@@ -551,7 +551,7 @@ class PDFService {
         
         // Tabelle für diese Seite
         pw.Expanded(
-          child: _buildTripsTable(invoiceData, startIndex, endIndex - startIndex),
+          child: _buildTripsTableForRange(invoiceData, startIndex, endIndex),
         ),
       ],
     );
@@ -615,6 +615,52 @@ class PDFService {
     );
   }
 
+  // Spezielle Funktion für Multi-Page mit Start- und End-Index
+  static pw.Widget _buildTripsTableForRange(InvoiceData invoiceData, int startIndex, int endIndex) {
+    return pw.Column(
+      children: [
+        // Header-Tabelle
+        pw.Table(
+          columnWidths: {
+            0: const pw.FixedColumnWidth(70),
+            1: const pw.FixedColumnWidth(65),
+            2: const pw.FlexColumnWidth(2),
+            3: const pw.FlexColumnWidth(2),
+            4: const pw.FixedColumnWidth(70),
+          },
+          children: [
+            pw.TableRow(
+              children: [
+                _buildTableHeader('Datum:'),
+                _buildTableHeader('Fahrt/en:'),
+                _buildTableHeader('von:'),
+                _buildTableHeader('nach:'),
+                _buildTableHeader('Preis:'),
+              ],
+            ),
+          ],
+        ),
+        // Gelber Strich unter Tabellenköpfen
+        pw.Container(
+          width: double.infinity,
+          height: 3,
+          color: yellowColor,
+        ),
+        // Daten-Tabelle
+        pw.Table(
+          columnWidths: {
+            0: const pw.FixedColumnWidth(70),
+            1: const pw.FixedColumnWidth(65),
+            2: const pw.FlexColumnWidth(2),
+            3: const pw.FlexColumnWidth(2),
+            4: const pw.FixedColumnWidth(70),
+          },
+          children: _buildDataRowsForRange(invoiceData, startIndex, endIndex),
+        ),
+      ],
+    );
+  }
+
   static List<pw.TableRow> _buildDataRows(InvoiceData invoiceData, [int startIndex = 0, int? maxTrips]) {
     final List<pw.TableRow> rows = [];
     
@@ -630,13 +676,42 @@ class PDFService {
       // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
       String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
       String toText = i == 0 ? '"${invoiceData.toAddress}"' : '"-"';
-      String fahrtText = i == 0 ? 'Fahrt' : '-'; // Nur erste Fahrt zeigt "Fahrt"
+      String fahrtText = i == 0 ? 'Fahrt' : '"-"'; // Nur erste Fahrt zeigt "Fahrt", andere mit Anführungszeichen
       
       rows.add(
         pw.TableRow(
           children: [
             _buildTableCell(DateFormat('dd.MM.yy').format(trip.date)),
             _buildTableCell(fahrtText), // Verwende fahrtText statt trip.description
+            _buildTableCell(fromText, fontSize: 8),
+            _buildTableCell(toText, fontSize: 8),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
+          ],
+        ),
+      );
+    }
+    
+    return rows;
+  }
+
+  // Spezielle Funktion für Multi-Page mit direktem Start- und End-Index
+  static List<pw.TableRow> _buildDataRowsForRange(InvoiceData invoiceData, int startIndex, int endIndex) {
+    final List<pw.TableRow> rows = [];
+    
+    // Datenzeilen (nur die Fahrten zwischen startIndex und endIndex)
+    for (int i = startIndex; i < endIndex && i < invoiceData.trips.length; i++) {
+      final trip = invoiceData.trips[i];
+      
+      // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
+      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
+      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '"-"';
+      String fahrtText = i == 0 ? 'Fahrt' : '"-"';
+      
+      rows.add(
+        pw.TableRow(
+          children: [
+            _buildTableCell(DateFormat('dd.MM.yy').format(trip.date)),
+            _buildTableCell(fahrtText),
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
             _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
