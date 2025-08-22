@@ -88,15 +88,16 @@ class PDFService {
     const int tripsPerAdditionalPage = 20; // Folgeseiten: 20 Fahrten pro Seite
     final int totalTrips = invoiceData.trips.length;
     
-    // Berechne korrekte Seitenzahl
+    // KORRIGIERTE Seitenberechnung
     int totalPages;
     if (totalTrips <= tripsOnFirstPage) {
-      totalPages = 2; // Erste Seite + Zusammenfassung
+      // Fall 1: ≤13 Fahrten → 2 Seiten (Fahrten + Zusammenfassung)
+      totalPages = 2;
     } else {
-      // Verbleibende Fahrten nach der ersten Seite
+      // Fall 2: >13 Fahrten → Seite 1 + Fahrt-Seiten + finale Zusammenfassung
       final int remainingTrips = totalTrips - tripsOnFirstPage;
-      final int additionalPagesForTrips = (remainingTrips / tripsPerAdditionalPage).ceil();
-      totalPages = 2 + additionalPagesForTrips; // Erste + zusätzliche + finale
+      final int additionalTripPages = (remainingTrips / tripsPerAdditionalPage).ceil();
+      totalPages = 1 + additionalTripPages + 1; // Erste + Fahrt-Seiten + finale
     }
 
     // Seite 1: Hauptrechnung mit Header und ersten 13 Fahrten
@@ -121,9 +122,9 @@ class PDFService {
       int pageNumber = 2;
       
       while (startIndex < totalTrips) {
-        final int endIndex = (startIndex + tripsPerAdditionalPage > totalTrips) 
-            ? totalTrips 
-            : (startIndex + tripsPerAdditionalPage);
+        final int endIndex = (startIndex + tripsPerAdditionalPage).clamp(0, totalTrips);
+        
+        print('DEBUG: Erstelle Seite $pageNumber/$totalPages mit Fahrten $startIndex bis ${endIndex-1} (${endIndex - startIndex} Fahrten)');
         
         pdf.addPage(
           pw.Page(
@@ -618,7 +619,10 @@ class PDFService {
   // Spezielle Funktion für Multi-Page mit Start- und End-Index
   static pw.Widget _buildTripsTableForRange(InvoiceData invoiceData, int startIndex, int endIndex) {
     // DEBUG: Sicherstellen, dass wir Fahrten haben
-    final tripsToShow = invoiceData.trips.sublist(startIndex, endIndex.clamp(0, invoiceData.trips.length));
+    final clampedEndIndex = endIndex.clamp(0, invoiceData.trips.length);
+    final tripsToShow = invoiceData.trips.sublist(startIndex, clampedEndIndex);
+    
+    print('DEBUG _buildTripsTableForRange: startIndex=$startIndex, endIndex=$endIndex, clampedEndIndex=$clampedEndIndex, tripsToShow.length=${tripsToShow.length}');
     
     return pw.Column(
       children: [
