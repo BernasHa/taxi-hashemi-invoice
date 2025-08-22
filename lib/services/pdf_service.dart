@@ -119,12 +119,13 @@ class PDFService {
     if (totalTrips > tripsOnFirstPage) {
       // Weitere Seiten für zusätzliche Fahrten (20 pro Seite)
       int startIndex = tripsOnFirstPage;
-      int pageNumber = 2;
+      int currentPageNumber = 2;
       
+      // Erstelle alle Fahrt-Seiten (nicht die finale Zusammenfassung)
       while (startIndex < totalTrips) {
-        final int endIndex = (startIndex + tripsPerAdditionalPage).clamp(0, totalTrips);
+        final int endIndex = (startIndex + tripsPerAdditionalPage).clamp(startIndex + 1, totalTrips);
         
-        print('DEBUG: Erstelle Seite $pageNumber/$totalPages mit Fahrten $startIndex bis ${endIndex-1} (${endIndex - startIndex} Fahrten)');
+        print('DEBUG: Erstelle Seite $currentPageNumber/$totalPages mit Fahrten $startIndex bis ${endIndex-1} (${endIndex - startIndex} Fahrten)');
         
         pdf.addPage(
           pw.Page(
@@ -134,7 +135,7 @@ class PDFService {
               return _buildPageWithFooter(
                 _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
                 invoiceData,
-                pageNumber,
+                currentPageNumber,
                 totalPages,
               );
             },
@@ -142,7 +143,7 @@ class PDFService {
         );
         
         startIndex = endIndex;
-        pageNumber++;
+        currentPageNumber++;
       }
       
       // Letzte Seite nur mit Zusammenfassung und Unterschrift
