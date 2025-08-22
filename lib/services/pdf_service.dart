@@ -83,20 +83,30 @@ class PDFService {
     final logoToUse = customLogo ?? companyLogo;
     final stampToUse = invoiceData.location == TaxiLocation.tamm ? tammStamp : sersheimStamp;
 
-    // Berechne Anzahl benötigter Seiten (16 Fahrten pro Seite)
-    const int tripsPerPage = 16;
+    // Berechne Anzahl benötigter Seiten
+    const int tripsOnFirstPage = 13; // Erste Seite: nur 13 Fahrten (wegen Header/Logo)
+    const int tripsPerAdditionalPage = 20; // Folgeseiten: 20 Fahrten pro Seite
     final int totalTrips = invoiceData.trips.length;
-    // Erste Seite + weitere Seiten für Fahrten + eine finale Seite für Zusammenfassung
-    final int totalPages = totalTrips <= tripsPerPage ? 2 : (((totalTrips - 1) ~/ tripsPerPage) + 2);
+    
+    // Berechne korrekte Seitenzahl
+    int totalPages;
+    if (totalTrips <= tripsOnFirstPage) {
+      totalPages = 2; // Erste Seite + Zusammenfassung
+    } else {
+      // Verbleibende Fahrten nach der ersten Seite
+      final int remainingTrips = totalTrips - tripsOnFirstPage;
+      final int additionalPagesForTrips = (remainingTrips / tripsPerAdditionalPage).ceil();
+      totalPages = 2 + additionalPagesForTrips; // Erste + zusätzliche + finale
+    }
 
-    // Seite 1: Hauptrechnung mit Header
+    // Seite 1: Hauptrechnung mit Header und ersten 13 Fahrten
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(40),
         build: (pw.Context context) {
           return _buildPageWithFooter(
-            _buildFirstPage(invoiceData, logoToUse, 0, tripsPerPage),
+            _buildFirstPage(invoiceData, logoToUse, 0, tripsOnFirstPage),
             invoiceData,
             1,
             totalPages,
@@ -105,16 +115,16 @@ class PDFService {
       ),
     );
 
-    // Multi-Page Logik für mehr als 16 Fahrten
-    if (totalTrips > tripsPerPage) {
-      int startIndex = tripsPerPage;
+    if (totalTrips > tripsOnFirstPage) {
+      // Weitere Seiten für zusätzliche Fahrten (20 pro Seite)
+      int startIndex = tripsOnFirstPage;
       int pageNumber = 2;
       
-      // Erstelle Zwischenseiten für weitere Fahrten
       while (startIndex < totalTrips) {
-        final int endIndex = (startIndex + tripsPerPage > totalTrips) ? totalTrips : (startIndex + tripsPerPage);
+        final int endIndex = (startIndex + tripsPerAdditionalPage > totalTrips) 
+            ? totalTrips 
+            : (startIndex + tripsPerAdditionalPage);
         
-        // Nur Fahrten-Seite (keine Zusammenfassung)
         pdf.addPage(
           pw.Page(
             pageFormat: PdfPageFormat.a4,
@@ -143,14 +153,14 @@ class PDFService {
             return _buildPageWithFooter(
               _buildFinalPage(invoiceData, stampToUse),
               invoiceData,
-              pageNumber,
+              totalPages, // Letzte Seitenzahl
               totalPages,
             );
           },
         ),
       );
     } else {
-      // Normale zweite Seite mit Zusammenfassung (≤16 Fahrten)
+      // Normale zweite Seite mit Zusammenfassung (≤13 Fahrten)
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
@@ -498,88 +508,6 @@ class PDFService {
         pw.Expanded(
           child: pw.Container(),
         ),
-
-        // Footer mit Bankdaten (dreispaltig wie im Screenshot)
-        pw.Container(
-          width: double.infinity,
-          padding: const pw.EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-          decoration: pw.BoxDecoration(
-            border: pw.Border(
-              top: pw.BorderSide(color: blackColor, width: 1),
-            ),
-          ),
-          child: pw.Row(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              // Adresse (links)
-              pw.Expanded(
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      CompanyInfo.getName(invoiceData.location),
-                      style: pw.TextStyle(
-                        fontSize: 8,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
-                    ),
-                    pw.Text(
-                      '${CompanyInfo.getAddress(invoiceData.location)}',
-                      style: pw.TextStyle(fontSize: 8),
-                    ),
-                    pw.Text(
-                      '${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-                      style: pw.TextStyle(fontSize: 8),
-                    ),
-                  ],
-                ),
-              ),
-              // Bankdaten (mitte)
-              pw.Expanded(
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      CompanyInfo.bank,
-                      style: pw.TextStyle(
-                        fontSize: 8,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
-                    ),
-                    pw.Text(
-                      'IBAN ${CompanyInfo.iban}',
-                      style: pw.TextStyle(fontSize: 8),
-                    ),
-                    pw.Text(
-                      'BIC ${CompanyInfo.bic}',
-                      style: pw.TextStyle(fontSize: 8),
-                    ),
-                  ],
-                ),
-              ),
-              // Kontakt (rechts)
-              pw.Expanded(
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Tel: ${CompanyInfo.getPhone(invoiceData.location)}',
-                      style: pw.TextStyle(fontSize: 8),
-                    ),
-                    pw.Text(
-                      '${CompanyInfo.email}',
-                      style: pw.TextStyle(fontSize: 8),
-                    ),
-                    pw.Text(
-                      '${CompanyInfo.website}',
-                      style: pw.TextStyle(fontSize: 8),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -702,12 +630,13 @@ class PDFService {
       // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
       String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
       String toText = i == 0 ? '"${invoiceData.toAddress}"' : '"-"';
+      String fahrtText = i == 0 ? 'Fahrt' : '-'; // Nur erste Fahrt zeigt "Fahrt"
       
       rows.add(
         pw.TableRow(
           children: [
             _buildTableCell(DateFormat('dd.MM.yy').format(trip.date)),
-            _buildTableCell(trip.description),
+            _buildTableCell(fahrtText), // Verwende fahrtText statt trip.description
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
             _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
