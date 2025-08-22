@@ -117,15 +117,20 @@ class PDFService {
     );
 
     if (totalTrips > tripsOnFirstPage) {
-      // Weitere Seiten für zusätzliche Fahrten (20 pro Seite)
-      int startIndex = tripsOnFirstPage;
+      // KOMPLETT NEUE LOGIK: Explizite Berechnung aller Fahrt-Seiten
+      int remainingTrips = totalTrips - tripsOnFirstPage;
       int currentPageNumber = 2;
+      int currentStartIndex = tripsOnFirstPage;
       
       // Erstelle alle Fahrt-Seiten (nicht die finale Zusammenfassung)
-      while (startIndex < totalTrips) {
-        final int endIndex = (startIndex + tripsPerAdditionalPage).clamp(startIndex + 1, totalTrips);
+      while (remainingTrips > 0) {
+        // Berechne wie viele Fahrten auf diese Seite passen
+        final int tripsOnThisPage = remainingTrips > tripsPerAdditionalPage 
+            ? tripsPerAdditionalPage 
+            : remainingTrips;
+        final int currentEndIndex = currentStartIndex + tripsOnThisPage;
         
-        print('DEBUG: Erstelle Seite $currentPageNumber/$totalPages mit Fahrten $startIndex bis ${endIndex-1} (${endIndex - startIndex} Fahrten)');
+        print('DEBUG: Seite $currentPageNumber/$totalPages - Fahrten $currentStartIndex bis ${currentEndIndex-1} ($tripsOnThisPage Fahrten, $remainingTrips verbleibend)');
         
         pdf.addPage(
           pw.Page(
@@ -133,7 +138,7 @@ class PDFService {
             margin: const pw.EdgeInsets.all(40),
             build: (pw.Context context) {
               return _buildPageWithFooter(
-                _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
+                _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
                 invoiceData,
                 currentPageNumber,
                 totalPages,
@@ -142,7 +147,9 @@ class PDFService {
           ),
         );
         
-        startIndex = endIndex;
+        // Nächste Iteration vorbereiten
+        currentStartIndex = currentEndIndex;
+        remainingTrips -= tripsOnThisPage;
         currentPageNumber++;
       }
       
