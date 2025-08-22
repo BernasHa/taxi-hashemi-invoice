@@ -94,8 +94,6 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             children: [
               _buildLocationCard(),
               const SizedBox(height: 16),
-              _buildHeaderCard(),
-              const SizedBox(height: 16),
               _buildCustomerDataCard(),
               const SizedBox(height: 16),
               _buildRouteCard(),
@@ -198,37 +196,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     );
   }
 
-  Widget _buildHeaderCard() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-                          Row(
-                children: [
-                  Icon(Icons.local_taxi, color: Colors.yellow[700], size: 32),
-                  const SizedBox(width: 12),
-                  Text(
-                    CompanyInfo.getName(_selectedLocation),
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            const SizedBox(height: 8),
-            Text(
-              'Logo wird automatisch aus den App-Ressourcen verwendet',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildCustomerDataCard() {
     return Card(
@@ -337,16 +305,6 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
               ),
               validator: (value) => value?.isEmpty ?? true ? 'Bitte Ankunftsort eingeben' : null,
             ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _purposeController,
-              decoration: const InputDecoration(
-                labelText: 'Verwendungszweck',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.description),
-                hintText: 'z.B. Rechnung Nr. 708-024',
-              ),
-            ),
           ],
         ),
       ),
@@ -409,6 +367,16 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                   DateFormat('dd.MM.yyyy').format(_invoiceDate),
                   style: const TextStyle(fontSize: 16),
                 ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _purposeController,
+              decoration: const InputDecoration(
+                labelText: 'Verwendungszweck',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.description),
+                hintText: 'z.B. Rechnung Nr. 708-024',
               ),
             ),
           ],
@@ -640,26 +608,34 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       final invoiceData = _createInvoiceData();
       await PDFService.generateAndPreview(invoiceData);
       
-      // Kurze Verzögerung um sicherzustellen, dass PDF-Viewer schließt
-      await Future.delayed(const Duration(milliseconds: 500));
-      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('PDF Vorschau erfolgreich erstellt!')),
         );
       }
     } catch (e) {
+      print('Fehler in _generatePreview: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Fehler beim Generieren der PDF: $e')),
         );
       }
     } finally {
+      // Immer den Status zurücksetzen, auch bei Fehlern
       if (mounted) {
         setState(() {
           _isGenerating = false;
         });
       }
+      
+      // Zusätzliche Sicherheit: Nach 2 Sekunden nochmal prüfen
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted && _isGenerating) {
+          setState(() {
+            _isGenerating = false;
+          });
+        }
+      });
     }
   }
 
@@ -761,11 +737,14 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       // Location zurücksetzen
       _selectedLocation = TaxiLocation.tamm;
       
-      _isGenerating = false;
+      _isGenerating = false; // Sicherstellen, dass PDF-Generation zurückgesetzt wird
     });
     
+    // Formular-Key zurücksetzen für saubere Validierung
+    _formKey.currentState?.reset();
+    
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Formular wurde zurückgesetzt')),
+      const SnackBar(content: Text('Formular wurde zurückgesetzt - bereit für neue Rechnung')),
     );
   }
 

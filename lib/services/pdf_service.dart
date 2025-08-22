@@ -105,57 +105,50 @@ class PDFService {
       ),
     );
 
-    // Weitere Seiten für zusätzliche Fahrten (falls mehr als 16)
+    // Multi-Page Logik für mehr als 16 Fahrten
     if (totalTrips > tripsPerPage) {
       int startIndex = tripsPerPage;
       int pageNumber = 2;
       
       // Erstelle Zwischenseiten für weitere Fahrten
       while (startIndex < totalTrips) {
-        final int remainingTrips = totalTrips - startIndex;
-        final int tripsOnThisPage = remainingTrips > tripsPerPage ? tripsPerPage : remainingTrips;
-        final int endIndex = startIndex + tripsOnThisPage;
+        final int endIndex = (startIndex + tripsPerPage > totalTrips) ? totalTrips : (startIndex + tripsPerPage);
         
-        // Ist das die letzte Seite mit Fahrten?
-        final bool hasMoreTripsAfter = endIndex < totalTrips;
-        
-        if (hasMoreTripsAfter) {
-          // Zwischenseite nur mit Fahrten
-          pdf.addPage(
-            pw.Page(
-              pageFormat: PdfPageFormat.a4,
-              margin: const pw.EdgeInsets.all(40),
-              build: (pw.Context context) {
-                return _buildPageWithFooter(
-                  _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
-                  invoiceData,
-                  pageNumber,
-                  totalPages,
-                );
-              },
-            ),
-          );
-        } else {
-          // Letzte Seite mit verbleibenden Fahrten + Zusammenfassung
-          pdf.addPage(
-            pw.Page(
-              pageFormat: PdfPageFormat.a4,
-              margin: const pw.EdgeInsets.all(40),
-              build: (pw.Context context) {
-                return _buildPageWithFooter(
-                  _buildLastPage(invoiceData, logoToUse, stampToUse, startIndex, endIndex),
-                  invoiceData,
-                  pageNumber,
-                  totalPages,
-                );
-              },
-            ),
-          );
-        }
+        // Nur Fahrten-Seite (keine Zusammenfassung)
+        pdf.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            margin: const pw.EdgeInsets.all(40),
+            build: (pw.Context context) {
+              return _buildPageWithFooter(
+                _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
+                invoiceData,
+                pageNumber,
+                totalPages,
+              );
+            },
+          ),
+        );
         
         startIndex = endIndex;
         pageNumber++;
       }
+      
+      // Letzte Seite nur mit Zusammenfassung und Unterschrift
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(40),
+          build: (pw.Context context) {
+            return _buildPageWithFooter(
+              _buildFinalPage(invoiceData, stampToUse),
+              invoiceData,
+              pageNumber,
+              totalPages,
+            );
+          },
+        ),
+      );
     } else {
       // Normale zweite Seite mit Zusammenfassung (≤16 Fahrten)
       pdf.addPage(
@@ -363,7 +356,7 @@ class PDFService {
                       _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
                       _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
                       _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
-                      _buildDetailRowLeft('Verwendungszweck:', invoiceData.purpose.isNotEmpty ? invoiceData.purpose : 'Rechnung Nr. ${invoiceData.invoiceNumber}'),
+                      _buildDetailRowLeft('Verwendungszweck:', invoiceData.purpose.isNotEmpty ? invoiceData.purpose : ''),
                     ],
                   ),
                 ],
@@ -636,48 +629,14 @@ class PDFService {
     );
   }
 
-  static pw.Widget _buildLastPage(InvoiceData invoiceData, pw.ImageProvider? logoImage, pw.ImageProvider? stamp, int startIndex, int endIndex) {
+  // Finale Seite nur mit Zusammenfassung und Unterschrift (keine Fahrten)
+  static pw.Widget _buildFinalPage(InvoiceData invoiceData, pw.ImageProvider? stamp) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        // Vereinfachter Header
-        pw.Row(
-          children: [
-            if (logoImage != null)
-              pw.Container(
-                width: 60,
-                height: 60,
-                child: pw.Image(logoImage, fit: pw.BoxFit.contain),
-              ),
-            pw.SizedBox(width: 15),
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                  CompanyInfo.getName(invoiceData.location),
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
-                    color: blackColor,
-                  ),
-                ),
-                pw.Text(
-                  'Rechnung Nr. ${invoiceData.invoiceNumber} (Fortsetzung)',
-                  style: pw.TextStyle(fontSize: 12, color: PdfColors.grey600),
-                ),
-              ],
-            ),
-          ],
-        ),
+        pw.SizedBox(height: 100), // Platz oben
         
-        pw.SizedBox(height: 20),
-        
-        // Tabelle für verbleibende Fahrten
-        _buildTripsTable(invoiceData, startIndex, endIndex - startIndex),
-        
-        pw.SizedBox(height: 30),
-        
-        // Zusammenfassung und Unterschrift (wie auf der normalen zweiten Seite)
+        // Zusammenfassung und Unterschrift
         _buildSummaryAndSignature(invoiceData, stamp),
       ],
     );
@@ -855,14 +814,19 @@ class PDFService {
   static Future<void> generateAndPreview(InvoiceData invoiceData) async {
     try {
       final pdfData = await generatePDF(invoiceData);
-      await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdfData,
-        name: 'Rechnung_${invoiceData.invoiceNumber}.pdf',
-      );
+      
+      // Verwende einen timeout für die Vorschau
+      await Future.any([
+        Printing.layoutPdf(
+          onLayout: (PdfPageFormat format) async => pdfData,
+          name: 'Rechnung_${invoiceData.invoiceNumber}.pdf',
+        ),
+        Future.delayed(const Duration(seconds: 30)), // 30 Sekunden timeout
+      ]);
+      
     } catch (e) {
       print('Preview-Fehler: $e');
-      // Fallback: Direkt teilen wenn Preview fehlschlägt
-      await generateAndShare(invoiceData);
+      rethrow; // Fehler weiterleiten statt fallback
     }
   }
 
