@@ -81,35 +81,103 @@ class PDFService {
     
     // Verwende benutzerdefiniertes Logo oder Standard-Logo
     final logoToUse = customLogo ?? companyLogo;
+    final stampToUse = invoiceData.location == TaxiLocation.tamm ? tammStamp : sersheimStamp;
 
-    // Seite 1: Hauptrechnung
+    // Berechne Anzahl benötigter Seiten (16 Fahrten pro Seite)
+    const int tripsPerPage = 16;
+    final int totalTrips = invoiceData.trips.length;
+    final int totalPages = totalTrips <= tripsPerPage ? 2 : ((totalTrips / tripsPerPage).ceil() + 1);
+
+    // Seite 1: Hauptrechnung mit Header
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(40),
         build: (pw.Context context) {
-          return _buildFirstPage(invoiceData, logoToUse);
+          return _buildPageWithFooter(
+            _buildFirstPage(invoiceData, logoToUse, 0, tripsPerPage),
+            invoiceData,
+            1,
+            totalPages,
+          );
         },
       ),
     );
 
-    // Seite 2: Zusammenfassung und Footer
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(40),
-        build: (pw.Context context) {
-          // Wähle den richtigen Stempel basierend auf der Location
-          final stampToUse = invoiceData.location == TaxiLocation.tamm ? tammStamp : sersheimStamp;
-          return _buildSecondPage(invoiceData, stampToUse);
-        },
-      ),
-    );
+    // Weitere Seiten für zusätzliche Fahrten (falls mehr als 16)
+    if (totalTrips > tripsPerPage) {
+      int startIndex = tripsPerPage;
+      int pageNumber = 2;
+      
+      while (startIndex < totalTrips) {
+        final int endIndex = (startIndex + tripsPerPage) > totalTrips ? totalTrips : (startIndex + tripsPerPage);
+        final bool isLastPage = endIndex >= totalTrips;
+        
+        pdf.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            margin: const pw.EdgeInsets.all(40),
+            build: (pw.Context context) {
+              return _buildPageWithFooter(
+                isLastPage 
+                  ? _buildLastPage(invoiceData, logoToUse, stampToUse, startIndex, endIndex)
+                  : _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
+                invoiceData,
+                pageNumber,
+                totalPages,
+              );
+            },
+          ),
+        );
+        
+        startIndex = endIndex;
+        pageNumber++;
+      }
+    } else {
+      // Normale zweite Seite mit Zusammenfassung
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(40),
+          build: (pw.Context context) {
+            return _buildPageWithFooter(
+              _buildSecondPage(invoiceData, stampToUse),
+              invoiceData,
+              2,
+              totalPages,
+            );
+          },
+        ),
+      );
+    }
 
     return pdf.save();
   }
 
-  static pw.Widget _buildFirstPage(InvoiceData invoiceData, pw.ImageProvider? logoImage) {
+  // Wrapper für Seiten mit Footer und Seitenzahl
+  static pw.Widget _buildPageWithFooter(pw.Widget content, InvoiceData invoiceData, int currentPage, int totalPages) {
+    return pw.Column(
+      children: [
+        pw.Expanded(child: content),
+        pw.SizedBox(height: 10),
+        // Footer mit Bankdaten
+        _buildFooter(invoiceData),
+        pw.SizedBox(height: 5),
+        // Seitenzahl unten rechts
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.end,
+          children: [
+            pw.Text(
+              'Seite $currentPage von $totalPages',
+              style: pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  static pw.Widget _buildFirstPage(InvoiceData invoiceData, pw.ImageProvider? logoImage, int startIndex, int maxTrips) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -244,9 +312,9 @@ class PDFService {
                         ),
                         textAlign: pw.TextAlign.left,
                       ),
-                      pw.SizedBox(height: 3),
+                      pw.SizedBox(height: 8), // Mehr Abstand nach Abteilung
                       pw.Text(
-                        'Telefon: ${CompanyInfo.phone}',
+                        'Telefon: ${CompanyInfo.getPhone(invoiceData.location)}',
                         style: pw.TextStyle(
                           fontSize: 9,
                         ),
@@ -272,6 +340,7 @@ class PDFService {
                       _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
                       _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
                       _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
+                      _buildDetailRowLeft('Verwendungszweck:', invoiceData.purpose.isNotEmpty ? invoiceData.purpose : 'Rechnung Nr. ${invoiceData.invoiceNumber}'),
                     ],
                   ),
                 ],
@@ -317,7 +386,7 @@ class PDFService {
 
         // Tabelle
         pw.Expanded(
-          child: _buildTripsTable(invoiceData),
+          child: _buildTripsTable(invoiceData, startIndex, maxTrips),
         ),
       ],
     );
@@ -473,7 +542,7 @@ class PDFService {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'Tel: ${CompanyInfo.phone}',
+                      'Tel: ${CompanyInfo.getPhone(invoiceData.location)}',
                       style: pw.TextStyle(fontSize: 8),
                     ),
                     pw.Text(
@@ -494,14 +563,106 @@ class PDFService {
     );
   }
 
-  static pw.Widget _buildTripsTable(InvoiceData invoiceData) {
+  // Neue Funktionen für Multi-Page Support
+  static pw.Widget _buildMiddlePage(InvoiceData invoiceData, pw.ImageProvider? logoImage, int startIndex, int endIndex) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Vereinfachter Header für Folgeseiten
+        pw.Row(
+          children: [
+            if (logoImage != null)
+              pw.Container(
+                width: 60,
+                height: 60,
+                child: pw.Image(logoImage, fit: pw.BoxFit.contain),
+              ),
+            pw.SizedBox(width: 15),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  CompanyInfo.getName(invoiceData.location),
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                    color: blackColor,
+                  ),
+                ),
+                pw.Text(
+                  'Rechnung Nr. ${invoiceData.invoiceNumber} (Fortsetzung)',
+                  style: pw.TextStyle(fontSize: 12, color: PdfColors.grey600),
+                ),
+              ],
+            ),
+          ],
+        ),
+        
+        pw.SizedBox(height: 20),
+        
+        // Tabelle für diese Seite
+        pw.Expanded(
+          child: _buildTripsTable(invoiceData, startIndex, endIndex - startIndex),
+        ),
+      ],
+    );
+  }
+
+  static pw.Widget _buildLastPage(InvoiceData invoiceData, pw.ImageProvider? logoImage, pw.ImageProvider? stamp, int startIndex, int endIndex) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Vereinfachter Header
+        pw.Row(
+          children: [
+            if (logoImage != null)
+              pw.Container(
+                width: 60,
+                height: 60,
+                child: pw.Image(logoImage, fit: pw.BoxFit.contain),
+              ),
+            pw.SizedBox(width: 15),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  CompanyInfo.getName(invoiceData.location),
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                    color: blackColor,
+                  ),
+                ),
+                pw.Text(
+                  'Rechnung Nr. ${invoiceData.invoiceNumber} (Fortsetzung)',
+                  style: pw.TextStyle(fontSize: 12, color: PdfColors.grey600),
+                ),
+              ],
+            ),
+          ],
+        ),
+        
+        pw.SizedBox(height: 20),
+        
+        // Tabelle für verbleibende Fahrten
+        _buildTripsTable(invoiceData, startIndex, endIndex - startIndex),
+        
+        pw.SizedBox(height: 30),
+        
+        // Zusammenfassung und Unterschrift (wie auf der normalen zweiten Seite)
+        _buildSummaryAndSignature(invoiceData, stamp),
+      ],
+    );
+  }
+
+  static pw.Widget _buildTripsTable(InvoiceData invoiceData, [int startIndex = 0, int? maxTrips]) {
     return pw.Column(
       children: [
         // Header-Tabelle
         pw.Table(
           columnWidths: {
             0: const pw.FixedColumnWidth(70),
-            1: const pw.FixedColumnWidth(50),
+            1: const pw.FixedColumnWidth(65), // Erweitert für "Fahrt/en:"
             2: const pw.FlexColumnWidth(2),
             3: const pw.FlexColumnWidth(2),
             4: const pw.FixedColumnWidth(70),
@@ -528,25 +689,30 @@ class PDFService {
         pw.Table(
           columnWidths: {
             0: const pw.FixedColumnWidth(70),
-            1: const pw.FixedColumnWidth(50),
+            1: const pw.FixedColumnWidth(65), // Erweitert für "Fahrt/en:"
             2: const pw.FlexColumnWidth(2),
             3: const pw.FlexColumnWidth(2),
             4: const pw.FixedColumnWidth(70),
           },
-          children: _buildDataRows(invoiceData),
+          children: _buildDataRows(invoiceData, startIndex, maxTrips),
         ),
       ],
     );
   }
 
-  static List<pw.TableRow> _buildDataRows(InvoiceData invoiceData) {
+  static List<pw.TableRow> _buildDataRows(InvoiceData invoiceData, [int startIndex = 0, int? maxTrips]) {
     final List<pw.TableRow> rows = [];
     
-    // Datenzeilen (nur die tatsächlichen Fahrten, keine leeren Zeilen)
-    for (int i = 0; i < invoiceData.trips.length; i++) {
+    // Bestimme Ende-Index
+    final int endIndex = maxTrips != null 
+        ? (startIndex + maxTrips).clamp(0, invoiceData.trips.length)
+        : invoiceData.trips.length;
+    
+    // Datenzeilen (nur die tatsächlichen Fahrten für diese Seite)
+    for (int i = startIndex; i < endIndex; i++) {
       final trip = invoiceData.trips[i];
       
-      // Erste Fahrt: echte Adressen, danach "-" Symbol
+      // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
       String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
       String toText = i == 0 ? '"${invoiceData.toAddress}"' : '"-"';
       
@@ -682,6 +848,170 @@ class PDFService {
     await Share.shareXFiles(
       [XFile(file.path)],
       text: 'Rechnung ${invoiceData.invoiceNumber} von ${CompanyInfo.getName(invoiceData.location)}',
+    );
+  }
+
+  // Neue Hilfsfunktionen für Multi-Page Support
+  static pw.Widget _buildSummaryAndSignature(InvoiceData invoiceData, pw.ImageProvider? stamp) {
+    return pw.Column(
+      children: [
+        // Rechnungssumme (rechtsbündig)
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.end,
+          children: [
+            pw.Container(
+              width: 200,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  pw.Text(
+                    'Verwendungszweck:',
+                    style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.Text(
+                    invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose,
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.SizedBox(height: 15),
+                  _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
+                  _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmount),
+                  pw.Container(
+                    height: 1,
+                    width: 150,
+                    color: blackColor,
+                    margin: const pw.EdgeInsets.symmetric(vertical: 3),
+                  ),
+                  _buildSummaryRow(
+                    'Gesamtbetrag:',
+                    invoiceData.formattedTotalAmount,
+                    isTotal: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        pw.SizedBox(height: 40),
+
+        // Grußformel und Unterschrift
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  'Mit freundlichen Grüßen',
+                  style: pw.TextStyle(fontSize: 11),
+                ),
+                pw.SizedBox(height: 10),
+                // Stempel (basierend auf Location)
+                if (stamp != null)
+                  pw.Container(
+                    width: 120,
+                    height: 80,
+                    child: pw.Image(stamp, fit: pw.BoxFit.contain),
+                  )
+                else
+                  pw.SizedBox(height: 80),
+                pw.SizedBox(height: 5),
+                pw.Text(
+                  CompanyInfo.contactPerson,
+                  style: pw.TextStyle(
+                    fontSize: 11,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            pw.Expanded(child: pw.Container()),
+          ],
+        ),
+      ],
+    );
+  }
+
+  static pw.Widget _buildFooter(InvoiceData invoiceData) {
+    return pw.Container(
+      width: double.infinity,
+      padding: const pw.EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+      decoration: pw.BoxDecoration(
+        border: pw.Border(
+          top: pw.BorderSide(color: blackColor, width: 1),
+        ),
+      ),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          // Adresse (links)
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  CompanyInfo.getName(invoiceData.location),
+                  style: pw.TextStyle(
+                    fontSize: 8,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  '${CompanyInfo.getAddress(invoiceData.location)}',
+                  style: pw.TextStyle(fontSize: 8),
+                ),
+                pw.Text(
+                  '${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                  style: pw.TextStyle(fontSize: 8),
+                ),
+              ],
+            ),
+          ),
+          // Bankdaten (mitte)
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  CompanyInfo.bank,
+                  style: pw.TextStyle(
+                    fontSize: 8,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  'IBAN ${CompanyInfo.iban}',
+                  style: pw.TextStyle(fontSize: 8),
+                ),
+                pw.Text(
+                  'BIC ${CompanyInfo.bic}',
+                  style: pw.TextStyle(fontSize: 8),
+                ),
+              ],
+            ),
+          ),
+          // Kontakt (rechts)
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  'Tel: ${CompanyInfo.getPhone(invoiceData.location)}',
+                  style: pw.TextStyle(fontSize: 8),
+                ),
+                pw.Text(
+                  '${CompanyInfo.email}',
+                  style: pw.TextStyle(fontSize: 8),
+                ),
+                pw.Text(
+                  '${CompanyInfo.website}',
+                  style: pw.TextStyle(fontSize: 8),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

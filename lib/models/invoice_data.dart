@@ -123,4 +123,13 @@ class CompanyInfo {
   static String getFullAddress(TaxiLocation location) {
     return '${getName(location)}, ${getAddress(location)}, ${getPostalCode(location)} ${getCity(location)}';
   }
+  
+  static String getPhone(TaxiLocation location) {
+    switch (location) {
+      case TaxiLocation.tamm:
+        return '07042 / 2607267';
+      case TaxiLocation.sersheim:
+        return '07141 / 9746955';
+    }
+  }
 }
