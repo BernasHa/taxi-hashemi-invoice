@@ -400,6 +400,8 @@ class PDFService {
                 ),
               ],
             ),
+            // Platz rechts vom Stempel, um ihn nach links zu verschieben
+            pw.Expanded(child: pw.Container()),
           ],
         ),
 
