@@ -617,6 +617,9 @@ class PDFService {
 
   // Spezielle Funktion für Multi-Page mit Start- und End-Index
   static pw.Widget _buildTripsTableForRange(InvoiceData invoiceData, int startIndex, int endIndex) {
+    // DEBUG: Sicherstellen, dass wir Fahrten haben
+    final tripsToShow = invoiceData.trips.sublist(startIndex, endIndex.clamp(0, invoiceData.trips.length));
+    
     return pw.Column(
       children: [
         // Header-Tabelle
@@ -646,7 +649,7 @@ class PDFService {
           height: 3,
           color: yellowColor,
         ),
-        // Daten-Tabelle
+        // Daten-Tabelle - VEREINFACHT für besseres Debugging
         pw.Table(
           columnWidths: {
             0: const pw.FixedColumnWidth(70),
@@ -655,7 +658,26 @@ class PDFService {
             3: const pw.FlexColumnWidth(2),
             4: const pw.FixedColumnWidth(70),
           },
-          children: _buildDataRowsForRange(invoiceData, startIndex, endIndex),
+          children: tripsToShow.asMap().entries.map((entry) {
+            final localIndex = entry.key; // 0, 1, 2... innerhalb dieser Seite
+            final globalIndex = startIndex + localIndex; // Absoluter Index
+            final trip = entry.value;
+            
+            // NUR die allererste Fahrt (globalIndex 0) zeigt echte Adressen
+            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
+            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : '"-"';
+            String fahrtText = globalIndex == 0 ? 'Fahrt' : '"-"';
+            
+            return pw.TableRow(
+              children: [
+                _buildTableCell(DateFormat('dd.MM.yy').format(trip.date)),
+                _buildTableCell(fahrtText),
+                _buildTableCell(fromText, fontSize: 8),
+                _buildTableCell(toText, fontSize: 8),
+                _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
+              ],
+            );
+          }).toList(),
         ),
       ],
     );
@@ -702,7 +724,7 @@ class PDFService {
     for (int i = startIndex; i < endIndex && i < invoiceData.trips.length; i++) {
       final trip = invoiceData.trips[i];
       
-      // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
+      // NUR die allererste Fahrt (Index 0) zeigt echte Adressen, alle anderen "-"
       String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
       String toText = i == 0 ? '"${invoiceData.toAddress}"' : '"-"';
       String fahrtText = i == 0 ? 'Fahrt' : '"-"';
