@@ -26,7 +26,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
 
   DateTime _invoiceDate = DateTime.now();
   List<TripEntry> _trips = [];
-  String? _logoPath;
+
   bool _isGenerating = false;
   TaxiLocation _selectedLocation = TaxiLocation.tamm;
 
@@ -215,40 +215,14 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                   ),
                 ],
               ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Logo auswählen (optional)',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      if (_logoPath != null)
-                        Text(
-                          'Logo ausgewählt: ${_logoPath!.split('/').last}',
-                          style: TextStyle(color: Colors.green[600]),
-                        ),
-                    ],
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: _pickLogo,
-                  icon: const Icon(Icons.image),
-                  label: const Text('Logo wählen'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow[700],
-                    foregroundColor: Colors.black,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 8),
+            Text(
+              'Logo wird automatisch aus den App-Ressourcen verwendet',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
         ),
@@ -610,22 +584,23 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: TextButton.icon(
+            onPressed: _resetForm,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Neue Rechnung'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Future<void> _pickLogo() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-    );
 
-    if (result != null) {
-      setState(() {
-        _logoPath = result.files.single.path;
-      });
-    }
-  }
 
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
@@ -664,6 +639,15 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     try {
       final invoiceData = _createInvoiceData();
       await PDFService.generateAndPreview(invoiceData);
+      
+      // Kurze Verzögerung um sicherzustellen, dass PDF-Viewer schließt
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('PDF Vorschau erfolgreich erstellt!')),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -671,9 +655,11 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
         );
       }
     } finally {
-      setState(() {
-        _isGenerating = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isGenerating = false;
+        });
+      }
     }
   }
 
@@ -699,9 +685,11 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
         );
       }
     } finally {
-      setState(() {
-        _isGenerating = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isGenerating = false;
+        });
+      }
     }
   }
 
@@ -722,9 +710,11 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
         );
       }
     } finally {
-      setState(() {
-        _isGenerating = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isGenerating = false;
+        });
+      }
     }
   }
 
@@ -740,11 +730,42 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       invoiceDate: _invoiceDate,
       trips: _trips,
       vatRate: vatRate,
-      logoPath: _logoPath,
+      logoPath: null, // Logo aus assets verwenden
       location: _selectedLocation,
       fromAddress: _fromAddressController.text,
       toAddress: _toAddressController.text,
       purpose: _purposeController.text,
+    );
+  }
+
+  void _resetForm() {
+    setState(() {
+      // Controller zurücksetzen
+      _customerNameController.clear();
+      _customerStreetController.clear();
+      _customerPostalCodeController.clear();
+      _customerCityController.clear();
+      _invoiceNumberController.text = 'R-${DateTime.now().year}-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+      _vatRateController.text = '7';
+      _fromAddressController.text = 'Tamm, Ulmer Str. 51';
+      _toAddressController.text = 'Ludwigsburg, Erlachhof Str. 1 und zurück';
+      _purposeController.clear();
+      
+      // Datum zurücksetzen
+      _invoiceDate = DateTime.now();
+      
+      // Fahrten zurücksetzen
+      _trips.clear();
+      _addInitialTrips();
+      
+      // Location zurücksetzen
+      _selectedLocation = TaxiLocation.tamm;
+      
+      _isGenerating = false;
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Formular wurde zurückgesetzt')),
     );
   }
 

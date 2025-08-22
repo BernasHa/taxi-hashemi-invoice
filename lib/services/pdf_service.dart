@@ -86,7 +86,8 @@ class PDFService {
     // Berechne Anzahl benötigter Seiten (16 Fahrten pro Seite)
     const int tripsPerPage = 16;
     final int totalTrips = invoiceData.trips.length;
-    final int totalPages = totalTrips <= tripsPerPage ? 2 : ((totalTrips / tripsPerPage).ceil() + 1);
+    // Erste Seite + weitere Seiten für Fahrten + eine finale Seite für Zusammenfassung
+    final int totalPages = totalTrips <= tripsPerPage ? 2 : (((totalTrips - 1) ~/ tripsPerPage) + 2);
 
     // Seite 1: Hauptrechnung mit Header
     pdf.addPage(
@@ -109,32 +110,54 @@ class PDFService {
       int startIndex = tripsPerPage;
       int pageNumber = 2;
       
+      // Erstelle Zwischenseiten für weitere Fahrten
       while (startIndex < totalTrips) {
-        final int endIndex = (startIndex + tripsPerPage) > totalTrips ? totalTrips : (startIndex + tripsPerPage);
-        final bool isLastPage = endIndex >= totalTrips;
+        final int remainingTrips = totalTrips - startIndex;
+        final int tripsOnThisPage = remainingTrips > tripsPerPage ? tripsPerPage : remainingTrips;
+        final int endIndex = startIndex + tripsOnThisPage;
         
-        pdf.addPage(
-          pw.Page(
-            pageFormat: PdfPageFormat.a4,
-            margin: const pw.EdgeInsets.all(40),
-            build: (pw.Context context) {
-              return _buildPageWithFooter(
-                isLastPage 
-                  ? _buildLastPage(invoiceData, logoToUse, stampToUse, startIndex, endIndex)
-                  : _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
-                invoiceData,
-                pageNumber,
-                totalPages,
-              );
-            },
-          ),
-        );
+        // Ist das die letzte Seite mit Fahrten?
+        final bool hasMoreTripsAfter = endIndex < totalTrips;
+        
+        if (hasMoreTripsAfter) {
+          // Zwischenseite nur mit Fahrten
+          pdf.addPage(
+            pw.Page(
+              pageFormat: PdfPageFormat.a4,
+              margin: const pw.EdgeInsets.all(40),
+              build: (pw.Context context) {
+                return _buildPageWithFooter(
+                  _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
+                  invoiceData,
+                  pageNumber,
+                  totalPages,
+                );
+              },
+            ),
+          );
+        } else {
+          // Letzte Seite mit verbleibenden Fahrten + Zusammenfassung
+          pdf.addPage(
+            pw.Page(
+              pageFormat: PdfPageFormat.a4,
+              margin: const pw.EdgeInsets.all(40),
+              build: (pw.Context context) {
+                return _buildPageWithFooter(
+                  _buildLastPage(invoiceData, logoToUse, stampToUse, startIndex, endIndex),
+                  invoiceData,
+                  pageNumber,
+                  totalPages,
+                );
+              },
+            ),
+          );
+        }
         
         startIndex = endIndex;
         pageNumber++;
       }
     } else {
-      // Normale zweite Seite mit Zusammenfassung
+      // Normale zweite Seite mit Zusammenfassung (≤16 Fahrten)
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
@@ -415,6 +438,11 @@ class PDFService {
                   pw.Text(
                     invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose,
                     style: pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.SizedBox(height: 5),
+                  pw.Text(
+                    'Rechnung Nr. ${invoiceData.invoiceNumber}',
+                    style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
                   _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
@@ -825,11 +853,17 @@ class PDFService {
 
   // Public Methoden für die App
   static Future<void> generateAndPreview(InvoiceData invoiceData) async {
-    final pdfData = await generatePDF(invoiceData);
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdfData,
-      name: 'Rechnung_${invoiceData.invoiceNumber}.pdf',
-    );
+    try {
+      final pdfData = await generatePDF(invoiceData);
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdfData,
+        name: 'Rechnung_${invoiceData.invoiceNumber}.pdf',
+      );
+    } catch (e) {
+      print('Preview-Fehler: $e');
+      // Fallback: Direkt teilen wenn Preview fehlschlägt
+      await generateAndShare(invoiceData);
+    }
   }
 
   static Future<void> generateAndSave(InvoiceData invoiceData) async {
@@ -871,6 +905,11 @@ class PDFService {
                   pw.Text(
                     invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose,
                     style: pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.SizedBox(height: 5),
+                  pw.Text(
+                    'Rechnung Nr. ${invoiceData.invoiceNumber}',
+                    style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
                   _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
