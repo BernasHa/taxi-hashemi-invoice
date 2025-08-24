@@ -420,7 +420,7 @@ class PDFService {
           color: blackColor,
         ),
 
-        pw.SizedBox(height: 10),
+        pw.SizedBox(height: 5),
 
         // Tabelle
         pw.Expanded(
@@ -447,12 +447,8 @@ class PDFService {
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
                   pw.Text(
-                    'Verwendungszweck:',
+                    'Verwendungszweck: ${invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose}',
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
-                  ),
-                  pw.Text(
-                    invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose,
-                    style: pw.TextStyle(fontSize: 10),
                   ),
                   pw.SizedBox(height: 5),
                   pw.Text(
@@ -460,12 +456,6 @@ class PDFService {
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
-                  // Verwendungszweck über Gesamtpreis
-                  pw.Text(
-                    'Verwendungszweck: Rechnung Nr. ${invoiceData.invoiceNumber}',
-                    style: pw.TextStyle(fontSize: 9),
-                  ),
-                  pw.SizedBox(height: 10),
                   _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
                   _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmount),
                   pw.Container(
@@ -475,7 +465,7 @@ class PDFService {
                     margin: const pw.EdgeInsets.symmetric(vertical: 3),
                   ),
                   _buildSummaryRow(
-                    'Gesamtbetrag:',
+                    'Gesamtbetrag (brutto):',
                     invoiceData.formattedTotalAmount,
                     isTotal: true,
                   ),
@@ -685,9 +675,9 @@ class PDFService {
             final trip = entry.value;
             
             // NUR die allererste Fahrt (globalIndex 0) zeigt echte Adressen
-            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : '""';
-            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : '""';
-            String fahrtText = globalIndex == 0 ? 'Fahrt' : '""';
+            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : "''";
+            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : "''";
+            String fahrtText = globalIndex == 0 ? 'Fahrt' : "''";
             
             return pw.TableRow(
               children: [
@@ -717,9 +707,9 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '""';
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '""';
-              String fahrtText = i == 0 ? 'Fahrt' : '""'; // Nur erste Fahrt zeigt "Fahrt", andere mit Anführungszeichen
+      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : "''";
+      String toText = i == 0 ? '"${invoiceData.toAddress}"' : "''";
+              String fahrtText = i == 0 ? 'Fahrt' : "''"; // Nur erste Fahrt zeigt "Fahrt", andere mit Anführungszeichen
       
       rows.add(
         pw.TableRow(
@@ -746,9 +736,9 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // NUR die allererste Fahrt (Index 0) zeigt echte Adressen, alle anderen "-"
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '""';
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '""';
-              String fahrtText = i == 0 ? 'Fahrt' : '""';
+      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : "''";
+      String toText = i == 0 ? '"${invoiceData.toAddress}"' : "''";
+              String fahrtText = i == 0 ? 'Fahrt' : "''";
       
       rows.add(
         pw.TableRow(
@@ -925,12 +915,8 @@ class PDFService {
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
                   pw.Text(
-                    'Verwendungszweck:',
+                    'Verwendungszweck: ${invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose}',
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
-                  ),
-                  pw.Text(
-                    invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose,
-                    style: pw.TextStyle(fontSize: 10),
                   ),
                   pw.SizedBox(height: 5),
                   pw.Text(
@@ -938,12 +924,6 @@ class PDFService {
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
-                  // Verwendungszweck über Gesamtpreis
-                  pw.Text(
-                    'Verwendungszweck: Rechnung Nr. ${invoiceData.invoiceNumber}',
-                    style: pw.TextStyle(fontSize: 9),
-                  ),
-                  pw.SizedBox(height: 10),
                   _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
                   _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmount),
                   pw.Container(
@@ -953,7 +933,7 @@ class PDFService {
                     margin: const pw.EdgeInsets.symmetric(vertical: 3),
                   ),
                   _buildSummaryRow(
-                    'Gesamtbetrag:',
+                    'Gesamtbetrag (brutto):',
                     invoiceData.formattedTotalAmount,
                     isTotal: true,
                   ),

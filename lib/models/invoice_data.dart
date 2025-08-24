@@ -44,7 +44,7 @@ class InvoiceData {
   String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} EUR';
   String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} EUR';
   String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} EUR';
-  String get formattedVatRate => '${(vatRate * 100).toInt()} %';
+  String get formattedVatRate => '${(vatRate * 100).toInt()}%';
 }
 
 class TripEntry {
@@ -113,9 +113,9 @@ class CompanyInfo {
   static String getAddress(TaxiLocation location) {
     switch (location) {
       case TaxiLocation.tamm:
-        return 'Heilbronner Str. 30';
+        return 'Heilbronner Str.30';
       case TaxiLocation.sersheim:
-        return 'Waldeck Str. 7';
+        return 'Waldeck Str.7';
     }
   }
   
