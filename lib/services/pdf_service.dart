@@ -456,8 +456,8 @@ class PDFService {
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
-                  _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
-                  _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmount),
+                  _buildSummaryRow('Netto:', invoiceData.formattedNetAmountPdf),
+                  _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmountPdf),
                   pw.Container(
                     height: 1,
                     width: 150,
@@ -466,7 +466,7 @@ class PDFService {
                   ),
                   _buildSummaryRow(
                     'Gesamtbetrag (brutto):',
-                    invoiceData.formattedTotalAmount,
+                    invoiceData.formattedTotalAmountPdf,
                     isTotal: true,
                   ),
                 ],
@@ -694,7 +694,7 @@ class PDFService {
                 _buildTableCell(fahrtText, align: pw.TextAlign.center),
                 _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
                 _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
-                _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.center),
+                _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.center),
               ],
             );
           }).toList(),
@@ -739,7 +739,7 @@ class PDFService {
             _buildTableCell(fahrtText, align: pw.TextAlign.center), // Verwende fahrtText statt trip.description
             _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
             _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.center),
+            _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.center),
           ],
         ),
       );
@@ -780,7 +780,7 @@ class PDFService {
             _buildTableCell(fahrtText),
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.center),
+            _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.center),
           ],
         ),
       );
@@ -957,8 +957,8 @@ class PDFService {
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
-                  _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
-                  _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmount),
+                  _buildSummaryRow('Netto:', invoiceData.formattedNetAmountPdf),
+                  _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmountPdf),
                   pw.Container(
                     height: 1,
                     width: 150,
@@ -967,7 +967,7 @@ class PDFService {
                   ),
                   _buildSummaryRow(
                     'Gesamtbetrag (brutto):',
-                    invoiceData.formattedTotalAmount,
+                    invoiceData.formattedTotalAmountPdf,
                     isTotal: true,
                   ),
                 ],
