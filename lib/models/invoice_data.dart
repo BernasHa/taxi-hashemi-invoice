@@ -43,10 +43,10 @@ class InvoiceData {
   String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} €';
   String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} €';
   
-  // PDF-Formatierung mit Euro-Symbol
-  String get formattedNetAmountPdf => '${netAmount.toStringAsFixed(2)} €';
-  String get formattedVatAmountPdf => '${vatAmount.toStringAsFixed(2)} €';
-  String get formattedTotalAmountPdf => '${totalAmount.toStringAsFixed(2)} €';
+  // PDF-Formatierung (EUR für bessere Kompatibilität)
+  String get formattedNetAmountPdf => '${netAmount.toStringAsFixed(2)} EUR';
+  String get formattedVatAmountPdf => '${vatAmount.toStringAsFixed(2)} EUR';
+  String get formattedTotalAmountPdf => '${totalAmount.toStringAsFixed(2)} EUR';
   String get formattedVatRate => '${(vatRate * 100).toInt()}%';
   
   // Korrekte Anrede basierend auf Geschlecht
@@ -76,8 +76,8 @@ class TripEntry {
 
   String get formattedPrice => '${price.toStringAsFixed(2)} €';
   
-  // PDF-Formatierung mit Euro-Symbol
-  String get formattedPricePdf => '${price.toStringAsFixed(2)} €';
+  // PDF-Formatierung (EUR für bessere Kompatibilität)
+  String get formattedPricePdf => '${price.toStringAsFixed(2)} EUR';
   
   // Prüft ob diese Fahrt identisch mit einer anderen ist
   bool isIdenticalTo(TripEntry other) {
