@@ -19,6 +19,22 @@ class PDFService {
   static pw.ImageProvider? _companyLogo;
   static pw.ImageProvider? _tammStamp;
   static pw.ImageProvider? _sersheimStamp;
+  
+  // Font-Caching für Unicode-Unterstützung
+  static pw.Font? _unicodeFont;
+
+  // Font-Lade-Funktion für Unicode-Unterstützung
+  static Future<pw.Font> _loadUnicodeFont() async {
+    if (_unicodeFont != null) return _unicodeFont!;
+    try {
+      // Verwende Standard-Font erstmal für Test
+      _unicodeFont = pw.Font.helvetica();
+      return _unicodeFont!;
+    } catch (e) {
+      print('Fehler beim Laden der Unicode-Font: $e');
+      return pw.Font.helvetica();
+    }
+  }
 
   // Logo-Lade-Funktionen
   static Future<pw.ImageProvider?> _loadCompanyLogo() async {
@@ -60,6 +76,9 @@ class PDFService {
   static Future<Uint8List> generatePDF(InvoiceData invoiceData) async {
     final pdf = pw.Document();
     
+    // Lade Unicode-Font für Euro-Symbol
+    final unicodeFont = await _loadUnicodeFont();
+    
     // Lade Logos
     final companyLogo = await _loadCompanyLogo();
     final tammStamp = await _loadTammStamp();
@@ -83,22 +102,21 @@ class PDFService {
     final logoToUse = customLogo ?? companyLogo;
     final stampToUse = invoiceData.location == TaxiLocation.tamm ? tammStamp : sersheimStamp;
 
-    // Berechne Anzahl benötigter Seiten
-    const int tripsOnFirstPage = 13; // Erste Seite: nur 13 Fahrten (wegen Header/Logo)
-    const int tripsPerAdditionalPage = 20; // Folgeseiten: 20 Fahrten pro Seite
+    // VEREINFACHTE Multi-Page Berechnung
+    const int tripsOnFirstPage = 13;
+    const int tripsPerAdditionalPage = 20;
     final int totalTrips = invoiceData.trips.length;
     
-    // KORRIGIERTE Seitenberechnung
-    int totalPages;
-    if (totalTrips <= tripsOnFirstPage) {
-      // Fall 1: ≤13 Fahrten → 2 Seiten (Fahrten + Zusammenfassung)
-      totalPages = 2;
-    } else {
-      // Fall 2: >13 Fahrten → Seite 1 + Fahrt-Seiten + finale Zusammenfassung
+    print('DEBUG: Gesamt Fahrten = $totalTrips');
+    
+    int totalPages = 2; // Minimum: Erste Seite + Zusammenfassung
+    if (totalTrips > tripsOnFirstPage) {
       final int remainingTrips = totalTrips - tripsOnFirstPage;
-      final int additionalTripPages = (remainingTrips / tripsPerAdditionalPage).ceil();
-      totalPages = 1 + additionalTripPages + 1; // Erste + Fahrt-Seiten + finale
+      final int additionalPages = (remainingTrips / tripsPerAdditionalPage).ceil();
+      totalPages = 1 + additionalPages + 1; // Erste + Zusätzliche + Finale
     }
+    
+    print('DEBUG: Berechnet $totalPages Seiten total');
 
     // Seite 1: Hauptrechnung mit Header und ersten 13 Fahrten
     pdf.addPage(
@@ -116,21 +134,17 @@ class PDFService {
       ),
     );
 
+    // VEREINFACHTE Multi-Page Erstellung
     if (totalTrips > tripsOnFirstPage) {
-      // KOMPLETT NEUE LOGIK: Explizite Berechnung aller Fahrt-Seiten
-      int remainingTrips = totalTrips - tripsOnFirstPage;
-      int currentPageNumber = 2;
-      int currentStartIndex = tripsOnFirstPage;
+      // Fahrt-Seiten erstellen
+      int startIndex = tripsOnFirstPage;
+      int pageNumber = 2;
       
-      // Erstelle alle Fahrt-Seiten (nicht die finale Zusammenfassung)
-      while (remainingTrips > 0) {
-        // Berechne wie viele Fahrten auf diese Seite passen
-        final int tripsOnThisPage = remainingTrips > tripsPerAdditionalPage 
-            ? tripsPerAdditionalPage 
-            : remainingTrips;
-        final int currentEndIndex = currentStartIndex + tripsOnThisPage;
+      while (startIndex < totalTrips) {
+        final int endIndex = (startIndex + tripsPerAdditionalPage).clamp(0, totalTrips);
+        final bool isLastTripPage = endIndex >= totalTrips;
         
-        print('DEBUG: Seite $currentPageNumber/$totalPages - Fahrten $currentStartIndex bis ${currentEndIndex-1} ($tripsOnThisPage Fahrten, $remainingTrips verbleibend)');
+        print('DEBUG: Seite $pageNumber - Fahrten $startIndex bis ${endIndex-1}');
         
         pdf.addPage(
           pw.Page(
@@ -138,22 +152,20 @@ class PDFService {
             margin: const pw.EdgeInsets.all(40),
             build: (pw.Context context) {
               return _buildPageWithFooter(
-                _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
+                _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
                 invoiceData,
-                currentPageNumber,
+                pageNumber,
                 totalPages,
               );
             },
           ),
         );
         
-        // Nächste Iteration vorbereiten
-        currentStartIndex = currentEndIndex;
-        remainingTrips -= tripsOnThisPage;
-        currentPageNumber++;
+        startIndex = endIndex;
+        pageNumber++;
       }
       
-      // Letzte Seite nur mit Zusammenfassung und Unterschrift
+      // Finale Seite mit Zusammenfassung
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
@@ -162,14 +174,14 @@ class PDFService {
             return _buildPageWithFooter(
               _buildFinalPage(invoiceData, stampToUse),
               invoiceData,
-              totalPages, // Letzte Seitenzahl
+              totalPages,
               totalPages,
             );
           },
         ),
       );
     } else {
-      // Normale zweite Seite mit Zusammenfassung (≤13 Fahrten)
+      // Nur 2 Seiten bei ≤13 Fahrten
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
