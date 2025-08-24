@@ -9,6 +9,7 @@ class InvoiceData {
   final double vatRate;
   final String? logoPath;
   final TaxiLocation location;
+  final CustomerGender customerGender;
   final String purpose;     // Verwendungszweck
 
   InvoiceData({
@@ -22,6 +23,7 @@ class InvoiceData {
     this.vatRate = 0.07, // 7% MwSt als Standard
     this.logoPath,
     this.location = TaxiLocation.tamm, // Standard: Tamm
+    this.customerGender = CustomerGender.herr, // Standard: Herr
     this.purpose = '',         // Optional
   });
 
@@ -41,11 +43,18 @@ class InvoiceData {
   String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} €';
   String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} €';
   
-  // PDF-sichere Formatierung (EUR statt €)
-  String get formattedNetAmountPdf => '${netAmount.toStringAsFixed(2)} EUR';
-  String get formattedVatAmountPdf => '${vatAmount.toStringAsFixed(2)} EUR';
-  String get formattedTotalAmountPdf => '${totalAmount.toStringAsFixed(2)} EUR';
+  // PDF-Formatierung mit Euro-Symbol
+  String get formattedNetAmountPdf => '${netAmount.toStringAsFixed(2)} €';
+  String get formattedVatAmountPdf => '${vatAmount.toStringAsFixed(2)} €';
+  String get formattedTotalAmountPdf => '${totalAmount.toStringAsFixed(2)} €';
   String get formattedVatRate => '${(vatRate * 100).toInt()}%';
+  
+  // Korrekte Anrede basierend auf Geschlecht
+  String get customerSalutation {
+    return customerGender == CustomerGender.frau 
+        ? 'Sehr geehrte Frau $customerName' 
+        : 'Sehr geehrter Herr $customerName';
+  }
 }
 
 class TripEntry {
@@ -67,8 +76,8 @@ class TripEntry {
 
   String get formattedPrice => '${price.toStringAsFixed(2)} €';
   
-  // PDF-sichere Formatierung (EUR statt €)
-  String get formattedPricePdf => '${price.toStringAsFixed(2)} EUR';
+  // PDF-Formatierung mit Euro-Symbol
+  String get formattedPricePdf => '${price.toStringAsFixed(2)} €';
   
   // Prüft ob diese Fahrt identisch mit einer anderen ist
   bool isIdenticalTo(TripEntry other) {
@@ -83,6 +92,11 @@ class TripEntry {
 enum TaxiLocation {
   tamm,
   sersheim,
+}
+
+enum CustomerGender {
+  herr,
+  frau,
 }
 
 class CompanyInfo {

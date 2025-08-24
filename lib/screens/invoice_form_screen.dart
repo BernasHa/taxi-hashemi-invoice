@@ -35,6 +35,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
 
   bool _isGenerating = false;
   TaxiLocation _selectedLocation = TaxiLocation.tamm;
+  CustomerGender _selectedGender = CustomerGender.herr;
 
   @override
   void initState() {
@@ -318,6 +319,46 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) => value?.isEmpty ?? true ? 'Ort eingeben' : null,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            
+            // Geschlechts-Auswahl
+            Text(
+              'Anrede',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[700],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<CustomerGender>(
+                    title: const Text('Herr'),
+                    value: CustomerGender.herr,
+                    groupValue: _selectedGender,
+                    onChanged: (CustomerGender? value) {
+                      setState(() {
+                        _selectedGender = value!;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<CustomerGender>(
+                    title: const Text('Frau'),
+                    value: CustomerGender.frau,
+                    groupValue: _selectedGender,
+                    onChanged: (CustomerGender? value) {
+                      setState(() {
+                        _selectedGender = value!;
+                      });
+                    },
                   ),
                 ),
               ],
@@ -1055,6 +1096,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       vatRate: vatRate,
       logoPath: null, // Logo aus assets verwenden
       location: _selectedLocation,
+      customerGender: _selectedGender,
       purpose: _purposeController.text,
     );
   }
@@ -1084,8 +1126,9 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       _trips.clear();
       _addInitialTrips();
       
-      // Location zurücksetzen
+      // Location und Geschlecht zurücksetzen
       _selectedLocation = TaxiLocation.tamm;
+      _selectedGender = CustomerGender.herr;
       
       _isGenerating = false; // Sicherstellen, dass PDF-Generation zurückgesetzt wird
     });

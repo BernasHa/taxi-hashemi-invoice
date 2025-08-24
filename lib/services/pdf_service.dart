@@ -401,9 +401,9 @@ class PDFService {
 
         pw.SizedBox(height: 15),
 
-        // Einleitung
+        // Einleitung mit korrekter Anrede
         pw.Text(
-          'Sehr geehrter Herr ${invoiceData.customerName.split(' ').last},',
+          invoiceData.customerSalutation + ',',
           style: pw.TextStyle(fontSize: 11),
         ),
         pw.SizedBox(height: 8),
