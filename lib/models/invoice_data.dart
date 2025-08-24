@@ -41,9 +41,9 @@ class InvoiceData {
     return netAmount + vatAmount;
   }
 
-  String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} EUR';
-  String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} EUR';
-  String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} EUR';
+  String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} €';
+  String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} €';
+  String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} €';
   String get formattedVatRate => '${(vatRate * 100).toInt()} %';
 }
 
@@ -58,7 +58,7 @@ class TripEntry {
     required this.price,
   });
 
-  String get formattedPrice => '${price.toStringAsFixed(2)} EUR';
+  String get formattedPrice => '${price.toStringAsFixed(2)} €';
 }
 
 enum TaxiLocation {
@@ -127,9 +127,18 @@ class CompanyInfo {
   static String getPhone(TaxiLocation location) {
     switch (location) {
       case TaxiLocation.tamm:
-        return '07042 / 2607267';
-      case TaxiLocation.sersheim:
         return '07141 / 9746955';
+      case TaxiLocation.sersheim:
+        return '07042 / 2607267';
+    }
+  }
+  
+  static String getEmail(TaxiLocation location) {
+    switch (location) {
+      case TaxiLocation.tamm:
+        return 'Taxi.Tamm@googlemail.com';
+      case TaxiLocation.sersheim:
+        return 'taxisersheim@gmail.com';
     }
   }
 }

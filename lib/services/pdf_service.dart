@@ -220,10 +220,11 @@ class PDFService {
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo Bereich (rundes gelbes Logo)
+            // Logo Bereich (rundes gelbes Logo) - höher positioniert
             pw.Container(
               width: 80,
               height: 80,
+              margin: pw.EdgeInsets.only(top: -10),
               child: logoImage != null
                   ? pw.Image(logoImage, fit: pw.BoxFit.contain)
                   : pw.Container(
@@ -320,7 +321,7 @@ class PDFService {
               ),
             ),
             
-            pw.SizedBox(width: 40),
+            pw.SizedBox(width: 20),
             
             // Kontaktdaten und Rechnungsdetails (rechts)
             pw.Expanded(
@@ -339,6 +340,8 @@ class PDFService {
                           fontWeight: pw.FontWeight.bold,
                         ),
                         textAlign: pw.TextAlign.left,
+                        maxLines: 1,
+                        overflow: pw.TextOverflow.clip,
                       ),
                       pw.Text(
                         'Abteilung: Rechnung u. Bearbeitung',
@@ -356,7 +359,7 @@ class PDFService {
                         textAlign: pw.TextAlign.left,
                       ),
                       pw.Text(
-                        'E-Mail: ${CompanyInfo.email}',
+                        'E-Mail: ${CompanyInfo.getEmail(invoiceData.location)}',
                         style: pw.TextStyle(
                           fontSize: 9,
                         ),
@@ -375,7 +378,7 @@ class PDFService {
                       _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
                       _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
                       _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
-                      _buildDetailRowLeft('Verwendungszweck:', invoiceData.purpose.isNotEmpty ? invoiceData.purpose : ''),
+                      // Verwendungszweck entfernt von oben rechts
                     ],
                   ),
                 ],
@@ -457,6 +460,12 @@ class PDFService {
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
+                  // Verwendungszweck über Gesamtpreis
+                  pw.Text(
+                    'Verwendungszweck: Rechnung Nr. ${invoiceData.invoiceNumber}',
+                    style: pw.TextStyle(fontSize: 9),
+                  ),
+                  pw.SizedBox(height: 10),
                   _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
                   _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmount),
                   pw.Container(
@@ -504,7 +513,7 @@ class PDFService {
                   CompanyInfo.contactPerson,
                   style: pw.TextStyle(
                     fontSize: 11,
-                    fontWeight: pw.FontWeight.bold,
+                    fontWeight: pw.FontWeight.normal,
                   ),
                 ),
               ],
@@ -676,9 +685,9 @@ class PDFService {
             final trip = entry.value;
             
             // NUR die allererste Fahrt (globalIndex 0) zeigt echte Adressen
-            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
-            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : '"-"';
-            String fahrtText = globalIndex == 0 ? 'Fahrt' : '"-"';
+            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : '';
+            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : '';
+            String fahrtText = globalIndex == 0 ? 'Fahrt' : '';
             
             return pw.TableRow(
               children: [
@@ -686,7 +695,7 @@ class PDFService {
                 _buildTableCell(fahrtText),
                 _buildTableCell(fromText, fontSize: 8),
                 _buildTableCell(toText, fontSize: 8),
-                _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
+                _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.right),
               ],
             );
           }).toList(),
@@ -708,9 +717,9 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '"-"';
-      String fahrtText = i == 0 ? 'Fahrt' : '"-"'; // Nur erste Fahrt zeigt "Fahrt", andere mit Anführungszeichen
+      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '';
+      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '';
+              String fahrtText = i == 0 ? 'Fahrt' : ''; // Nur erste Fahrt zeigt "Fahrt", andere leer
       
       rows.add(
         pw.TableRow(
@@ -719,7 +728,7 @@ class PDFService {
             _buildTableCell(fahrtText), // Verwende fahrtText statt trip.description
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.right),
           ],
         ),
       );
@@ -737,9 +746,9 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // NUR die allererste Fahrt (Index 0) zeigt echte Adressen, alle anderen "-"
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '"-"';
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '"-"';
-      String fahrtText = i == 0 ? 'Fahrt' : '"-"';
+      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '';
+      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '';
+              String fahrtText = i == 0 ? 'Fahrt' : '';
       
       rows.add(
         pw.TableRow(
@@ -748,7 +757,7 @@ class PDFService {
             _buildTableCell(fahrtText),
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.right),
           ],
         ),
       );
@@ -914,6 +923,12 @@ class PDFService {
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
+                  // Verwendungszweck über Gesamtpreis
+                  pw.Text(
+                    'Verwendungszweck: Rechnung Nr. ${invoiceData.invoiceNumber}',
+                    style: pw.TextStyle(fontSize: 9),
+                  ),
+                  pw.SizedBox(height: 10),
                   _buildSummaryRow('Netto:', invoiceData.formattedNetAmount),
                   _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmount),
                   pw.Container(
@@ -961,7 +976,7 @@ class PDFService {
                   CompanyInfo.contactPerson,
                   style: pw.TextStyle(
                     fontSize: 11,
-                    fontWeight: pw.FontWeight.bold,
+                    fontWeight: pw.FontWeight.normal,
                   ),
                 ),
               ],
