@@ -137,8 +137,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
               const SizedBox(height: 16),
               _buildInvoiceDetailsCard(),
               const SizedBox(height: 16),
-              _buildTripsCard(),
-              const SizedBox(height: 16),
+
               _buildSummaryCard(),
               const SizedBox(height: 24),
               _buildActionButtons(),
@@ -542,39 +541,77 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                           ),
                         ],
                       ),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            '${trip.price.toStringAsFixed(2)} EUR',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Colors.green[700],
-                            ),
-                          ),
-                          if (isIdentical)
-                            Container(
-                              margin: const EdgeInsets.only(top: 4),
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.orange[100],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                "''",
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                '${trip.price.toStringAsFixed(2)} EUR',
                                 style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.orange[800],
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.green[700],
                                 ),
                               ),
-                            ),
+                              if (isIdentical)
+                                Container(
+                                  margin: const EdgeInsets.only(top: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange[100],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    "''",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.orange[800],
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(width: 8),
+                          PopupMenuButton<String>(
+                            onSelected: (value) {
+                              if (value == 'edit') {
+                                _editTrip(index);
+                              } else if (value == 'delete') {
+                                _deleteTrip(index);
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit, size: 16),
+                                    SizedBox(width: 8),
+                                    Text('Bearbeiten'),
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete, size: 16, color: Colors.red),
+                                    SizedBox(width: 8),
+                                    Text('Löschen', style: TextStyle(color: Colors.red)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            child: const Icon(Icons.more_vert, color: Colors.grey),
+                          ),
                         ],
                       ),
                       onTap: () {
-                        // Optional: Details anzeigen oder bearbeiten
+                        _editTrip(index);
                       },
                     ),
                   );
@@ -659,67 +696,52 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       ),
     );
   }
-
-  Widget _buildTripsCard() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Fahrten',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: _addTrip,
-                  icon: const Icon(Icons.add),
-                  label: const Text('Fahrt hinzufügen'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow[700],
-                    foregroundColor: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_trips.isEmpty)
-              const Center(
-                child: Text(
-                  'Noch keine Fahrten hinzugefügt',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              )
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _trips.length,
-                itemBuilder: (context, index) {
-                  return TripEntryWidget(
-                    trip: _trips[index],
-                    onEdit: (updatedTrip) {
-                      setState(() {
-                        _trips[index] = updatedTrip;
-                      });
-                    },
-                    onDelete: () {
-                      setState(() {
-                        _trips.removeAt(index);
-                      });
-                    },
-                  );
-                },
-              ),
-          ],
-        ),
+  
+  void _editTrip(int index) {
+    final trip = _trips[index];
+    
+    // Felder mit aktuellen Werten füllen
+    _tripDescriptionController.text = trip.description;
+    _tripFromController.text = trip.fromAddress;
+    _tripToController.text = trip.toAddress;
+    _tripPriceController.text = trip.price.toString();
+    _tripDate = trip.date;
+    
+    setState(() {
+      // Fahrt temporär entfernen für Bearbeitung
+      _trips.removeAt(index);
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Fahrt wird bearbeitet - Änderungen vornehmen und erneut hinzufügen')),
+    );
+  }
+  
+  void _deleteTrip(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Fahrt löschen'),
+        content: const Text('Möchten Sie diese Fahrt wirklich löschen?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _trips.removeAt(index);
+              });
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Fahrt wurde gelöscht')),
+              );
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Löschen'),
+          ),
+        ],
       ),
     );
   }

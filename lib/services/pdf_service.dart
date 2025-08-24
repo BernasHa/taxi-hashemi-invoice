@@ -593,11 +593,11 @@ class PDFService {
           children: [
             pw.TableRow(
               children: [
-                _buildTableHeader('Datum:'),
-                _buildTableHeader('Fahrt/en:'),
-                _buildTableHeader('von:'),
-                _buildTableHeader('nach:'),
-                                  _buildTableHeaderCentered('Preis:'),
+                _buildTableHeaderCentered('Datum:'),
+                _buildTableHeaderCentered('Fahrt/en:'),
+                _buildTableHeaderCentered('von:'),
+                _buildTableHeaderCentered('nach:'),
+                _buildTableHeaderCentered('Preis:'),
               ],
             ),
           ],
@@ -645,11 +645,11 @@ class PDFService {
           children: [
             pw.TableRow(
               children: [
-                _buildTableHeader('Datum:'),
-                _buildTableHeader('Fahrt/en:'),
-                _buildTableHeader('von:'),
-                _buildTableHeader('nach:'),
-                                  _buildTableHeaderCentered('Preis:'),
+                _buildTableHeaderCentered('Datum:'),
+                _buildTableHeaderCentered('Fahrt/en:'),
+                _buildTableHeaderCentered('von:'),
+                _buildTableHeaderCentered('nach:'),
+                _buildTableHeaderCentered('Preis:'),
               ],
             ),
           ],
@@ -675,26 +675,28 @@ class PDFService {
             final trip = entry.value;
             
             // Neue Logik: Alle Fahrten zeigen ihre eigenen Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
-            String fromText = '"${trip.fromAddress}"';
-            String toText = '"${trip.toAddress}"';
+            String fromText = trip.fromAddress;
+            String toText = trip.toAddress;
             String fahrtText = trip.description;
             
             // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
+            // WICHTIG: Datum und Preis werden IMMER angezeigt, nur Fahrt/en, von, nach bekommen ''
             if (globalIndex > 0) {
               final previousTrip = invoiceData.trips[globalIndex - 1];
               if (trip.isIdenticalTo(previousTrip)) {
                 fahrtText = "''";
                 fromText = "''";
                 toText = "''";
+                // Datum und Preis bleiben unverändert!
               }
             }
             
             return pw.TableRow(
               children: [
-                _buildTableCell(DateFormat('dd.MM.yy').format(trip.date)),
-                _buildTableCell(fahrtText),
-                _buildTableCell(fromText, fontSize: 8),
-                _buildTableCell(toText, fontSize: 8),
+                _buildTableCell(DateFormat('dd.MM.yy').format(trip.date), align: pw.TextAlign.center),
+                _buildTableCell(fahrtText, align: pw.TextAlign.center),
+                _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
+                _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
                 _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
               ],
             );
@@ -717,27 +719,29 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // Neue Logik: Alle Fahrten zeigen ihre eigenen Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
-      String fromText = '"${trip.fromAddress}"';
-      String toText = '"${trip.toAddress}"';
+      String fromText = trip.fromAddress;
+      String toText = trip.toAddress;
       String fahrtText = trip.description;
       
       // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
+      // WICHTIG: Datum und Preis werden IMMER angezeigt, nur Fahrt/en, von, nach bekommen ''
       if (i > 0) {
         final previousTrip = invoiceData.trips[i - 1];
         if (trip.isIdenticalTo(previousTrip)) {
           fahrtText = "''";
           fromText = "''";
           toText = "''";
+          // Datum und Preis bleiben unverändert!
         }
       }
       
       rows.add(
         pw.TableRow(
           children: [
-            _buildTableCell(DateFormat('dd.MM.yy').format(trip.date)),
-            _buildTableCell(fahrtText), // Verwende fahrtText statt trip.description
-            _buildTableCell(fromText, fontSize: 8),
-            _buildTableCell(toText, fontSize: 8),
+            _buildTableCell(DateFormat('dd.MM.yy').format(trip.date), align: pw.TextAlign.center),
+            _buildTableCell(fahrtText, align: pw.TextAlign.center), // Verwende fahrtText statt trip.description
+            _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
+            _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
             _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
           ],
         ),
@@ -756,17 +760,19 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // Neue Logik: Alle Fahrten zeigen ihre eigenen Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
-      String fromText = '"${trip.fromAddress}"';
-      String toText = '"${trip.toAddress}"';
+      String fromText = trip.fromAddress;
+      String toText = trip.toAddress;
       String fahrtText = trip.description;
       
       // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
+      // WICHTIG: Datum und Preis werden IMMER angezeigt, nur Fahrt/en, von, nach bekommen ''
       if (i > 0) {
         final previousTrip = invoiceData.trips[i - 1];
         if (trip.isIdenticalTo(previousTrip)) {
           fahrtText = "''";
           fromText = "''";
           toText = "''";
+          // Datum und Preis bleiben unverändert!
         }
       }
       
