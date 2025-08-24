@@ -146,17 +146,23 @@ class PDFService {
             ? startIndex + tripsPerAdditionalPage 
             : totalTrips;
         
-        print('DEBUG: Seite $pageNumber - Fahrten $startIndex bis ${endIndex-1} (${endIndex - startIndex} Fahrten)');
+        // CLOSURE-FIX: Lokale Kopien für die build-Funktion
+        final int currentStartIndex = startIndex;
+        final int currentEndIndex = endIndex;
+        final int currentPageNumber = pageNumber;
+        
+        print('DEBUG: Seite $currentPageNumber - Fahrten $currentStartIndex bis ${currentEndIndex-1} (${currentEndIndex - currentStartIndex} Fahrten)');
         
         pdf.addPage(
           pw.Page(
             pageFormat: PdfPageFormat.a4,
             margin: const pw.EdgeInsets.all(40),
             build: (pw.Context context) {
+              print('DEBUG: In build context: startIndex=$currentStartIndex, endIndex=$currentEndIndex');
               return _buildPageWithFooter(
-                _buildMiddlePage(invoiceData, logoToUse, startIndex, endIndex),
+                _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
                 invoiceData,
-                pageNumber,
+                currentPageNumber,
                 totalPages,
               );
             },
