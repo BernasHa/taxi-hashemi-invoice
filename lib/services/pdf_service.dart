@@ -489,10 +489,11 @@ class PDFService {
 
         pw.SizedBox(height: 80),
 
-        // Grußformel und Unterschrift
+        // Grußformel und Unterschrift - WEITER LINKS
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
+            pw.SizedBox(width: 20), // Weniger Abstand vom linken Rand
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
@@ -501,7 +502,7 @@ class PDFService {
                   style: pw.TextStyle(fontSize: 11),
                 ),
                 pw.SizedBox(height: 10), // Weniger Abstand
-                // Stempel (basierend auf Location)
+                // Stempel (basierend auf Location) - WEITER LINKS
                 if (stamp != null)
                   pw.Container(
                     width: 120, // Größer
@@ -520,7 +521,7 @@ class PDFService {
                 ),
               ],
             ),
-            // Platz rechts vom Stempel, um ihn nach links zu verschieben
+            // Mehr Platz rechts vom Stempel
             pw.Expanded(child: pw.Container()),
           ],
         ),
@@ -994,6 +995,7 @@ class PDFService {
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
+            pw.SizedBox(width: 20), // Weniger Abstand vom linken Rand
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
@@ -1002,7 +1004,7 @@ class PDFService {
                   style: pw.TextStyle(fontSize: 11),
                 ),
                 pw.SizedBox(height: 10),
-                // Stempel (basierend auf Location)
+                // Stempel (basierend auf Location) - WEITER LINKS
                 if (stamp != null)
                   pw.Container(
                     width: 120,
@@ -1021,6 +1023,7 @@ class PDFService {
                 ),
               ],
             ),
+            // Mehr Platz rechts vom Stempel
             pw.Expanded(child: pw.Container()),
           ],
         ),
