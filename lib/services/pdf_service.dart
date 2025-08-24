@@ -444,10 +444,10 @@ class PDFService {
             pw.Container(
               width: 200,
               child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text(
-                    'Verwendungszweck: ${invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose}',
+                    'Verwendungszweck: ${invoiceData.purpose.isEmpty ? invoiceData.invoiceNumber : invoiceData.purpose}',
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 5),
@@ -674,10 +674,22 @@ class PDFService {
             final globalIndex = startIndex + localIndex; // Absoluter Index
             final trip = entry.value;
             
-            // NUR die allererste Fahrt (globalIndex 0) zeigt echte Adressen
-            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : "''";
-            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : "''";
-            String fahrtText = globalIndex == 0 ? 'Fahrt' : "''";
+            // Neue Logik: Alle Fahrten zeigen ihre Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
+            String fromText = '"${invoiceData.fromAddress}"';
+            String toText = '"${invoiceData.toAddress}"';
+            String fahrtText = trip.description;
+            
+            // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
+            if (globalIndex > 0) {
+              final previousTrip = invoiceData.trips[globalIndex - 1];
+              if (previousTrip.description == trip.description &&
+                  previousTrip.date == trip.date &&
+                  previousTrip.price == trip.price) {
+                fahrtText = "''";
+                fromText = "''";
+                toText = "''";
+              }
+            }
             
             return pw.TableRow(
               children: [
@@ -706,10 +718,22 @@ class PDFService {
     for (int i = startIndex; i < endIndex; i++) {
       final trip = invoiceData.trips[i];
       
-      // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : "''";
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : "''";
-              String fahrtText = i == 0 ? 'Fahrt' : "''"; // Nur erste Fahrt zeigt "Fahrt", andere mit Anführungszeichen
+      // Neue Logik: Alle Fahrten zeigen ihre Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
+      String fromText = '"${invoiceData.fromAddress}"';
+      String toText = '"${invoiceData.toAddress}"';
+      String fahrtText = trip.description;
+      
+      // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
+      if (i > 0) {
+        final previousTrip = invoiceData.trips[i - 1];
+        if (previousTrip.description == trip.description &&
+            previousTrip.date == trip.date &&
+            previousTrip.price == trip.price) {
+          fahrtText = "''";
+          fromText = "''";
+          toText = "''";
+        }
+      }
       
       rows.add(
         pw.TableRow(
@@ -718,7 +742,7 @@ class PDFService {
             _buildTableCell(fahrtText), // Verwende fahrtText statt trip.description
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
           ],
         ),
       );
@@ -735,10 +759,22 @@ class PDFService {
     for (int i = startIndex; i < endIndex && i < invoiceData.trips.length; i++) {
       final trip = invoiceData.trips[i];
       
-      // NUR die allererste Fahrt (Index 0) zeigt echte Adressen, alle anderen "-"
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : "''";
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : "''";
-              String fahrtText = i == 0 ? 'Fahrt' : "''";
+      // Neue Logik: Alle Fahrten zeigen ihre Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
+      String fromText = '"${invoiceData.fromAddress}"';
+      String toText = '"${invoiceData.toAddress}"';
+      String fahrtText = trip.description;
+      
+      // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
+      if (i > 0) {
+        final previousTrip = invoiceData.trips[i - 1];
+        if (previousTrip.description == trip.description &&
+            previousTrip.date == trip.date &&
+            previousTrip.price == trip.price) {
+          fahrtText = "''";
+          fromText = "''";
+          toText = "''";
+        }
+      }
       
       rows.add(
         pw.TableRow(
@@ -747,7 +783,7 @@ class PDFService {
             _buildTableCell(fahrtText),
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
           ],
         ),
       );
@@ -773,7 +809,7 @@ class PDFService {
 
   static pw.Widget _buildTableHeaderCentered(String text) {
     return pw.Container(
-      padding: const pw.EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      padding: const pw.EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       child: pw.Text(
         text,
         style: pw.TextStyle(
@@ -912,10 +948,10 @@ class PDFService {
             pw.Container(
               width: 200,
               child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text(
-                    'Verwendungszweck: ${invoiceData.purpose.isEmpty ? 'Rechnung Nr. ${invoiceData.invoiceNumber}' : invoiceData.purpose}',
+                    'Verwendungszweck: ${invoiceData.purpose.isEmpty ? invoiceData.invoiceNumber : invoiceData.purpose}',
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 5),
