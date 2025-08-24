@@ -224,7 +224,7 @@ class PDFService {
             pw.Container(
               width: 80,
               height: 80,
-              margin: pw.EdgeInsets.only(top: -10),
+              margin: pw.EdgeInsets.only(top: -5),
               child: logoImage != null
                   ? pw.Image(logoImage, fit: pw.BoxFit.contain)
                   : pw.Container(
@@ -416,11 +416,11 @@ class PDFService {
         pw.SizedBox(height: 8),
         pw.Container(
           width: double.infinity,
-          height: 3,
+          height: 5,
           color: blackColor,
         ),
 
-        pw.SizedBox(height: 15),
+        pw.SizedBox(height: 10),
 
         // Tabelle
         pw.Expanded(
@@ -607,7 +607,7 @@ class PDFService {
                 _buildTableHeader('Fahrt/en:'),
                 _buildTableHeader('von:'),
                 _buildTableHeader('nach:'),
-                _buildTableHeader('Preis:'),
+                                  _buildTableHeaderCentered('Preis:'),
               ],
             ),
           ],
@@ -615,7 +615,7 @@ class PDFService {
         // Gelbe Linie direkt unter Header
         pw.Container(
           width: double.infinity,
-          height: 3,
+          height: 5,
           color: yellowColor,
         ),
         // Daten-Tabelle
@@ -659,7 +659,7 @@ class PDFService {
                 _buildTableHeader('Fahrt/en:'),
                 _buildTableHeader('von:'),
                 _buildTableHeader('nach:'),
-                _buildTableHeader('Preis:'),
+                                  _buildTableHeaderCentered('Preis:'),
               ],
             ),
           ],
@@ -685,9 +685,9 @@ class PDFService {
             final trip = entry.value;
             
             // NUR die allererste Fahrt (globalIndex 0) zeigt echte Adressen
-            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : '';
-            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : '';
-            String fahrtText = globalIndex == 0 ? 'Fahrt' : '';
+            String fromText = globalIndex == 0 ? '"${invoiceData.fromAddress}"' : '""';
+            String toText = globalIndex == 0 ? '"${invoiceData.toAddress}"' : '""';
+            String fahrtText = globalIndex == 0 ? 'Fahrt' : '""';
             
             return pw.TableRow(
               children: [
@@ -695,7 +695,7 @@ class PDFService {
                 _buildTableCell(fahrtText),
                 _buildTableCell(fromText, fontSize: 8),
                 _buildTableCell(toText, fontSize: 8),
-                _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.right),
+                _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
               ],
             );
           }).toList(),
@@ -717,9 +717,9 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // Erste Fahrt der gesamten Rechnung: echte Adressen, danach "-" Symbol
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '';
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '';
-              String fahrtText = i == 0 ? 'Fahrt' : ''; // Nur erste Fahrt zeigt "Fahrt", andere leer
+      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '""';
+      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '""';
+              String fahrtText = i == 0 ? 'Fahrt' : '""'; // Nur erste Fahrt zeigt "Fahrt", andere mit Anführungszeichen
       
       rows.add(
         pw.TableRow(
@@ -728,7 +728,7 @@ class PDFService {
             _buildTableCell(fahrtText), // Verwende fahrtText statt trip.description
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.right),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
           ],
         ),
       );
@@ -746,9 +746,9 @@ class PDFService {
       final trip = invoiceData.trips[i];
       
       // NUR die allererste Fahrt (Index 0) zeigt echte Adressen, alle anderen "-"
-      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '';
-      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '';
-              String fahrtText = i == 0 ? 'Fahrt' : '';
+      String fromText = i == 0 ? '"${invoiceData.fromAddress}"' : '""';
+      String toText = i == 0 ? '"${invoiceData.toAddress}"' : '""';
+              String fahrtText = i == 0 ? 'Fahrt' : '""';
       
       rows.add(
         pw.TableRow(
@@ -757,7 +757,7 @@ class PDFService {
             _buildTableCell(fahrtText),
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.right),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.right),
           ],
         ),
       );
@@ -777,6 +777,21 @@ class PDFService {
           color: blackColor,
         ),
         textAlign: pw.TextAlign.left,
+      ),
+    );
+  }
+
+  static pw.Widget _buildTableHeaderCentered(String text) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: 10,
+          fontWeight: pw.FontWeight.bold,
+          color: blackColor,
+        ),
+        textAlign: pw.TextAlign.center,
       ),
     );
   }
@@ -1036,7 +1051,7 @@ class PDFService {
                   ),
                 ),
                 pw.Text(
-                  'IBAN ${CompanyInfo.iban}',
+                  'IBAN ${CompanyInfo.getIban(invoiceData.location)}',
                   style: pw.TextStyle(fontSize: 8),
                 ),
                 pw.Text(
@@ -1056,11 +1071,11 @@ class PDFService {
                   style: pw.TextStyle(fontSize: 8),
                 ),
                 pw.Text(
-                  '${CompanyInfo.email}',
+                  '${CompanyInfo.getEmail(invoiceData.location)}',
                   style: pw.TextStyle(fontSize: 8),
                 ),
                 pw.Text(
-                  '${CompanyInfo.website}',
+                  '${CompanyInfo.getWebsite(invoiceData.location)}',
                   style: pw.TextStyle(fontSize: 8),
                 ),
               ],

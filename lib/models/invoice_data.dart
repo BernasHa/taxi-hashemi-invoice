@@ -41,9 +41,9 @@ class InvoiceData {
     return netAmount + vatAmount;
   }
 
-  String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} €';
-  String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} €';
-  String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} €';
+  String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} EUR';
+  String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} EUR';
+  String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} EUR';
   String get formattedVatRate => '${(vatRate * 100).toInt()} %';
 }
 
@@ -58,7 +58,7 @@ class TripEntry {
     required this.price,
   });
 
-  String get formattedPrice => '${price.toStringAsFixed(2)} €';
+  String get formattedPrice => '${price.toStringAsFixed(2)} EUR';
 }
 
 enum TaxiLocation {
@@ -72,9 +72,26 @@ class CompanyInfo {
   static const String email = 'T.K.Hashemi@hotmail.de';
   static const String website = 'www.Taxi-Service-Tamm.de';
   
-  static const String iban = 'DE18 6045 0050 0000 0167 95';
   static const String bic = 'SOLADES1LBG';
   static const String bank = 'Kreissparkasse Ludwigsburg';
+  
+  static String getIban(TaxiLocation location) {
+    switch (location) {
+      case TaxiLocation.tamm:
+        return 'DE18 6045 0050 0000 0167 95';
+      case TaxiLocation.sersheim:
+        return 'DE36 6045 0050 0030 2268 30';
+    }
+  }
+  
+  static String getWebsite(TaxiLocation location) {
+    switch (location) {
+      case TaxiLocation.tamm:
+        return 'www.Taxi-Service-Tamm.de';
+      case TaxiLocation.sersheim:
+        return 'www.Taxi-Sersheim.de';
+    }
+  }
   
   static const String taxNumber = '7110247350';
   static const String ikNumber = '60851512';
@@ -107,7 +124,7 @@ class CompanyInfo {
       case TaxiLocation.tamm:
         return '71732';
       case TaxiLocation.sersheim:
-        return '74371';
+        return '74372';
     }
   }
   
