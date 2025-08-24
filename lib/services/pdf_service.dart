@@ -134,17 +134,19 @@ class PDFService {
       ),
     );
 
-    // VEREINFACHTE Multi-Page Erstellung
+    // KORRIGIERTE Multi-Page Erstellung
     if (totalTrips > tripsOnFirstPage) {
       // Fahrt-Seiten erstellen
       int startIndex = tripsOnFirstPage;
       int pageNumber = 2;
       
       while (startIndex < totalTrips) {
-        final int endIndex = (startIndex + tripsPerAdditionalPage).clamp(0, totalTrips);
-        final bool isLastTripPage = endIndex >= totalTrips;
+        // KORRIGIERTE endIndex Berechnung
+        final int endIndex = (startIndex + tripsPerAdditionalPage < totalTrips) 
+            ? startIndex + tripsPerAdditionalPage 
+            : totalTrips;
         
-        print('DEBUG: Seite $pageNumber - Fahrten $startIndex bis ${endIndex-1}');
+        print('DEBUG: Seite $pageNumber - Fahrten $startIndex bis ${endIndex-1} (${endIndex - startIndex} Fahrten)');
         
         pdf.addPage(
           pw.Page(
