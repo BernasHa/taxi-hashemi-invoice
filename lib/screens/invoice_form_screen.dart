@@ -422,7 +422,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.euro),
                 hintText: '25.50',
-                suffixText: 'EUR',
+                suffixText: '€',
               ),
               keyboardType: TextInputType.number,
             ),
@@ -607,7 +607,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '${trip.price.toStringAsFixed(2)} EUR',
+                                '${trip.price.toStringAsFixed(2)} €',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -758,24 +758,22 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
   void _editTrip(int index) {
     final trip = _trips[index];
     
-    // Felder mit aktuellen Werten füllen
-    _tripDescriptionController.text = trip.description;
-    _tripFromController.text = trip.fromAddress;
-    _tripToController.text = trip.toAddress;
-    _tripPriceController.text = trip.price.toString();
-    _tripDate = trip.date;
-    
-    // Prüfe ob Widget noch gemountet ist vor setState
-    if (mounted) {
-      setState(() {
-        // Fahrt temporär entfernen für Bearbeitung
-        _trips.removeAt(index);
-      });
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fahrt wird bearbeitet - Änderungen vornehmen und erneut hinzufügen')),
-      );
-    }
+    showDialog(
+      context: context,
+      builder: (context) => _EditTripDialog(
+        originalTrip: trip,
+        onTripEdited: (editedTrip) {
+          if (mounted) {
+            setState(() {
+              _trips[index] = editedTrip;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Fahrt wurde bearbeitet')),
+            );
+          }
+        },
+      ),
+    );
   }
   
   void _deleteTrip(int index) {
@@ -1298,7 +1296,7 @@ class _DuplicateTripDialogState extends State<_DuplicateTripDialog> {
           TextFormField(
             controller: _priceController,
             decoration: const InputDecoration(
-              labelText: 'Preis (EUR)',
+              labelText: 'Preis (€)',
               border: OutlineInputBorder(),
               prefixText: '€ ',
             ),
@@ -1347,6 +1345,179 @@ class _DuplicateTripDialogState extends State<_DuplicateTripDialog> {
 
   @override
   void dispose() {
+    _priceController.dispose();
+    super.dispose();
+  }
+}
+
+// Dialog für das Bearbeiten von Fahrten
+class _EditTripDialog extends StatefulWidget {
+  final TripEntry originalTrip;
+  final Function(TripEntry) onTripEdited;
+
+  const _EditTripDialog({
+    required this.originalTrip,
+    required this.onTripEdited,
+  });
+
+  @override
+  State<_EditTripDialog> createState() => _EditTripDialogState();
+}
+
+class _EditTripDialogState extends State<_EditTripDialog> {
+  late TextEditingController _descriptionController;
+  late TextEditingController _fromController;
+  late TextEditingController _toController;
+  late TextEditingController _priceController;
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _descriptionController = TextEditingController(text: widget.originalTrip.description);
+    _fromController = TextEditingController(text: widget.originalTrip.fromAddress);
+    _toController = TextEditingController(text: widget.originalTrip.toAddress);
+    _priceController = TextEditingController(text: widget.originalTrip.price.toString());
+    _selectedDate = widget.originalTrip.date;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Fahrt bearbeiten'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Datum auswählen
+            InkWell(
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate: _selectedDate,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2030),
+                );
+                if (date != null) {
+                  setState(() {
+                    _selectedDate = date;
+                  });
+                }
+              },
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Datum',
+                  border: OutlineInputBorder(),
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
+                child: Text(
+                  '${_selectedDate.day.toString().padLeft(2, '0')}.${_selectedDate.month.toString().padLeft(2, '0')}.${_selectedDate.year}',
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            // Beschreibung editieren
+            TextFormField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Fahrt/en',
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            const SizedBox(height: 12),
+            
+            // Von-Adresse editieren
+            TextFormField(
+              controller: _fromController,
+              decoration: const InputDecoration(
+                labelText: 'Von',
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 12),
+            
+            // Nach-Adresse editieren
+            TextFormField(
+              controller: _toController,
+              decoration: const InputDecoration(
+                labelText: 'Nach',
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 12),
+            
+            // Preis editieren
+            TextFormField(
+              controller: _priceController,
+              decoration: const InputDecoration(
+                labelText: 'Preis (€)',
+                border: OutlineInputBorder(),
+                prefixText: '€ ',
+              ),
+              keyboardType: TextInputType.number,
+              textCapitalization: TextCapitalization.none,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Abbrechen'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            if (_descriptionController.text.isEmpty ||
+                _fromController.text.isEmpty ||
+                _toController.text.isEmpty ||
+                _priceController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bitte alle Felder ausfüllen')),
+              );
+              return;
+            }
+
+            final price = double.tryParse(_priceController.text.replaceAll(',', '.'));
+            if (price == null || price <= 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bitte gültigen Preis eingeben')),
+              );
+              return;
+            }
+
+            // Erstelle bearbeitete Fahrt (behält isDuplicate Status bei)
+            final editedTrip = TripEntry(
+              date: _selectedDate,
+              description: _descriptionController.text,
+              fromAddress: _fromController.text,
+              toAddress: _toController.text,
+              price: price,
+              isDuplicate: widget.originalTrip.isDuplicate, // Status beibehalten
+            );
+
+            widget.onTripEdited(editedTrip);
+            Navigator.of(context).pop();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue[600],
+            foregroundColor: Colors.white,
+          ),
+          child: const Text('Speichern'),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    _fromController.dispose();
+    _toController.dispose();
     _priceController.dispose();
     super.dispose();
   }

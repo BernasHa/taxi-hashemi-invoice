@@ -694,7 +694,7 @@ class PDFService {
                 _buildTableCell(fahrtText, align: pw.TextAlign.center),
                 _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
                 _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
-                _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
+                _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.center),
               ],
             );
           }).toList(),
@@ -739,7 +739,7 @@ class PDFService {
             _buildTableCell(fahrtText, align: pw.TextAlign.center), // Verwende fahrtText statt trip.description
             _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
             _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.center),
           ],
         ),
       );
@@ -780,7 +780,7 @@ class PDFService {
             _buildTableCell(fahrtText),
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell('${trip.price.toStringAsFixed(2)} EUR', align: pw.TextAlign.center),
+            _buildTableCell('${trip.price.toStringAsFixed(2)} €', align: pw.TextAlign.center),
           ],
         ),
       );

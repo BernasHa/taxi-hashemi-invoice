@@ -37,9 +37,9 @@ class InvoiceData {
     return netAmount + vatAmount;
   }
 
-  String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} EUR';
-  String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} EUR';
-  String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} EUR';
+  String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} €';
+  String get formattedVatAmount => '${vatAmount.toStringAsFixed(2)} €';
+  String get formattedTotalAmount => '${totalAmount.toStringAsFixed(2)} €';
   String get formattedVatRate => '${(vatRate * 100).toInt()}%';
 }
 
@@ -60,7 +60,7 @@ class TripEntry {
     this.isDuplicate = false, // Standard: kein Duplikat
   });
 
-  String get formattedPrice => '${price.toStringAsFixed(2)} EUR';
+  String get formattedPrice => '${price.toStringAsFixed(2)} €';
   
   // Prüft ob diese Fahrt identisch mit einer anderen ist
   bool isIdenticalTo(TripEntry other) {
