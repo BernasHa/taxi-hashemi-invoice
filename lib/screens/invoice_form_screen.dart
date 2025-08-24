@@ -92,6 +92,27 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     });
   }
 
+  void _duplicateLastTrip() {
+    if (_trips.isEmpty) return;
+    
+    final lastTrip = _trips.last;
+    
+    showDialog(
+      context: context,
+      builder: (context) => _DuplicateTripDialog(
+        originalTrip: lastTrip,
+        onTripDuplicated: (duplicatedTrip) {
+          setState(() {
+            _trips.add(duplicatedTrip);
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Duplikat-Fahrt wurde hinzugefügt')),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -408,19 +429,37 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             
             const SizedBox(height: 16),
             
-            // Hinzufügen-Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _addTrip,
-                icon: const Icon(Icons.add),
-                label: const Text('Fahrt hinzufügen'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+            // Hinzufügen-Button und Duplicate-Button
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton.icon(
+                    onPressed: _addTrip,
+                    icon: const Icon(Icons.add),
+                    label: const Text('Fahrt hinzufügen'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[600],
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 1,
+                  child: OutlinedButton.icon(
+                    onPressed: _trips.isEmpty ? null : _duplicateLastTrip,
+                    icon: const Icon(Icons.content_copy),
+                    label: const Text('Duplicate'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.orange[600],
+                      side: BorderSide(color: _trips.isEmpty ? Colors.grey[300]! : Colors.orange[600]!),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -504,20 +543,20 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                 itemCount: _trips.length,
                 itemBuilder: (context, index) {
                   final trip = _trips[index];
-                  final isIdentical = index > 0 && trip.isIdenticalTo(_trips[index - 1]);
+                  final isDuplicate = trip.isDuplicate;
                   
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
                     decoration: BoxDecoration(
-                      color: isIdentical ? Colors.yellow[50] : Colors.white,
+                      color: isDuplicate ? Colors.orange[50] : Colors.white,
                       border: Border.all(
-                        color: isIdentical ? Colors.yellow[300]! : Colors.grey[300]!,
+                        color: isDuplicate ? Colors.orange[300]! : Colors.grey[300]!,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: isIdentical ? Colors.yellow[600] : Colors.blue[600],
+                        backgroundColor: isDuplicate ? Colors.orange[600] : Colors.blue[600],
                         child: Text(
                           '${index + 1}',
                           style: const TextStyle(
@@ -526,23 +565,36 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                           ),
                         ),
                       ),
-                      title: Text(
-                        '${DateFormat('dd.MM.yy').format(trip.date)} - ${trip.description}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: isIdentical ? Colors.orange[800] : null,
-                        ),
+                      title: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${DateFormat('dd.MM.yy').format(trip.date)} - ${trip.description}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: isDuplicate ? Colors.orange[800] : null,
+                              ),
+                            ),
+                          ),
+                          if (isDuplicate)
+                            Icon(
+                              Icons.content_copy,
+                              size: 16,
+                              color: Colors.orange[600],
+                            ),
+                        ],
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            isIdentical 
-                                ? "Von/Nach: '' (identisch mit vorheriger Fahrt)"
+                            isDuplicate 
+                                ? "Von/Nach: '' (Duplikat - wird in PDF als '' angezeigt)"
                                 : 'Von: ${trip.fromAddress}\nNach: ${trip.toAddress}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: isIdentical ? Colors.orange[700] : Colors.grey[600],
+                              color: isDuplicate ? Colors.orange[700] : Colors.grey[600],
+                              fontStyle: isDuplicate ? FontStyle.italic : FontStyle.normal,
                             ),
                           ),
                         ],
@@ -562,7 +614,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                                   color: Colors.green[700],
                                 ),
                               ),
-                              if (isIdentical)
+                              if (isDuplicate)
                                 Container(
                                   margin: const EdgeInsets.only(top: 4),
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -713,14 +765,17 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     _tripPriceController.text = trip.price.toString();
     _tripDate = trip.date;
     
-    setState(() {
-      // Fahrt temporär entfernen für Bearbeitung
-      _trips.removeAt(index);
-    });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fahrt wird bearbeitet - Änderungen vornehmen und erneut hinzufügen')),
-    );
+    // Prüfe ob Widget noch gemountet ist vor setState
+    if (mounted) {
+      setState(() {
+        // Fahrt temporär entfernen für Bearbeitung
+        _trips.removeAt(index);
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fahrt wird bearbeitet - Änderungen vornehmen und erneut hinzufügen')),
+      );
+    }
   }
   
   void _deleteTrip(int index) {
@@ -736,13 +791,15 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
           ),
           TextButton(
             onPressed: () {
-              setState(() {
-                _trips.removeAt(index);
-              });
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fahrt wurde gelöscht')),
-              );
+              if (mounted) {
+                setState(() {
+                  _trips.removeAt(index);
+                });
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Fahrt wurde gelöscht')),
+                );
+              }
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Löschen'),
@@ -1158,6 +1215,139 @@ class _AddTripDialogState extends State<_AddTripDialog> {
   void dispose() {
     _priceController.dispose();
     _descriptionController.dispose();
+    super.dispose();
+  }
+}
+
+// Dialog für das Duplizieren von Fahrten
+class _DuplicateTripDialog extends StatefulWidget {
+  final TripEntry originalTrip;
+  final Function(TripEntry) onTripDuplicated;
+
+  const _DuplicateTripDialog({
+    required this.originalTrip,
+    required this.onTripDuplicated,
+  });
+
+  @override
+  State<_DuplicateTripDialog> createState() => _DuplicateTripDialogState();
+}
+
+class _DuplicateTripDialogState extends State<_DuplicateTripDialog> {
+  late TextEditingController _priceController;
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _priceController = TextEditingController(text: widget.originalTrip.price.toString());
+    _selectedDate = widget.originalTrip.date;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Fahrt duplizieren'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Fahrt/en: ${widget.originalTrip.description}', 
+               style: const TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          Text('Von: ${widget.originalTrip.fromAddress}', 
+               style: const TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          Text('Nach: ${widget.originalTrip.toAddress}', 
+               style: const TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 16),
+          const Text('Editierbare Felder:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          
+          // Datum auswählen
+          InkWell(
+            onTap: () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate,
+                firstDate: DateTime(2020),
+                lastDate: DateTime(2030),
+              );
+              if (date != null) {
+                setState(() {
+                  _selectedDate = date;
+                });
+              }
+            },
+            child: InputDecorator(
+              decoration: const InputDecoration(
+                labelText: 'Datum',
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
+              child: Text(
+                '${_selectedDate.day.toString().padLeft(2, '0')}.${_selectedDate.month.toString().padLeft(2, '0')}.${_selectedDate.year}',
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          
+          // Preis editieren
+          TextFormField(
+            controller: _priceController,
+            decoration: const InputDecoration(
+              labelText: 'Preis (EUR)',
+              border: OutlineInputBorder(),
+              prefixText: '€ ',
+            ),
+            keyboardType: TextInputType.number,
+            textCapitalization: TextCapitalization.none,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Abbrechen'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final price = double.tryParse(_priceController.text.replaceAll(',', '.'));
+            if (price == null || price <= 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bitte gültigen Preis eingeben')),
+              );
+              return;
+            }
+
+            // Erstelle Duplikat mit isDuplicate = true
+            final duplicatedTrip = TripEntry(
+              date: _selectedDate,
+              description: widget.originalTrip.description,
+              fromAddress: widget.originalTrip.fromAddress,
+              toAddress: widget.originalTrip.toAddress,
+              price: price,
+              isDuplicate: true, // Markiere als Duplikat!
+            );
+
+            widget.onTripDuplicated(duplicatedTrip);
+            Navigator.of(context).pop();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange[600],
+            foregroundColor: Colors.white,
+          ),
+          child: const Text('Duplizieren'),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _priceController.dispose();
     super.dispose();
   }
 }

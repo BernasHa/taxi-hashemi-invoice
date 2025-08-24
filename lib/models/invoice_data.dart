@@ -49,6 +49,7 @@ class TripEntry {
   final String fromAddress;
   final String toAddress;
   final double price;
+  final bool isDuplicate; // Markiert ob diese Fahrt ein Duplikat ist
 
   TripEntry({
     required this.date,
@@ -56,6 +57,7 @@ class TripEntry {
     required this.fromAddress,
     required this.toAddress,
     required this.price,
+    this.isDuplicate = false, // Standard: kein Duplikat
   });
 
   String get formattedPrice => '${price.toStringAsFixed(2)} EUR';
