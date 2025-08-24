@@ -674,17 +674,15 @@ class PDFService {
             final globalIndex = startIndex + localIndex; // Absoluter Index
             final trip = entry.value;
             
-            // Neue Logik: Alle Fahrten zeigen ihre Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
-            String fromText = '"${invoiceData.fromAddress}"';
-            String toText = '"${invoiceData.toAddress}"';
+            // Neue Logik: Alle Fahrten zeigen ihre eigenen Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
+            String fromText = '"${trip.fromAddress}"';
+            String toText = '"${trip.toAddress}"';
             String fahrtText = trip.description;
             
             // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
             if (globalIndex > 0) {
               final previousTrip = invoiceData.trips[globalIndex - 1];
-              if (previousTrip.description == trip.description &&
-                  previousTrip.date == trip.date &&
-                  previousTrip.price == trip.price) {
+              if (trip.isIdenticalTo(previousTrip)) {
                 fahrtText = "''";
                 fromText = "''";
                 toText = "''";
@@ -718,17 +716,15 @@ class PDFService {
     for (int i = startIndex; i < endIndex; i++) {
       final trip = invoiceData.trips[i];
       
-      // Neue Logik: Alle Fahrten zeigen ihre Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
-      String fromText = '"${invoiceData.fromAddress}"';
-      String toText = '"${invoiceData.toAddress}"';
+      // Neue Logik: Alle Fahrten zeigen ihre eigenen Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
+      String fromText = '"${trip.fromAddress}"';
+      String toText = '"${trip.toAddress}"';
       String fahrtText = trip.description;
       
       // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
       if (i > 0) {
         final previousTrip = invoiceData.trips[i - 1];
-        if (previousTrip.description == trip.description &&
-            previousTrip.date == trip.date &&
-            previousTrip.price == trip.price) {
+        if (trip.isIdenticalTo(previousTrip)) {
           fahrtText = "''";
           fromText = "''";
           toText = "''";
@@ -759,17 +755,15 @@ class PDFService {
     for (int i = startIndex; i < endIndex && i < invoiceData.trips.length; i++) {
       final trip = invoiceData.trips[i];
       
-      // Neue Logik: Alle Fahrten zeigen ihre Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
-      String fromText = '"${invoiceData.fromAddress}"';
-      String toText = '"${invoiceData.toAddress}"';
+      // Neue Logik: Alle Fahrten zeigen ihre eigenen Daten, '' nur bei identischen aufeinanderfolgenden Fahrten
+      String fromText = '"${trip.fromAddress}"';
+      String toText = '"${trip.toAddress}"';
       String fahrtText = trip.description;
       
       // Prüfe ob vorherige Fahrt identisch ist (für '' Logik)
       if (i > 0) {
         final previousTrip = invoiceData.trips[i - 1];
-        if (previousTrip.description == trip.description &&
-            previousTrip.date == trip.date &&
-            previousTrip.price == trip.price) {
+        if (trip.isIdenticalTo(previousTrip)) {
           fahrtText = "''";
           fromText = "''";
           toText = "''";

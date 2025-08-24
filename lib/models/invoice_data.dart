@@ -9,8 +9,6 @@ class InvoiceData {
   final double vatRate;
   final String? logoPath;
   final TaxiLocation location;
-  final String fromAddress; // Abfahrtsort
-  final String toAddress;   // Ankunftsort
   final String purpose;     // Verwendungszweck
 
   InvoiceData({
@@ -24,8 +22,6 @@ class InvoiceData {
     this.vatRate = 0.07, // 7% MwSt als Standard
     this.logoPath,
     this.location = TaxiLocation.tamm, // Standard: Tamm
-    required this.fromAddress, // Pflichtfeld
-    required this.toAddress,   // Pflichtfeld
     this.purpose = '',         // Optional
   });
 
@@ -50,15 +46,28 @@ class InvoiceData {
 class TripEntry {
   final DateTime date;
   final String description;
+  final String fromAddress;
+  final String toAddress;
   final double price;
 
   TripEntry({
     required this.date,
     required this.description,
+    required this.fromAddress,
+    required this.toAddress,
     required this.price,
   });
 
   String get formattedPrice => '${price.toStringAsFixed(2)} EUR';
+  
+  // Prüft ob diese Fahrt identisch mit einer anderen ist
+  bool isIdenticalTo(TripEntry other) {
+    return date == other.date &&
+           description == other.description &&
+           fromAddress == other.fromAddress &&
+           toAddress == other.toAddress &&
+           price == other.price;
+  }
 }
 
 enum TaxiLocation {

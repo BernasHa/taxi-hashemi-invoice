@@ -218,6 +218,8 @@ class _EditTripDialogState extends State<_EditTripDialog> {
               widget.onEdit(TripEntry(
                 date: _tripDate,
                 description: _descriptionController.text,
+                fromAddress: 'Standard Von-Adresse', // Placeholder
+                toAddress: 'Standard Nach-Adresse',  // Placeholder
                 price: price,
               ));
               Navigator.of(context).pop();

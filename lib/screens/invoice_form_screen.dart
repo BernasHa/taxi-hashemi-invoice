@@ -20,11 +20,17 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
   final _customerCityController = TextEditingController();
   final _invoiceNumberController = TextEditingController();
   final _vatRateController = TextEditingController(text: '7');
-  final _fromAddressController = TextEditingController();
-  final _toAddressController = TextEditingController();
   final _purposeController = TextEditingController();
+  
+  // Controller für neue Fahrt-Eingabe
+  final _tripDateController = TextEditingController();
+  final _tripDescriptionController = TextEditingController();
+  final _tripFromController = TextEditingController();
+  final _tripToController = TextEditingController();
+  final _tripPriceController = TextEditingController();
 
   DateTime _invoiceDate = DateTime.now();
+  DateTime _tripDate = DateTime.now();
   List<TripEntry> _trips = [];
 
   bool _isGenerating = false;
@@ -45,16 +51,45 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
   }
 
   void _addInitialTrips() {
-    // Füge einige Beispielfahrten hinzu
-    _trips.addAll([
-      TripEntry(date: DateTime.now(), description: 'Fahrt', price: 10.00),
-      TripEntry(date: DateTime.now().subtract(const Duration(days: 1)), description: 'Fahrt', price: 10.00),
-      TripEntry(date: DateTime.now().subtract(const Duration(days: 2)), description: 'Fahrt', price: 10.00),
-    ]);
+    // Keine Standard-Fahrten mehr - User soll alles selbst eingeben
+    _trips.clear();
+  }
+  
+  void _addTrip() {
+    if (_tripDescriptionController.text.isEmpty || 
+        _tripFromController.text.isEmpty ||
+        _tripToController.text.isEmpty ||
+        _tripPriceController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bitte alle Fahrt-Felder ausfüllen')),
+      );
+      return;
+    }
     
-    // Standard-Adressen setzen
-    _fromAddressController.text = 'Tamm (Ulmer Str.51)';
-    _toAddressController.text = 'Ludwigsburg (Erlachhof Str.1) und zurück';
+    final price = double.tryParse(_tripPriceController.text.replaceAll(',', '.'));
+    if (price == null || price <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bitte gültigen Preis eingeben')),
+      );
+      return;
+    }
+    
+    setState(() {
+      _trips.add(TripEntry(
+        date: _tripDate,
+        description: _tripDescriptionController.text,
+        fromAddress: _tripFromController.text,
+        toAddress: _tripToController.text,
+        price: price,
+      ));
+      
+      // Felder zurücksetzen
+      _tripDescriptionController.clear();
+      _tripFromController.clear();
+      _tripToController.clear();
+      _tripPriceController.clear();
+      _tripDate = DateTime.now();
+    });
   }
 
   @override
@@ -96,7 +131,9 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
               const SizedBox(height: 16),
               _buildCustomerDataCard(),
               const SizedBox(height: 16),
-              _buildRouteCard(),
+              _buildTripInputCard(),
+              const SizedBox(height: 16),
+              _buildTripListCard(),
               const SizedBox(height: 16),
               _buildInvoiceDetailsCard(),
               const SizedBox(height: 16),
@@ -268,7 +305,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     );
   }
 
-  Widget _buildRouteCard() {
+  Widget _buildTripInputCard() {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -276,7 +313,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Fahrtstrecke',
+              'Neue Fahrt hinzufügen',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -284,27 +321,265 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            
+            // Datum auswählen
+            InkWell(
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate: _tripDate,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2030),
+                );
+                if (date != null) {
+                  setState(() {
+                    _tripDate = date;
+                  });
+                }
+              },
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Fahrt-Datum *',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.calendar_today),
+                ),
+                child: Text(DateFormat('dd.MM.yyyy').format(_tripDate)),
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Fahrt-Beschreibung
             TextFormField(
-              controller: _fromAddressController,
+              controller: _tripDescriptionController,
               decoration: const InputDecoration(
-                labelText: 'Abfahrtsort *',
+                labelText: 'Fahrt/en *',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.directions_car),
+                hintText: 'z.B. Arztfahrt, Einkauf, Therapie',
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Von-Adresse
+            TextFormField(
+              controller: _tripFromController,
+              decoration: const InputDecoration(
+                labelText: 'Von *',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.location_on),
                 hintText: 'z.B. Tamm (Ulmer Str.51)',
               ),
-              validator: (value) => value?.isEmpty ?? true ? 'Bitte Abfahrtsort eingeben' : null,
             ),
+            
             const SizedBox(height: 12),
+            
+            // Nach-Adresse
             TextFormField(
-              controller: _toAddressController,
+              controller: _tripToController,
               decoration: const InputDecoration(
-                labelText: 'Ankunftsort *',
+                labelText: 'Nach *',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.flag),
-                hintText: 'z.B. Ludwigsburg (Erlachhof Str.1) und zurück',
+                hintText: 'z.B. Stuttgart Hauptbahnhof',
               ),
-              validator: (value) => value?.isEmpty ?? true ? 'Bitte Ankunftsort eingeben' : null,
             ),
+            
+            const SizedBox(height: 12),
+            
+            // Preis
+            TextFormField(
+              controller: _tripPriceController,
+              decoration: const InputDecoration(
+                labelText: 'Preis *',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.euro),
+                hintText: '25.50',
+                suffixText: 'EUR',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Hinzufügen-Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _addTrip,
+                icon: const Icon(Icons.add),
+                label: const Text('Fahrt hinzufügen'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[600],
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTripListCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Hinzugefügte Fahrten',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[100],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${_trips.length} Fahrt${_trips.length == 1 ? '' : 'en'}',
+                    style: TextStyle(
+                      color: Colors.blue[800],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            if (_trips.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.directions_car_outlined, 
+                         size: 48, color: Colors.grey[400]),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Noch keine Fahrten hinzugefügt',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Fügen Sie oben Ihre erste Fahrt hinzu',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _trips.length,
+                itemBuilder: (context, index) {
+                  final trip = _trips[index];
+                  final isIdentical = index > 0 && trip.isIdenticalTo(_trips[index - 1]);
+                  
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: isIdentical ? Colors.yellow[50] : Colors.white,
+                      border: Border.all(
+                        color: isIdentical ? Colors.yellow[300]! : Colors.grey[300]!,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: isIdentical ? Colors.yellow[600] : Colors.blue[600],
+                        child: Text(
+                          '${index + 1}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        '${DateFormat('dd.MM.yy').format(trip.date)} - ${trip.description}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isIdentical ? Colors.orange[800] : null,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isIdentical 
+                                ? "Von/Nach: '' (identisch mit vorheriger Fahrt)"
+                                : 'Von: ${trip.fromAddress}\nNach: ${trip.toAddress}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isIdentical ? Colors.orange[700] : Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${trip.price.toStringAsFixed(2)} EUR',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                          if (isIdentical)
+                            Container(
+                              margin: const EdgeInsets.only(top: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.orange[100],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                "''",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.orange[800],
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      onTap: () {
+                        // Optional: Details anzeigen oder bearbeiten
+                      },
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
@@ -584,18 +859,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     }
   }
 
-  void _addTrip() {
-    showDialog(
-      context: context,
-      builder: (context) => _AddTripDialog(
-        onAdd: (trip) {
-          setState(() {
-            _trips.add(trip);
-          });
-        },
-      ),
-    );
-  }
+
 
   Future<void> _generatePreview() async {
     if (!_formKey.currentState!.validate()) return;
@@ -708,8 +972,6 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       vatRate: vatRate,
       logoPath: null, // Logo aus assets verwenden
       location: _selectedLocation,
-      fromAddress: _fromAddressController.text,
-      toAddress: _toAddressController.text,
       purpose: _purposeController.text,
     );
   }
@@ -723,12 +985,17 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       _customerCityController.clear();
       _invoiceNumberController.text = 'R-${DateTime.now().year}-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
       _vatRateController.text = '7';
-      _fromAddressController.text = 'Tamm, Ulmer Str. 51';
-      _toAddressController.text = 'Ludwigsburg, Erlachhof Str. 1 und zurück';
       _purposeController.clear();
+      
+      // Neue Fahrt-Controller zurücksetzen
+      _tripDescriptionController.clear();
+      _tripFromController.clear();
+      _tripToController.clear();
+      _tripPriceController.clear();
       
       // Datum zurücksetzen
       _invoiceDate = DateTime.now();
+      _tripDate = DateTime.now();
       
       // Fahrten zurücksetzen
       _trips.clear();
@@ -756,9 +1023,14 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     _customerCityController.dispose();
     _invoiceNumberController.dispose();
     _vatRateController.dispose();
-    _fromAddressController.dispose();
-    _toAddressController.dispose();
     _purposeController.dispose();
+    
+    // Neue Fahrt-Controller dispose
+    _tripDescriptionController.dispose();
+    _tripFromController.dispose();
+    _tripToController.dispose();
+    _tripPriceController.dispose();
+    
     super.dispose();
   }
 }
@@ -837,6 +1109,8 @@ class _AddTripDialogState extends State<_AddTripDialog> {
               widget.onAdd(TripEntry(
                 date: _tripDate,
                 description: _descriptionController.text,
+                fromAddress: 'Standard Von-Adresse', // Placeholder
+                toAddress: 'Standard Nach-Adresse',  // Placeholder
                 price: price,
               ));
               Navigator.of(context).pop();
