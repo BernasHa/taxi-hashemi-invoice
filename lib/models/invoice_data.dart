@@ -62,7 +62,7 @@ class TripEntry {
   
   // Prüft ob diese Fahrt identisch mit einer anderen ist
   bool isIdenticalTo(TripEntry other) {
-    return date == other.date &&
+    return date.isAtSameMomentAs(other.date) &&
            description == other.description &&
            fromAddress == other.fromAddress &&
            toAddress == other.toAddress &&

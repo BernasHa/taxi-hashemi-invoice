@@ -252,6 +252,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _customerNameController,
+              textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
                 labelText: 'Kundenname *',
                 border: OutlineInputBorder(),
@@ -262,6 +263,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _customerStreetController,
+              textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
                 labelText: 'Straße und Hausnummer *',
                 border: OutlineInputBorder(),
@@ -289,6 +291,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                   flex: 2,
                   child: TextFormField(
                     controller: _customerCityController,
+                    textCapitalization: TextCapitalization.words,
                     decoration: const InputDecoration(
                       labelText: 'Ort *',
                       border: OutlineInputBorder(),
@@ -351,6 +354,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             // Fahrt-Beschreibung
             TextFormField(
               controller: _tripDescriptionController,
+              textCapitalization: TextCapitalization.sentences,
               decoration: const InputDecoration(
                 labelText: 'Fahrt/en *',
                 border: OutlineInputBorder(),
@@ -364,6 +368,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             // Von-Adresse
             TextFormField(
               controller: _tripFromController,
+              textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
                 labelText: 'Von *',
                 border: OutlineInputBorder(),
@@ -377,6 +382,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             // Nach-Adresse
             TextFormField(
               controller: _tripToController,
+              textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
                 labelText: 'Nach *',
                 border: OutlineInputBorder(),

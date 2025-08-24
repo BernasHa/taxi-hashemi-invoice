@@ -683,7 +683,13 @@ class PDFService {
             // WICHTIG: Datum und Preis werden IMMER angezeigt, nur Fahrt/en, von, nach bekommen ''
             if (globalIndex > 0) {
               final previousTrip = invoiceData.trips[globalIndex - 1];
+              print('DEBUG: Vergleiche Fahrt $globalIndex mit vorheriger:');
+              print('  Aktuell: ${trip.description}, ${trip.fromAddress}, ${trip.toAddress}, ${trip.price}, ${trip.date}');
+              print('  Vorherig: ${previousTrip.description}, ${previousTrip.fromAddress}, ${previousTrip.toAddress}, ${previousTrip.price}, ${previousTrip.date}');
+              print('  Identisch: ${trip.isIdenticalTo(previousTrip)}');
+              
               if (trip.isIdenticalTo(previousTrip)) {
+                print('  -> Setze Texte auf \'\'');
                 fahrtText = "''";
                 fromText = "''";
                 toText = "''";
