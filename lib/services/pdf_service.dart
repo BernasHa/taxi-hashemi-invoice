@@ -254,7 +254,7 @@ class PDFService {
   // Falzmarken für manuelles Falten (DIN A4 Standard)
   static pw.Widget _buildFoldMarks() {
     return pw.Positioned(
-      left: -2, // Sehr nah am Rand
+      left: -10, // Komplett außerhalb des Inhaltsbereichs
       top: 0,
       bottom: 0,
       child: pw.Column(
@@ -263,16 +263,16 @@ class PDFService {
           // Erste Falzmarke bei 105mm (A4 Drittel-Faltung)
           pw.Container(
             margin: pw.EdgeInsets.only(top: 105 * 2.83465), // mm zu PDF-Punkte
-            width: 4, // Schmaler
-            height: 0.5,
-            color: PdfColors.grey400,
+            width: 8, // Etwas breiter für bessere Sichtbarkeit
+            height: 1, // Etwas höher
+            color: PdfColors.grey500,
           ),
           // Zweite Falzmarke bei 148.5mm (A4 Halbierung)
           pw.Container(
             margin: pw.EdgeInsets.only(top: (148.5 - 105) * 2.83465),
-            width: 4, // Schmaler
-            height: 0.5,
-            color: PdfColors.grey400,
+            width: 8, // Etwas breiter für bessere Sichtbarkeit
+            height: 1, // Etwas höher
+            color: PdfColors.grey500,
           ),
         ],
       ),
