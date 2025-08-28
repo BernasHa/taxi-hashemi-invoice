@@ -355,7 +355,15 @@ class PDFService {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  // Empfänger ohne Box
+                  // Empfänger: Firma über "Herr" (nicht fett)
+                  if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
+                    pw.Text(
+                      '${invoiceData.customerCompany}',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.normal, // Firma nicht fett
+                      ),
+                    ),
                   pw.Text(
                     'Herr',
                     style: pw.TextStyle(
@@ -363,15 +371,6 @@ class PDFService {
                       fontWeight: pw.FontWeight.normal,
                     ),
                   ),
-                  // Firma (falls vorhanden) über dem Namen
-                  if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
-                    pw.Text(
-                      '${invoiceData.customerCompany}',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.bold, // Firma fett
-                      ),
-                    ),
                   // Kundenname (nur wenn vorhanden)
                   if (invoiceData.customerName.isNotEmpty)
                     pw.Text(
@@ -524,8 +523,8 @@ class PDFService {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        // Platz für eventuell weitere Tabellenzeilen
-        pw.SizedBox(height: 200),
+        // Größerer Abstand zwischen Tabelle und Verwendungszweck
+        pw.SizedBox(height: 280),
 
         // Rechnungssumme (rechtsbündig)
         pw.Row(
@@ -1070,7 +1069,7 @@ class PDFService {
           ],
         ),
 
-        pw.SizedBox(height: 40),
+        pw.SizedBox(height: 70),
 
         // Grußformel und Unterschrift
         pw.Row(
@@ -1266,19 +1265,19 @@ class PDFService {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text(
-                    'Herr',
-                    style: pw.TextStyle(fontSize: 10),
-                  ),
-                  // Firma (falls vorhanden)
+                  // Firma über "Herr" (nicht fett)
                   if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
                     pw.Text(
                       '${invoiceData.customerCompany}',
                       style: pw.TextStyle(
                         fontSize: 10,
-                        fontWeight: pw.FontWeight.bold,
+                        fontWeight: pw.FontWeight.normal, // Nicht fett
                       ),
                     ),
+                  pw.Text(
+                    'Herr',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
                   // Kundenname (nur wenn vorhanden)
                   if (invoiceData.customerName.isNotEmpty)
                     pw.Text(
@@ -1385,7 +1384,7 @@ class PDFService {
         // Kompakte Tabelle
         _buildTripsTable(invoiceData, 0, invoiceData.trips.length),
         
-        pw.SizedBox(height: 15),
+        pw.SizedBox(height: 35),
 
         // Zusammenfassung und Unterschrift in einer Zeile
         pw.Row(
