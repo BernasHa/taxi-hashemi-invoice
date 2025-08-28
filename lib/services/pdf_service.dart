@@ -330,13 +330,13 @@ class PDFService {
                 ),
               ],
             ),
-            pw.SizedBox(width: 15),
+            pw.SizedBox(width: 8), // Weniger Abstand zwischen Logo und Firmenname
             // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.SizedBox(height: 20),
+                  pw.SizedBox(height: 30), // Firmenname weiter nach unten
                   pw.Text(
                     CompanyInfo.getName(invoiceData.location),
                     style: pw.TextStyle(
@@ -1253,12 +1253,13 @@ class PDFService {
                 ),
               ],
             ),
-            pw.SizedBox(width: 15),
+            pw.SizedBox(width: 6), // Weniger Abstand zwischen Logo und Firmenname
             // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
+                  pw.SizedBox(height: 20), // Firmenname weiter nach unten
                   pw.Text(
                     CompanyInfo.getName(invoiceData.location),
                     style: pw.TextStyle(
