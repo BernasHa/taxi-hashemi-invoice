@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:html' as html;
 import '../models/invoice_data.dart';
 
 class PDFService {
@@ -109,23 +111,32 @@ class PDFService {
     
     print('DEBUG: Gesamt Fahrten = $totalTrips');
     
-    int totalPages = 2; // Minimum: Erste Seite + Zusammenfassung
-    if (totalTrips > tripsOnFirstPage) {
+    // NEUE LOGIK: Bei wenigen Fahrten (≤5) alles auf eine Seite
+    final bool singlePageLayout = totalTrips <= 5;
+    
+    int totalPages;
+    if (singlePageLayout) {
+      totalPages = 1; // Alles auf eine Seite
+    } else if (totalTrips <= tripsOnFirstPage) {
+      totalPages = 2; // Erste Seite + Zusammenfassung
+    } else {
       final int remainingTrips = totalTrips - tripsOnFirstPage;
       final int additionalPages = (remainingTrips / tripsPerAdditionalPage).ceil();
       totalPages = 1 + additionalPages + 1; // Erste + Zusätzliche + Finale
     }
     
-    print('DEBUG: Berechnet $totalPages Seiten total');
+    print('DEBUG: Berechnet $totalPages Seiten total (singlePageLayout: $singlePageLayout)');
 
-    // Seite 1: Hauptrechnung mit Header und ersten 13 Fahrten
+    // Seite 1: Hauptrechnung mit Header und Fahrten
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(40),
         build: (pw.Context context) {
           return _buildPageWithFooter(
-            _buildFirstPage(invoiceData, logoToUse, 0, tripsOnFirstPage),
+            singlePageLayout 
+              ? _buildSinglePage(invoiceData, logoToUse, stampToUse) // Alles auf einer Seite
+              : _buildFirstPage(invoiceData, logoToUse, 0, tripsOnFirstPage), // Normal
             invoiceData,
             1,
             totalPages,
@@ -134,8 +145,8 @@ class PDFService {
       ),
     );
 
-    // KORRIGIERTE Multi-Page Erstellung
-    if (totalTrips > tripsOnFirstPage) {
+    // KORRIGIERTE Multi-Page Erstellung (nur wenn nicht Single-Page)
+    if (!singlePageLayout && totalTrips > tripsOnFirstPage) {
       // Fahrt-Seiten erstellen
       int startIndex = tripsOnFirstPage;
       int pageNumber = 2;
@@ -188,8 +199,8 @@ class PDFService {
           },
         ),
       );
-    } else {
-      // Nur 2 Seiten bei ≤13 Fahrten
+    } else if (!singlePageLayout) {
+      // Nur 2 Seiten bei ≤13 Fahrten (aber nicht Single-Page)
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
@@ -205,30 +216,66 @@ class PDFService {
         ),
       );
     }
+    // Bei singlePageLayout wird keine zweite Seite erstellt!
 
     return pdf.save();
   }
 
   // Wrapper für Seiten mit Footer und Seitenzahl
   static pw.Widget _buildPageWithFooter(pw.Widget content, InvoiceData invoiceData, int currentPage, int totalPages) {
-    return pw.Column(
+    return pw.Stack(
       children: [
-        pw.Expanded(child: content),
-        pw.SizedBox(height: 10),
-        // Footer mit Bankdaten
-        _buildFooter(invoiceData),
-        pw.SizedBox(height: 5),
-        // Seitenzahl unten rechts
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.end,
+        // Hauptinhalt
+        pw.Column(
           children: [
-            pw.Text(
-              'Seite $currentPage von $totalPages',
-              style: pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+            pw.Expanded(child: content),
+            pw.SizedBox(height: 10),
+            // Footer mit Bankdaten
+            _buildFooter(invoiceData),
+            pw.SizedBox(height: 5),
+            // Seitenzahl unten rechts
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              children: [
+                pw.Text(
+                  'Seite $currentPage von $totalPages',
+                  style: pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+                ),
+              ],
             ),
           ],
         ),
+        // Falzmarken am linken Rand
+        _buildFoldMarks(),
       ],
+    );
+  }
+
+  // Falzmarken für manuelles Falten (DIN A4 Standard)
+  static pw.Widget _buildFoldMarks() {
+    return pw.Positioned(
+      left: 0,
+      top: 0,
+      bottom: 0,
+      child: pw.Column(
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        children: [
+          // Erste Falzmarke bei 105mm (A4 Drittel-Faltung)
+          pw.Container(
+            margin: pw.EdgeInsets.only(top: 105 * 2.83465), // mm zu PDF-Punkte
+            width: 8,
+            height: 0.5,
+            color: PdfColors.grey400,
+          ),
+          // Zweite Falzmarke bei 148.5mm (A4 Halbierung)
+          pw.Container(
+            margin: pw.EdgeInsets.only(top: (148.5 - 105) * 2.83465),
+            width: 8,
+            height: 0.5,
+            color: PdfColors.grey400,
+          ),
+        ],
+      ),
     );
   }
 
@@ -316,13 +363,24 @@ class PDFService {
                       fontWeight: pw.FontWeight.normal,
                     ),
                   ),
-                  pw.Text(
-                    '${invoiceData.customerName}',
-                    style: pw.TextStyle(
-                      fontSize: 12,
-                      fontWeight: pw.FontWeight.normal,
+                  // Firma (falls vorhanden) über dem Namen
+                  if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
+                    pw.Text(
+                      '${invoiceData.customerCompany}',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.bold, // Firma fett
+                      ),
                     ),
-                  ),
+                  // Kundenname (nur wenn vorhanden)
+                  if (invoiceData.customerName.isNotEmpty)
+                    pw.Text(
+                      '${invoiceData.customerName}',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.normal,
+                      ),
+                    ),
                   pw.Text(
                     '${invoiceData.customerStreet}',
                     style: pw.TextStyle(
@@ -353,15 +411,27 @@ class PDFService {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text(
-                        'Ihr Ansprechpartner: ${CompanyInfo.contactPerson}',
-                        style: pw.TextStyle(
-                          fontSize: 9,
-                          fontWeight: pw.FontWeight.bold,
+                      // Ansprechpartner: Label fett, Name normal
+                      pw.RichText(
+                        text: pw.TextSpan(
+                          children: [
+                            pw.TextSpan(
+                              text: 'Ihr Ansprechpartner: ',
+                              style: pw.TextStyle(
+                                fontSize: 9,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.TextSpan(
+                              text: '${CompanyInfo.contactPerson}',
+                              style: pw.TextStyle(
+                                fontSize: 9,
+                                fontWeight: pw.FontWeight.normal, // Name normal
+                              ),
+                            ),
+                          ],
                         ),
                         textAlign: pw.TextAlign.left,
-                        maxLines: 1,
-                        overflow: pw.TextOverflow.clip,
                       ),
                       pw.Text(
                         'Abteilung: Rechnung u. Bearbeitung',
@@ -468,11 +538,6 @@ class PDFService {
                 children: [
                   pw.Text(
                     'Verwendungszweck: ${invoiceData.purpose.isEmpty ? invoiceData.invoiceNumber : invoiceData.purpose}',
-                    style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
-                  ),
-                  pw.SizedBox(height: 5),
-                  pw.Text(
-                    'Rechnung Nr. ${invoiceData.invoiceNumber}',
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
@@ -938,9 +1003,22 @@ class PDFService {
 
   static Future<void> generateAndSave(InvoiceData invoiceData) async {
     final pdfData = await generatePDF(invoiceData);
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/Rechnung_${invoiceData.invoiceNumber}.pdf');
-    await file.writeAsBytes(pdfData);
+    final fileName = 'Rechnung_${invoiceData.invoiceNumber}.pdf';
+    
+    if (kIsWeb) {
+      // Web: Browser-Download verwenden
+      final blob = html.Blob([pdfData], 'application/pdf');
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', fileName)
+        ..click();
+      html.Url.revokeObjectUrl(url);
+    } else {
+      // Mobile/Desktop: Dateisystem verwenden
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$fileName');
+      await file.writeAsBytes(pdfData);
+    }
   }
 
   static Future<void> generateAndShare(InvoiceData invoiceData) async {
@@ -970,11 +1048,6 @@ class PDFService {
                 children: [
                   pw.Text(
                     'Verwendungszweck: ${invoiceData.purpose.isEmpty ? invoiceData.invoiceNumber : invoiceData.purpose}',
-                    style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
-                  ),
-                  pw.SizedBox(height: 5),
-                  pw.Text(
-                    'Rechnung Nr. ${invoiceData.invoiceNumber}',
                     style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 15),
@@ -1119,6 +1192,255 @@ class PDFService {
           ),
         ],
       ),
+    );
+  }
+
+  // NEUE METHODE: Alles auf einer Seite für wenige Fahrten
+  static pw.Widget _buildSinglePage(InvoiceData invoiceData, pw.ImageProvider? logoImage, pw.ImageProvider? stamp) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Header mit Logo und Firmenname (kompakter)
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Logo Bereich (kleiner für Single Page)
+            pw.Container(
+              width: 60,
+              height: 60,
+              child: logoImage != null
+                  ? pw.Image(logoImage, fit: pw.BoxFit.contain)
+                  : pw.Container(
+                      decoration: pw.BoxDecoration(
+                        color: yellowColor,
+                        shape: pw.BoxShape.circle,
+                      ),
+                      child: pw.Center(
+                        child: pw.Text(
+                          'T',
+                          style: pw.TextStyle(
+                            color: blackColor,
+                            fontSize: 28,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
+            pw.SizedBox(width: 15),
+            // Firmenname
+            pw.Expanded(
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                    CompanyInfo.getName(invoiceData.location),
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                      color: blackColor,
+                    ),
+                  ),
+                  pw.Text(
+                    CompanyInfo.getFullAddress(invoiceData.location),
+                    style: pw.TextStyle(
+                      fontSize: 7,
+                      color: lightGrayColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        
+        pw.SizedBox(height: 20),
+
+        // Empfänger und Kontaktdaten (kompakter)
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Empfänger (links)
+            pw.Expanded(
+              flex: 2,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                    'Herr',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                  // Firma (falls vorhanden)
+                  if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
+                    pw.Text(
+                      '${invoiceData.customerCompany}',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  // Kundenname (nur wenn vorhanden)
+                  if (invoiceData.customerName.isNotEmpty)
+                    pw.Text(
+                      '${invoiceData.customerName}',
+                      style: pw.TextStyle(fontSize: 10),
+                    ),
+                  pw.Text(
+                    '${invoiceData.customerStreet}',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.Text(
+                    '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+            pw.SizedBox(width: 15),
+            // Kontaktdaten (kompakter)
+            pw.Expanded(
+              flex: 1,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: 'Ihr Ansprechpartner: ',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                        pw.TextSpan(
+                          text: '${CompanyInfo.contactPerson}',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.Text(
+                    'Tel: ${CompanyInfo.getPhone(invoiceData.location)}',
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                  pw.SizedBox(height: 10),
+                  _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
+                  _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        pw.SizedBox(height: 15),
+
+        // Überschrift "Rechnung:"
+        pw.Text(
+          'Rechnung:',
+          style: pw.TextStyle(
+            fontSize: 14,
+            fontWeight: pw.FontWeight.bold,
+            color: blackColor,
+          ),
+        ),
+
+        pw.SizedBox(height: 10),
+
+        // Begrüßung
+        pw.Text(
+          invoiceData.customerSalutation + ',',
+          style: pw.TextStyle(fontSize: 10),
+        ),
+        pw.Text(
+          'hier stellen wir folgende Fahrt/en für Sie in Rechnung.',
+          style: pw.TextStyle(fontSize: 10),
+        ),
+        
+        // Schwarze Linie
+        pw.SizedBox(height: 5),
+        pw.Container(
+          width: double.infinity,
+          height: 3,
+          color: blackColor,
+        ),
+
+        pw.SizedBox(height: 5),
+
+        // Kompakte Tabelle
+        _buildTripsTable(invoiceData, 0, invoiceData.trips.length),
+        
+        pw.SizedBox(height: 15),
+
+        // Zusammenfassung und Unterschrift in einer Zeile
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Unterschrift (links)
+            pw.Expanded(
+              flex: 2,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.SizedBox(height: 20),
+                  pw.Text(
+                    'Mit freundlichen Grüßen',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.SizedBox(height: 25),
+                  if (stamp != null)
+                    pw.Container(
+                      width: 100,
+                      height: 40,
+                      child: pw.Image(stamp, fit: pw.BoxFit.contain),
+                    ),
+                  pw.SizedBox(height: 5),
+                  pw.Text(
+                    CompanyInfo.contactPerson,
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Zusammenfassung (rechts)
+            pw.Container(
+              width: 180,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                    'Verwendungszweck: ${invoiceData.purpose.isEmpty ? invoiceData.invoiceNumber : invoiceData.purpose}',
+                    style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.SizedBox(height: 10),
+                  _buildSummaryRow('Netto:', invoiceData.formattedNetAmountPdf),
+                  _buildSummaryRow('MwSt. ${invoiceData.formattedVatRate}:', invoiceData.formattedVatAmountPdf),
+                  pw.Container(
+                    height: 1,
+                    width: 120,
+                    color: blackColor,
+                    margin: const pw.EdgeInsets.symmetric(vertical: 3),
+                  ),
+                  _buildSummaryRow(
+                    'Gesamtbetrag (brutto):',
+                    invoiceData.formattedTotalAmountPdf,
+                    isTotal: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        // Flexible Spacer für verbleibendes Layout
+        pw.Expanded(child: pw.Container()),
+      ],
     );
   }
 }

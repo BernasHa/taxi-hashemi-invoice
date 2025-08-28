@@ -1,5 +1,6 @@
 class InvoiceData {
   final String customerName;
+  final String? customerCompany; // Neue Firma-Feld (optional)
   final String customerStreet;
   final String customerPostalCode;
   final String customerCity;
@@ -14,6 +15,7 @@ class InvoiceData {
 
   InvoiceData({
     required this.customerName,
+    this.customerCompany, // Optional: Firma
     required this.customerStreet,
     required this.customerPostalCode,
     required this.customerCity,
@@ -27,16 +29,18 @@ class InvoiceData {
     this.purpose = '',         // Optional
   });
 
-  double get netAmount {
+  // KORRIGIERT: Fahrpreise sind bereits Brutto!
+  double get totalAmount {
     return trips.fold(0.0, (sum, trip) => sum + trip.price);
   }
 
-  double get vatAmount {
-    return netAmount * vatRate;
+  double get netAmount {
+    // Netto rückwärts berechnen: Brutto / (1 + MwSt-Satz)
+    return totalAmount / (1 + vatRate);
   }
 
-  double get totalAmount {
-    return netAmount + vatAmount;
+  double get vatAmount {
+    return totalAmount - netAmount;
   }
 
   String get formattedNetAmount => '${netAmount.toStringAsFixed(2)} €';
@@ -49,11 +53,14 @@ class InvoiceData {
   String get formattedTotalAmountPdf => '${totalAmount.toStringAsFixed(2)} EUR';
   String get formattedVatRate => '${(vatRate * 100).toInt()}%';
   
-  // Korrekte Anrede basierend auf Geschlecht
+  // Korrekte Anrede basierend auf Geschlecht - nur Nachname
   String get customerSalutation {
+    // Nachname extrahieren (letztes Wort)
+    String lastName = customerName.trim().split(' ').last;
+    
     return customerGender == CustomerGender.frau 
-        ? 'Sehr geehrte Frau $customerName' 
-        : 'Sehr geehrter Herr $customerName';
+        ? 'Sehr geehrte Frau $lastName' 
+        : 'Sehr geehrter Herr $lastName';
   }
 }
 

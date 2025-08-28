@@ -15,6 +15,7 @@ class InvoiceFormScreen extends StatefulWidget {
 class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _customerNameController = TextEditingController();
+  final _customerCompanyController = TextEditingController(); // Neues Firma-Feld
   final _customerStreetController = TextEditingController();
   final _customerPostalCodeController = TextEditingController();
   final _customerCityController = TextEditingController();
@@ -273,14 +274,32 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _customerCompanyController,
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(
+                labelText: 'Firma (optional)',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.business),
+                helperText: 'Wird über dem Kundennamen angezeigt',
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
               controller: _customerNameController,
               textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
-                labelText: 'Kundenname *',
+                labelText: 'Kundenname',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
+                helperText: 'Mindestens Firma oder Name erforderlich',
               ),
-              validator: (value) => value?.isEmpty ?? true ? 'Bitte Namen eingeben' : null,
+              validator: (value) {
+                // Validierung: Mindestens Firma ODER Name muss ausgefüllt sein
+                if ((value?.isEmpty ?? true) && (_customerCompanyController.text.isEmpty)) {
+                  return 'Bitte Kundenname oder Firma eingeben';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -1087,6 +1106,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     
     return InvoiceData(
       customerName: _customerNameController.text,
+      customerCompany: _customerCompanyController.text.isEmpty ? null : _customerCompanyController.text,
       customerStreet: _customerStreetController.text,
       customerPostalCode: _customerPostalCodeController.text,
       customerCity: _customerCityController.text,
@@ -1105,6 +1125,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     setState(() {
       // Controller zurücksetzen
       _customerNameController.clear();
+      _customerCompanyController.clear(); // Firma-Feld zurücksetzen
       _customerStreetController.clear();
       _customerPostalCodeController.clear();
       _customerCityController.clear();
@@ -1144,6 +1165,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
   @override
   void dispose() {
     _customerNameController.dispose();
+    _customerCompanyController.dispose(); // Firma-Controller dispose
     _customerStreetController.dispose();
     _customerPostalCodeController.dispose();
     _customerCityController.dispose();
