@@ -101517,9 +101517,9 @@ B.ayA(s,s,!0,s,new B.as9(this,a),r,s,!0,t.z)},
 a7B(){var s,r,q,p=null,o=B.we(this.z.a.a)
 if(o==null)o=7
 s=A.o.mH(this.cy,0,new B.as_())
-r=s*(o/100)
+r=s/(1+o/100)
 q=t.D
-return B.zP(new B.bU(A.ef,B.dO(B.a([B.bL("Zusammenfassung",p,p,p,B.dB(p,p,A.cf,p,p,p,p,p,p,p,p,18,p,p,A.bN,p,p,!0,p,p,p,p,p,p,p,p),p,p,p),A.bY,B.eh(B.a([A.aUC,B.bL(A.m.a9(s,2)+" \u20ac",p,p,p,A.iB,p,p,p)],q),A.ay,A.i1,A.as),A.iw,B.eh(B.a([B.bL("MwSt. "+A.m.n(o)+"%:",p,p,p,A.iB,p,p,p),B.bL(A.m.a9(r,2)+" \u20ac",p,p,p,A.iB,p,p,p)],q),A.ay,A.i1,A.as),A.jp,B.eh(B.a([A.aUZ,B.bL(A.m.a9(s+r,2)+" \u20ac",p,p,p,A.L9,p,p,p)],q),A.ay,A.i1,A.as)],q),A.bt,A.ab,A.as),p),A.OK)},
+return B.zP(new B.bU(A.ef,B.dO(B.a([B.bL("Zusammenfassung",p,p,p,B.dB(p,p,A.cf,p,p,p,p,p,p,p,p,18,p,p,A.bN,p,p,!0,p,p,p,p,p,p,p,p),p,p,p),A.bY,B.eh(B.a([A.aUC,B.bL(A.m.a9(r,2)+" \u20ac",p,p,p,A.iB,p,p,p)],q),A.ay,A.i1,A.as),A.iw,B.eh(B.a([B.bL("MwSt. "+A.m.n(o)+"%:",p,p,p,A.iB,p,p,p),B.bL(A.m.a9(s-r,2)+" \u20ac",p,p,p,A.iB,p,p,p)],q),A.ay,A.i1,A.as),A.jp,B.eh(B.a([A.aUZ,B.bL(A.m.a9(s,2)+" \u20ac",p,p,p,A.L9,p,p,p)],q),A.ay,A.i1,A.as)],q),A.bt,A.ab,A.as),p),A.OK)},
 zZ(){var s=0,r=B.R(t.H),q=this,p,o,n
 var $async$zZ=B.S(function(a,b){if(a===1)return B.O(b,r)
 while(true)switch(s){case 0:n=q.c

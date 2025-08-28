@@ -869,9 +869,10 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
 
   Widget _buildSummaryCard() {
     final vatRate = double.tryParse(_vatRateController.text) ?? 7.0;
-    final netAmount = _trips.fold(0.0, (sum, trip) => sum + trip.price);
-    final vatAmount = netAmount * (vatRate / 100);
-    final totalAmount = netAmount + vatAmount;
+    // KORRIGIERT: Fahrpreise sind bereits Brutto! Rückwärtsrechnung:
+    final totalAmount = _trips.fold(0.0, (sum, trip) => sum + trip.price); // Brutto-Gesamtsumme
+    final netAmount = totalAmount / (1 + (vatRate / 100)); // Netto rückwärts berechnen
+    final vatAmount = totalAmount - netAmount; // MwSt. = Brutto - Netto
 
     return Card(
       color: Colors.yellow[50],
