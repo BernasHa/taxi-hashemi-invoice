@@ -287,32 +287,51 @@ class PDFService {
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo Bereich (rundes gelbes Logo) - höher positioniert
-            pw.Container(
-              width: 80,
-              height: 80,
-              margin: pw.EdgeInsets.only(top: -5),
-              child: logoImage != null
-                  ? pw.Image(logoImage, fit: pw.BoxFit.contain)
-                  : pw.Container(
-                      decoration: pw.BoxDecoration(
-                        color: yellowColor,
-                        shape: pw.BoxShape.circle,
-                      ),
-                      child: pw.Center(
-                        child: pw.Text(
-                          'T',
-                          style: pw.TextStyle(
-                            color: blackColor,
-                            fontSize: 36,
-                            fontWeight: pw.FontWeight.bold,
+            // Logo und Adresse (links)
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Logo Bereich (rundes gelbes Logo) - höher positioniert
+                pw.Container(
+                  width: 80,
+                  height: 80,
+                  margin: pw.EdgeInsets.only(top: -5),
+                  child: logoImage != null
+                      ? pw.Image(logoImage, fit: pw.BoxFit.contain)
+                      : pw.Container(
+                          decoration: pw.BoxDecoration(
+                            color: yellowColor,
+                            shape: pw.BoxShape.circle,
+                          ),
+                          child: pw.Center(
+                            child: pw.Text(
+                              'T',
+                              style: pw.TextStyle(
+                                color: blackColor,
+                                fontSize: 36,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                ),
+                pw.SizedBox(height: 5),
+                // Absender-Adresse direkt unter dem Logo
+                pw.Container(
+                  width: 80, // Gleiche Breite wie Logo
+                  child: pw.Text(
+                    '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                    style: pw.TextStyle(
+                      fontSize: 8,
+                      color: lightGrayColor,
                     ),
+                    maxLines: 3, // Mehrere Zeilen erlauben
+                  ),
+                ),
+              ],
             ),
             pw.SizedBox(width: 15),
-            // Firmenname
+            // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -330,17 +349,6 @@ class PDFService {
               ),
             ),
           ],
-        ),
-        
-        pw.SizedBox(height: 10),
-        
-        // Absender-Adresse klein unter dem Logo (wie im Original)
-        pw.Text(
-          '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-          style: pw.TextStyle(
-            fontSize: 8,
-            color: lightGrayColor,
-          ),
         ),
         
         pw.SizedBox(height: 30),
@@ -457,7 +465,7 @@ class PDFService {
                     ],
                   ),
                   
-                  pw.SizedBox(height: 30),
+                  pw.SizedBox(height: 45), // Mehr Abstand zwischen Email und Rechnungsnummer
                   
                   // Rechnungsdetails (linksbündig)
                   pw.Column(
@@ -1203,31 +1211,50 @@ class PDFService {
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo Bereich (kleiner für Single Page)
-            pw.Container(
-              width: 60,
-              height: 60,
-              child: logoImage != null
-                  ? pw.Image(logoImage, fit: pw.BoxFit.contain)
-                  : pw.Container(
-                      decoration: pw.BoxDecoration(
-                        color: yellowColor,
-                        shape: pw.BoxShape.circle,
-                      ),
-                      child: pw.Center(
-                        child: pw.Text(
-                          'T',
-                          style: pw.TextStyle(
-                            color: blackColor,
-                            fontSize: 28,
-                            fontWeight: pw.FontWeight.bold,
+            // Logo und Adresse (links)
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Logo Bereich (kleiner für Single Page)
+                pw.Container(
+                  width: 60,
+                  height: 60,
+                  child: logoImage != null
+                      ? pw.Image(logoImage, fit: pw.BoxFit.contain)
+                      : pw.Container(
+                          decoration: pw.BoxDecoration(
+                            color: yellowColor,
+                            shape: pw.BoxShape.circle,
+                          ),
+                          child: pw.Center(
+                            child: pw.Text(
+                              'T',
+                              style: pw.TextStyle(
+                                color: blackColor,
+                                fontSize: 28,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                ),
+                pw.SizedBox(height: 3),
+                // Absender-Adresse direkt unter dem Logo
+                pw.Container(
+                  width: 60, // Gleiche Breite wie Logo
+                  child: pw.Text(
+                    '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                    style: pw.TextStyle(
+                      fontSize: 7,
+                      color: lightGrayColor,
                     ),
+                    maxLines: 3, // Mehrere Zeilen erlauben
+                  ),
+                ),
+              ],
             ),
             pw.SizedBox(width: 15),
-            // Firmenname
+            // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1238,13 +1265,6 @@ class PDFService {
                       fontSize: 16,
                       fontWeight: pw.FontWeight.bold,
                       color: blackColor,
-                    ),
-                  ),
-                  pw.Text(
-                    '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-                    style: pw.TextStyle(
-                      fontSize: 7,
-                      color: lightGrayColor,
                     ),
                   ),
                 ],
@@ -1336,7 +1356,7 @@ class PDFService {
                     'E-Mail: ${CompanyInfo.getEmail(invoiceData.location)}',
                     style: pw.TextStyle(fontSize: 8),
                   ),
-                  pw.SizedBox(height: 10),
+                  pw.SizedBox(height: 18), // Mehr Abstand zwischen Email und Rechnungsnummer
                   _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
                   _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
                   _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
