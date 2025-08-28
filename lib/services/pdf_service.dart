@@ -1303,6 +1303,7 @@ class PDFService {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
+                  // Ansprechpartner: Label fett, Name normal
                   pw.RichText(
                     text: pw.TextSpan(
                       children: [
@@ -1324,11 +1325,22 @@ class PDFService {
                     ),
                   ),
                   pw.Text(
-                    'Tel: ${CompanyInfo.getPhone(invoiceData.location)}',
+                    'Abteilung: Rechnung u. Bearbeitung',
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                  pw.SizedBox(height: 6),
+                  pw.Text(
+                    'Telefon: ${CompanyInfo.getPhone(invoiceData.location)}',
+                    style: pw.TextStyle(fontSize: 8),
+                  ),
+                  pw.Text(
+                    'E-Mail: ${CompanyInfo.getEmail(invoiceData.location)}',
                     style: pw.TextStyle(fontSize: 8),
                   ),
                   pw.SizedBox(height: 10),
                   _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
+                  _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
+                  _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
                   _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
                 ],
               ),
