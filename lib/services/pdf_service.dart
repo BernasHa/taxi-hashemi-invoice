@@ -334,9 +334,9 @@ class PDFService {
         
         pw.SizedBox(height: 10),
         
-        // Absender-Adresse klein unter dem Logo
+        // Absender-Adresse klein unter dem Logo (wie im Original)
         pw.Text(
-          CompanyInfo.getFullAddress(invoiceData.location),
+          '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
           style: pw.TextStyle(
             fontSize: 8,
             color: lightGrayColor,
@@ -495,7 +495,7 @@ class PDFService {
           invoiceData.customerSalutation + ',',
           style: pw.TextStyle(fontSize: 11),
         ),
-        pw.SizedBox(height: 8),
+        pw.SizedBox(height: 12), // Absatz nach Begrüßung
         pw.Text(
           'hier stellen wir folgende Fahrt/en für Sie in Rechnung.',
           style: pw.TextStyle(fontSize: 11),
@@ -1241,7 +1241,7 @@ class PDFService {
                     ),
                   ),
                   pw.Text(
-                    CompanyInfo.getFullAddress(invoiceData.location),
+                    '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
                     style: pw.TextStyle(
                       fontSize: 7,
                       color: lightGrayColor,
@@ -1366,6 +1366,7 @@ class PDFService {
           invoiceData.customerSalutation + ',',
           style: pw.TextStyle(fontSize: 10),
         ),
+        pw.SizedBox(height: 8), // Absatz nach Begrüßung
         pw.Text(
           'hier stellen wir folgende Fahrt/en für Sie in Rechnung.',
           style: pw.TextStyle(fontSize: 10),
