@@ -316,16 +316,16 @@ class PDFService {
                         ),
                 ),
                 pw.SizedBox(height: 5),
-                // Absender-Adresse direkt unter dem Logo
+                // Absender-Adresse direkt unter dem Logo (einzeilig)
                 pw.Container(
-                  width: 80, // Gleiche Breite wie Logo
+                  width: 200, // Breiter für einzeilige Darstellung
                   child: pw.Text(
                     '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
                     style: pw.TextStyle(
                       fontSize: 8,
                       color: lightGrayColor,
                     ),
-                    maxLines: 3, // Mehrere Zeilen erlauben
+                    maxLines: 1, // Nur eine Zeile
                   ),
                 ),
               ],
@@ -531,8 +531,8 @@ class PDFService {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        // Größerer Abstand zwischen Tabelle und Verwendungszweck
-        pw.SizedBox(height: 280),
+        // Viel größerer Abstand zwischen Tabelle und Verwendungszweck
+        pw.SizedBox(height: 350),
 
         // Rechnungssumme (rechtsbündig)
         pw.Row(
@@ -557,7 +557,7 @@ class PDFService {
                     margin: const pw.EdgeInsets.symmetric(vertical: 3),
                   ),
                   _buildSummaryRow(
-                    'Gesamtbetrag (brutto):',
+                    'Gesamtbetrag (Brutto):',
                     invoiceData.formattedTotalAmountPdf,
                     isTotal: true,
                   ),
@@ -1067,7 +1067,7 @@ class PDFService {
                     margin: const pw.EdgeInsets.symmetric(vertical: 3),
                   ),
                   _buildSummaryRow(
-                    'Gesamtbetrag (brutto):',
+                    'Gesamtbetrag (Brutto):',
                     invoiceData.formattedTotalAmountPdf,
                     isTotal: true,
                   ),
@@ -1239,16 +1239,16 @@ class PDFService {
                         ),
                 ),
                 pw.SizedBox(height: 3),
-                // Absender-Adresse direkt unter dem Logo
+                // Absender-Adresse direkt unter dem Logo (einzeilig)
                 pw.Container(
-                  width: 60, // Gleiche Breite wie Logo
+                  width: 180, // Breiter für einzeilige Darstellung
                   child: pw.Text(
                     '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
                     style: pw.TextStyle(
                       fontSize: 7,
                       color: lightGrayColor,
                     ),
-                    maxLines: 3, // Mehrere Zeilen erlauben
+                    maxLines: 1, // Nur eine Zeile
                   ),
                 ),
               ],
@@ -1405,7 +1405,7 @@ class PDFService {
         // Kompakte Tabelle
         _buildTripsTable(invoiceData, 0, invoiceData.trips.length),
         
-        pw.SizedBox(height: 35),
+        pw.SizedBox(height: 60), // Viel größerer Abstand zwischen Tabelle und Verwendungszweck
 
         // Zusammenfassung und Unterschrift in einer Zeile
         pw.Row(
@@ -1460,7 +1460,7 @@ class PDFService {
                     margin: const pw.EdgeInsets.symmetric(vertical: 3),
                   ),
                   _buildSummaryRow(
-                    'Gesamtbetrag (brutto):',
+                    'Gesamtbetrag (Brutto):',
                     invoiceData.formattedTotalAmountPdf,
                     isTotal: true,
                   ),
