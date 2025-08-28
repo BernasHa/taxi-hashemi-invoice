@@ -254,7 +254,7 @@ class PDFService {
   // Falzmarken für manuelles Falten (DIN A4 Standard)
   static pw.Widget _buildFoldMarks() {
     return pw.Positioned(
-      left: 0,
+      left: -2, // Sehr nah am Rand
       top: 0,
       bottom: 0,
       child: pw.Column(
@@ -263,14 +263,14 @@ class PDFService {
           // Erste Falzmarke bei 105mm (A4 Drittel-Faltung)
           pw.Container(
             margin: pw.EdgeInsets.only(top: 105 * 2.83465), // mm zu PDF-Punkte
-            width: 8,
+            width: 4, // Schmaler
             height: 0.5,
             color: PdfColors.grey400,
           ),
           // Zweite Falzmarke bei 148.5mm (A4 Halbierung)
           pw.Container(
             margin: pw.EdgeInsets.only(top: (148.5 - 105) * 2.83465),
-            width: 8,
+            width: 4, // Schmaler
             height: 0.5,
             color: PdfColors.grey400,
           ),
@@ -567,7 +567,7 @@ class PDFService {
           ],
         ),
 
-        pw.SizedBox(height: 80),
+        pw.SizedBox(height: 100), // Mehr Abstand nach unten
 
         // Grußformel und Unterschrift - WEITER LINKS
         pw.Row(
@@ -1077,7 +1077,7 @@ class PDFService {
           ],
         ),
 
-        pw.SizedBox(height: 70),
+        pw.SizedBox(height: 90), // Mehr Abstand nach unten
 
         // Grußformel und Unterschrift
         pw.Row(
@@ -1418,7 +1418,7 @@ class PDFService {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.SizedBox(height: 20),
+                  pw.SizedBox(height: 30), // Mehr Abstand nach unten
                   pw.Text(
                     'Mit freundlichen Grüßen',
                     style: pw.TextStyle(fontSize: 10),
