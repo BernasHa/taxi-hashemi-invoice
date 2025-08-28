@@ -330,7 +330,7 @@ class PDFService {
                 ),
               ],
             ),
-            pw.SizedBox(width: 0.5), // Sehr sehr kleiner Abstand zwischen Logo und Firmenname
+
             // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
@@ -1253,7 +1253,7 @@ class PDFService {
                 ),
               ],
             ),
-            pw.SizedBox(width: 0.5), // Sehr sehr kleiner Abstand zwischen Logo und Firmenname
+
             // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
