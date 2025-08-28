@@ -330,7 +330,7 @@ class PDFService {
                 ),
               ],
             ),
-            pw.SizedBox(width: 8), // Weniger Abstand zwischen Logo und Firmenname
+            pw.SizedBox(width: 3), // Firmenname direkt neben Logo
             // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
@@ -972,14 +972,14 @@ class PDFService {
           pw.Text(
             label,
             style: pw.TextStyle(
-              fontSize: isTotal ? 11 : 10,
+              fontSize: isTotal ? 10 : 10, // Gesamtbetrag kleiner gemacht
               fontWeight: isTotal ? pw.FontWeight.bold : pw.FontWeight.normal,
             ),
           ),
           pw.Text(
             value,
             style: pw.TextStyle(
-              fontSize: isTotal ? 11 : 10,
+              fontSize: isTotal ? 10 : 10, // Gesamtbetrag kleiner gemacht
               fontWeight: isTotal ? pw.FontWeight.bold : pw.FontWeight.normal,
             ),
           ),
@@ -1253,7 +1253,7 @@ class PDFService {
                 ),
               ],
             ),
-            pw.SizedBox(width: 6), // Weniger Abstand zwischen Logo und Firmenname
+            pw.SizedBox(width: 2), // Firmenname direkt neben Logo
             // Firmenname (rechts)
             pw.Expanded(
               child: pw.Column(
