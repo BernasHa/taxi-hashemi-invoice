@@ -131,15 +131,45 @@ class PDFService {
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(40),
+        margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
         build: (pw.Context context) {
-          return _buildPageWithFooter(
-            singlePageLayout 
-              ? _buildSinglePage(invoiceData, logoToUse, stampToUse) // Alles auf einer Seite
-              : _buildFirstPage(invoiceData, logoToUse, 0, tripsOnFirstPage), // Normal
-            invoiceData,
-            1,
-            totalPages,
+          return pw.Stack(
+            children: [
+              // Falzmarken ganz am linken Seitenrand
+              pw.Positioned(
+                left: 0, // Absolut am Seitenrand
+                top: 105 * 2.83465, // 105mm in PDF-Punkte
+                child: pw.Container(
+                  width: 8,
+                  height: 1,
+                  color: PdfColors.grey700,
+                ),
+              ),
+              pw.Positioned(
+                left: 0, // Absolut am Seitenrand
+                top: 148.5 * 2.83465, // 148.5mm in PDF-Punkte
+                child: pw.Container(
+                  width: 8,
+                  height: 1,
+                  color: PdfColors.grey700,
+                ),
+              ),
+              // Hauptinhalt mit eigenem Margin
+              pw.Positioned(
+                left: 40,
+                right: 40,
+                top: 40,
+                bottom: 40,
+                child: _buildPageWithFooter(
+                  singlePageLayout 
+                    ? _buildSinglePage(invoiceData, logoToUse, stampToUse)
+                    : _buildFirstPage(invoiceData, logoToUse, 0, tripsOnFirstPage),
+                  invoiceData,
+                  1,
+                  totalPages,
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -167,14 +197,33 @@ class PDFService {
         pdf.addPage(
           pw.Page(
             pageFormat: PdfPageFormat.a4,
-            margin: const pw.EdgeInsets.all(40),
+            margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
             build: (pw.Context context) {
               print('DEBUG: In build context: startIndex=$currentStartIndex, endIndex=$currentEndIndex');
-              return _buildPageWithFooter(
-                _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
-                invoiceData,
-                currentPageNumber,
-                totalPages,
+              return pw.Stack(
+                children: [
+                  // Falzmarken ganz am linken Seitenrand
+                  pw.Positioned(
+                    left: 0,
+                    top: 105 * 2.83465,
+                    child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                  ),
+                  pw.Positioned(
+                    left: 0,
+                    top: 148.5 * 2.83465,
+                    child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                  ),
+                  // Hauptinhalt mit eigenem Margin
+                  pw.Positioned(
+                    left: 40, right: 40, top: 40, bottom: 40,
+                    child: _buildPageWithFooter(
+                      _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
+                      invoiceData,
+                      currentPageNumber,
+                      totalPages,
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -188,13 +237,32 @@ class PDFService {
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(40),
+          margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
           build: (pw.Context context) {
-            return _buildPageWithFooter(
-              _buildFinalPage(invoiceData, stampToUse),
-              invoiceData,
-              totalPages,
-              totalPages,
+            return pw.Stack(
+              children: [
+                // Falzmarken ganz am linken Seitenrand
+                pw.Positioned(
+                  left: 0,
+                  top: 105 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                ),
+                pw.Positioned(
+                  left: 0,
+                  top: 148.5 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                ),
+                // Hauptinhalt mit eigenem Margin
+                pw.Positioned(
+                  left: 40, right: 40, top: 40, bottom: 40,
+                  child: _buildPageWithFooter(
+                    _buildFinalPage(invoiceData, stampToUse),
+                    invoiceData,
+                    totalPages,
+                    totalPages,
+                  ),
+                ),
+              ],
             );
           },
         ),
@@ -204,13 +272,32 @@ class PDFService {
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(40),
+          margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
           build: (pw.Context context) {
-            return _buildPageWithFooter(
-              _buildSecondPage(invoiceData, stampToUse),
-              invoiceData,
-              2,
-              totalPages,
+            return pw.Stack(
+              children: [
+                // Falzmarken ganz am linken Seitenrand
+                pw.Positioned(
+                  left: 0,
+                  top: 105 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                ),
+                pw.Positioned(
+                  left: 0,
+                  top: 148.5 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                ),
+                // Hauptinhalt mit eigenem Margin
+                pw.Positioned(
+                  left: 40, right: 40, top: 40, bottom: 40,
+                  child: _buildPageWithFooter(
+                    _buildSecondPage(invoiceData, stampToUse),
+                    invoiceData,
+                    2,
+                    totalPages,
+                  ),
+                ),
+              ],
             );
           },
         ),
@@ -245,39 +332,12 @@ class PDFService {
             ),
           ],
         ),
-        // Falzmarken am linken Rand
-        _buildFoldMarks(),
+
       ],
     );
   }
 
-  // Falzmarken für manuelles Falten (DIN A4 Standard)
-  static pw.Widget _buildFoldMarks() {
-    return pw.Positioned(
-      left: 0, // Absolut am linken Rand der PDF-Seite
-      top: 0,
-      child: pw.Column(
-        mainAxisAlignment: pw.MainAxisAlignment.start,
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          // Erste Falzmarke bei 105mm (A4 Drittel-Faltung)
-          pw.Container(
-            margin: pw.EdgeInsets.only(top: 105 * 2.83465), // mm zu PDF-Punkte
-            width: 6, // Kurze Falzmarke
-            height: 1,
-            color: PdfColors.grey600,
-          ),
-          // Zweite Falzmarke bei 148.5mm (A4 Halbierung)
-          pw.Container(
-            margin: pw.EdgeInsets.only(top: (148.5 - 105) * 2.83465),
-            width: 6, // Kurze Falzmarke
-            height: 1,
-            color: PdfColors.grey600,
-          ),
-        ],
-      ),
-    );
-  }
+
 
   static pw.Widget _buildFirstPage(InvoiceData invoiceData, pw.ImageProvider? logoImage, int startIndex, int maxTrips) {
     return pw.Column(
