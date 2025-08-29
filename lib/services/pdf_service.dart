@@ -122,7 +122,7 @@ class PDFService {
     } else {
       final int remainingTrips = totalTrips - tripsOnFirstPage;
       final int additionalPages = (remainingTrips / tripsPerAdditionalPage).ceil();
-      totalPages = 1 + additionalPages + 1; // Erste + Zusätzliche + Finale
+      totalPages = 1 + additionalPages; // Erste + Zusätzliche (KEINE separate Finale-Seite)
     }
     
     print('DEBUG: Berechnet $totalPages Seiten total (singlePageLayout: $singlePageLayout)');
@@ -217,7 +217,10 @@ class PDFService {
                   pw.Positioned(
                     left: 40, right: 40, top: 40, bottom: 40,
                     child: _buildPageWithFooter(
-                      _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
+                      // Letzte Seite bekommt Zusammenfassung dazu
+                      currentPageNumber == totalPages 
+                        ? _buildLastMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex, stampToUse)
+                        : _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
                       invoiceData,
                       currentPageNumber,
                       totalPages,
@@ -232,41 +235,7 @@ class PDFService {
         startIndex = endIndex;
         pageNumber++;
       }
-      
-      // Finale Seite mit Zusammenfassung
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
-          build: (pw.Context context) {
-            return pw.Stack(
-              children: [
-                // Falzmarken ganz am linken Seitenrand
-                pw.Positioned(
-                  left: 0,
-                  top: 105 * 2.83465,
-                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
-                ),
-                pw.Positioned(
-                  left: 0,
-                  top: 148.5 * 2.83465,
-                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
-                ),
-                // Hauptinhalt mit eigenem Margin
-                pw.Positioned(
-                  left: 40, right: 40, top: 40, bottom: 40,
-                  child: _buildPageWithFooter(
-                    _buildFinalPage(invoiceData, stampToUse),
-                    invoiceData,
-                    totalPages,
-                    totalPages,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      );
+      // KEINE separate Finale-Seite mehr - Zusammenfassung auf letzter Fahrt-Seite
     } else if (!singlePageLayout) {
       // Nur 2 Seiten bei ≤13 Fahrten (aber nicht Single-Page)
       pdf.addPage(
@@ -408,7 +377,7 @@ class PDFService {
 
         // Empfänger und Kontaktdaten - FESTE POSITIONIERUNG
         pw.Container(
-          height: 120, // Feste Höhe für den gesamten oberen Bereich
+          height: 140, // Mehr Höhe damit Rechnungsdetails nicht verschwinden
           child: pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
@@ -710,6 +679,57 @@ class PDFService {
         pw.Expanded(
           child: _buildTripsTableForRange(invoiceData, startIndex, endIndex),
         ),
+      ],
+    );
+  }
+
+  // Letzte Multi-Page mit Fahrten UND Zusammenfassung
+  static pw.Widget _buildLastMiddlePage(InvoiceData invoiceData, pw.ImageProvider? logoImage, int startIndex, int endIndex, pw.ImageProvider? stamp) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Vereinfachter Header für Folgeseiten
+        pw.Row(
+          children: [
+            if (logoImage != null)
+              pw.Container(
+                width: 60,
+                height: 60,
+                child: pw.Image(logoImage, fit: pw.BoxFit.contain),
+              ),
+            pw.SizedBox(width: 15),
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  CompanyInfo.getName(invoiceData.location),
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                    color: blackColor,
+                  ),
+                ),
+                pw.Text(
+                  'Rechnung Nr. ${invoiceData.invoiceNumber} (Fortsetzung)',
+                  style: pw.TextStyle(fontSize: 12, color: PdfColors.grey600),
+                ),
+              ],
+            ),
+          ],
+        ),
+        
+        pw.SizedBox(height: 20),
+        
+        // Tabelle für diese Seite (weniger Platz für Zusammenfassung)
+        pw.Container(
+          height: 300, // Weniger Höhe für Zusammenfassung
+          child: _buildTripsTableForRange(invoiceData, startIndex, endIndex),
+        ),
+        
+        pw.SizedBox(height: 20),
+        
+        // Zusammenfassung und Unterschrift auf derselben Seite
+        _buildSummaryAndSignature(invoiceData, stamp),
       ],
     );
   }

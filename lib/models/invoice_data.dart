@@ -53,8 +53,13 @@ class InvoiceData {
   String get formattedTotalAmountPdf => '${totalAmount.toStringAsFixed(2)} EUR';
   String get formattedVatRate => '${(vatRate * 100).toInt()}%';
   
-  // Korrekte Anrede basierend auf Geschlecht - nur Nachname
+  // Korrekte Anrede basierend auf Geschlecht - nur Nachname oder Firma
   String get customerSalutation {
+    // Wenn nur Firma ohne Name angegeben
+    if (customerName.trim().isEmpty && customerCompany != null && customerCompany!.isNotEmpty) {
+      return 'Sehr geehrte Damen und Herren';
+    }
+    
     // Nachname extrahieren (letztes Wort)
     String lastName = customerName.trim().split(' ').last;
     
