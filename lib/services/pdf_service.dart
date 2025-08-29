@@ -566,14 +566,15 @@ class PDFService {
         pw.SizedBox(height: 8),
         pw.Container(
           width: double.infinity,
-          height: 3, // Gleiche Dicke wie gelbe Linie
+          height: 4, // Etwas dicker
           color: blackColor,
         ),
 
         pw.SizedBox(height: 5),
 
-        // Tabelle
-        pw.Expanded(
+        // Tabelle mit fester Höhe um Layout-Verschiebung zu vermeiden
+        pw.Container(
+          height: 350, // Feste Höhe verhindert Layout-Verschiebung
           child: _buildTripsTable(invoiceData, startIndex, maxTrips),
         ),
       ],
@@ -803,7 +804,7 @@ class PDFService {
         // Gelber Strich unter Tabellenköpfen
         pw.Container(
           width: double.infinity,
-          height: 3,
+          height: 4, // Gleiche Dicke wie schwarze Linie
           color: yellowColor,
         ),
         // Daten-Tabelle - VEREINFACHT für besseres Debugging
@@ -1444,7 +1445,7 @@ class PDFService {
         pw.SizedBox(height: 5),
         pw.Container(
           width: double.infinity,
-          height: 3,
+          height: 4, // Gleiche Dicke wie gelbe Linie
           color: blackColor,
         ),
 
