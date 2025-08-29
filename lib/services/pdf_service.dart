@@ -12,7 +12,7 @@ import 'dart:html' as html;
 import '../models/invoice_data.dart';
 
 class PDFService {
-  static const PdfColor yellowColor = PdfColor.fromInt(0xFFFFD700);
+  static const PdfColor yellowColor = PdfColor.fromInt(0xFFFFEC00); // #ffec00
   static const PdfColor blackColor = PdfColor.fromInt(0xFF000000);
   static const PdfColor darkGrayColor = PdfColor.fromInt(0xFF333333);
   static const PdfColor lightGrayColor = PdfColor.fromInt(0xFF666666);
@@ -562,11 +562,11 @@ class PDFService {
           style: pw.TextStyle(fontSize: 11),
         ),
         
-        // Dickere schwarze Linie unter Text
+        // Schwarze Linie unter Text - gleiche Dicke wie gelbe Linie
         pw.SizedBox(height: 8),
         pw.Container(
           width: double.infinity,
-          height: 5,
+          height: 3, // Gleiche Dicke wie gelbe Linie
           color: blackColor,
         ),
 
