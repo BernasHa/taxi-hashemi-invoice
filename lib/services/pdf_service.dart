@@ -406,138 +406,141 @@ class PDFService {
         
         pw.SizedBox(height: 30),
 
-        // Empfänger und Kontaktdaten
-        pw.Row(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            // Empfänger (links)
-            pw.Expanded(
-              flex: 2,
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  // Empfänger: Firma über "Herr" (nicht fett)
-                  if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
-                    pw.Text(
-                      '${invoiceData.customerCompany}',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.normal, // Firma nicht fett
+        // Empfänger und Kontaktdaten - FESTE POSITIONIERUNG
+        pw.Container(
+          height: 120, // Feste Höhe für den gesamten oberen Bereich
+          child: pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              // Empfänger (links) - feste Breite
+              pw.Container(
+                width: 300, // Feste Breite statt Expanded
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // Empfänger: Firma über "Herr" (nicht fett)
+                    if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
+                      pw.Text(
+                        '${invoiceData.customerCompany}',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.normal, // Firma nicht fett
+                        ),
                       ),
-                    ),
-                  pw.Text(
-                    'Herr',
-                    style: pw.TextStyle(
-                      fontSize: 12,
-                      fontWeight: pw.FontWeight.normal,
-                    ),
-                  ),
-                  // Kundenname (nur wenn vorhanden)
-                  if (invoiceData.customerName.isNotEmpty)
                     pw.Text(
-                      '${invoiceData.customerName}',
+                      'Herr',
                       style: pw.TextStyle(
                         fontSize: 12,
                         fontWeight: pw.FontWeight.normal,
                       ),
                     ),
-                  pw.Text(
-                    '${invoiceData.customerStreet}',
-                    style: pw.TextStyle(
-                      fontSize: 12,
-                      fontWeight: pw.FontWeight.normal,
+                    // Kundenname (nur wenn vorhanden)
+                    if (invoiceData.customerName.isNotEmpty)
+                      pw.Text(
+                        '${invoiceData.customerName}',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.normal,
+                        ),
+                      ),
+                    pw.Text(
+                      '${invoiceData.customerStreet}',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.normal,
+                      ),
                     ),
-                  ),
-                  pw.Text(
-                    '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
-                    style: pw.TextStyle(
-                      fontSize: 12,
-                      fontWeight: pw.FontWeight.normal,
+                    pw.Text(
+                      '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.normal,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            
-            pw.SizedBox(width: 20),
-            
-            // Kontaktdaten und Rechnungsdetails (rechts)
-            pw.Expanded(
-              flex: 1,
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.end,
-                children: [
-                  // Ansprechpartner (linksbündig)
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      // Ansprechpartner: Label fett, Name normal
-                      pw.RichText(
-                        text: pw.TextSpan(
-                          children: [
-                            pw.TextSpan(
-                              text: 'Ihr Ansprechpartner: ',
-                              style: pw.TextStyle(
-                                fontSize: 9,
-                                fontWeight: pw.FontWeight.bold,
+              
+              pw.SizedBox(width: 20),
+              
+              // Kontaktdaten und Rechnungsdetails (rechts) - feste Position
+              pw.Container(
+                width: 200, // Feste Breite statt Expanded
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // Ansprechpartner (linksbündig)
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        // Ansprechpartner: Label fett, Name normal
+                        pw.RichText(
+                          text: pw.TextSpan(
+                            children: [
+                              pw.TextSpan(
+                                text: 'Ihr Ansprechpartner: ',
+                                style: pw.TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            pw.TextSpan(
-                              text: '${CompanyInfo.contactPerson}',
-                              style: pw.TextStyle(
-                                fontSize: 9,
-                                fontWeight: pw.FontWeight.normal, // Name normal
+                              pw.TextSpan(
+                                text: '${CompanyInfo.contactPerson}',
+                                style: pw.TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: pw.FontWeight.normal, // Name normal
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          textAlign: pw.TextAlign.left,
                         ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                      pw.Text(
-                        'Abteilung: Rechnung u. Bearbeitung',
-                        style: pw.TextStyle(
-                          fontSize: 9,
+                        pw.Text(
+                          'Abteilung: Rechnung u. Bearbeitung',
+                          style: pw.TextStyle(
+                            fontSize: 9,
+                          ),
+                          textAlign: pw.TextAlign.left,
                         ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                      pw.SizedBox(height: 8), // Mehr Abstand nach Abteilung
-                      pw.Text(
-                        'Telefon: ${CompanyInfo.getPhone(invoiceData.location)}',
-                        style: pw.TextStyle(
-                          fontSize: 9,
+                        pw.SizedBox(height: 8), // Mehr Abstand nach Abteilung
+                        pw.Text(
+                          'Telefon: ${CompanyInfo.getPhone(invoiceData.location)}',
+                          style: pw.TextStyle(
+                            fontSize: 9,
+                          ),
+                          textAlign: pw.TextAlign.left,
                         ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                      pw.Text(
-                        'E-Mail: ${CompanyInfo.getEmail(invoiceData.location)}',
-                        style: pw.TextStyle(
-                          fontSize: 9,
+                        pw.Text(
+                          'E-Mail: ${CompanyInfo.getEmail(invoiceData.location)}',
+                          style: pw.TextStyle(
+                            fontSize: 9,
+                          ),
+                          textAlign: pw.TextAlign.left,
                         ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                    ],
-                  ),
-                  
-                  pw.SizedBox(height: 45), // Mehr Abstand zwischen Email und Rechnungsnummer
-                  
-                  // Rechnungsdetails (linksbündig)
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
-                      _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
-                      _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
-                      _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
-                      // Verwendungszweck entfernt von oben rechts
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    
+                    pw.SizedBox(height: 20), // Weniger Abstand für feste Höhe
+                    
+                    // Rechnungsdetails (linksbündig)
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
+                        _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
+                        _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
+                        _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
+                        // Verwendungszweck entfernt von oben rechts
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
 
-        pw.SizedBox(height: 30),
+        pw.SizedBox(height: 20),
 
         // Überschrift "Rechnung:" (ohne Linie darüber)
         pw.Text(
@@ -572,9 +575,8 @@ class PDFService {
 
         pw.SizedBox(height: 5),
 
-        // Tabelle mit fester Höhe um Layout-Verschiebung zu vermeiden
-        pw.Container(
-          height: 350, // Feste Höhe verhindert Layout-Verschiebung
+        // Tabelle zurück zu Expanded - aber mit besserer Layout-Kontrolle
+        pw.Expanded(
           child: _buildTripsTable(invoiceData, startIndex, maxTrips),
         ),
       ],
