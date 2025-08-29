@@ -484,7 +484,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                 hintText: '25.50',
                 suffixText: '€',
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
             
             const SizedBox(height: 16),
