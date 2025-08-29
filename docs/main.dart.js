@@ -102049,7 +102049,7 @@ n=B.bo(a6.gX0()+",",g,B.b9(g,g,g,g,g,g,g,g,g,A.a2,g,g,10,g,g,g,!0,g,g,g,g),g)
 m=B.bo(a3,g,B.b9(g,g,g,g,g,g,g,g,g,A.a2,g,g,10,g,g,g,!0,g,g,g,g),g)
 l=B.cc(g,A.bV,g,3,g,g,1/0)
 k=B.aGm(a6,0,a6.w.length)
-j=B.a([new B.bI(g,30,g),B.bo("Mit freundlichen Gr\xfc\xdfen",g,B.b9(g,g,g,g,g,g,g,g,g,A.a2,g,g,10,g,g,g,!0,g,g,g,g),g),new B.bI(g,25,g)],q)
+j=B.a([new B.bI(g,30,g),B.bo("Mit freundlichen Gr\xfc\xdfen",g,B.b9(g,g,g,g,g,g,g,g,g,A.a2,g,g,10,g,g,g,!0,g,g,g,g),g),new B.bI(g,12,g)],q)
 if(s!=null)j.push(B.cc(B.BH(s,A.eT),g,g,40,g,g,100))
 j.push(new B.bI(g,5,g))
 j.push(B.bo(e,g,B.b9(g,g,g,g,g,g,g,g,g,A.a2,g,g,10,g,A.cg,g,!0,g,g,g,g),g))
@@ -102095,7 +102095,7 @@ s=m.x
 r=1+s
 q=t.T
 r=B.io(B.a([B.cc(B.dt(B.a([B.bo("Verwendungszweck: "+k,p,B.b9(p,p,p,p,p,p,p,p,p,A.a2,p,p,10,p,A.b2,p,!0,p,p,p,p),p),new B.bI(p,15,p),B.ob("Netto:",A.m.a9(m.gkl()/r,2)+" EUR",!1),B.ob("MwSt. "+(""+A.m.n(s*100)+"%")+":",A.m.a9(m.gkl()-m.gkl()/r,2)+" EUR",!1),B.cc(p,A.bV,p,1,A.nO,p,150),B.ob("Gesamtbetrag (Brutto):",A.m.a9(m.gkl(),2)+" EUR",!0)],q),A.aL),p,p,p,p,p,200)],q),A.cz,A.po,A.cj)
-s=B.a([B.bo("Mit freundlichen Gr\xfc\xdfen",p,B.b9(p,p,p,p,p,p,p,p,p,A.a2,p,p,11,p,p,p,!0,p,p,p,p),p),new B.bI(p,10,p)],q)
+s=B.a([B.bo("Mit freundlichen Gr\xfc\xdfen",p,B.b9(p,p,p,p,p,p,p,p,p,A.a2,p,p,11,p,p,p,!0,p,p,p,p),p),new B.bI(p,5,p)],q)
 if(l!=null)s.push(B.cc(B.BH(l,A.eT),p,p,80,p,p,120))
 else s.push(new B.bI(p,80,p))
 s.push(new B.bI(p,5,p))
@@ -102111,7 +102111,7 @@ s=m.x
 r=1+s
 q=t.T
 r=B.io(B.a([B.cc(B.dt(B.a([B.bo("Verwendungszweck: "+k,p,B.b9(p,p,p,p,p,p,p,p,p,A.a2,p,p,10,p,A.b2,p,!0,p,p,p,p),p),new B.bI(p,15,p),B.ob("Netto:",A.m.a9(m.gkl()/r,2)+" EUR",!1),B.ob("MwSt. "+(""+A.m.n(s*100)+"%")+":",A.m.a9(m.gkl()-m.gkl()/r,2)+" EUR",!1),B.cc(p,A.bV,p,1,A.nO,p,150),B.ob("Gesamtbetrag (Brutto):",A.m.a9(m.gkl(),2)+" EUR",!0)],q),A.aL),p,p,p,p,p,200)],q),A.cz,A.po,A.cj)
-s=B.a([B.bo("Mit freundlichen Gr\xfc\xdfen",p,B.b9(p,p,p,p,p,p,p,p,p,A.a2,p,p,11,p,p,p,!0,p,p,p,p),p),new B.bI(p,10,p)],q)
+s=B.a([B.bo("Mit freundlichen Gr\xfc\xdfen",p,B.b9(p,p,p,p,p,p,p,p,p,A.a2,p,p,11,p,p,p,!0,p,p,p,p),p),new B.bI(p,5,p)],q)
 if(l!=null)s.push(B.cc(B.BH(l,A.eT),p,p,80,p,p,120))
 else s.push(new B.bI(p,80,p))
 s.push(new B.bI(p,5,p))

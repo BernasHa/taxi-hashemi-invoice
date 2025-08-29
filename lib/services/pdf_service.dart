@@ -634,7 +634,7 @@ class PDFService {
                   'Mit freundlichen Grüßen',
                   style: pw.TextStyle(fontSize: 11),
                 ),
-                pw.SizedBox(height: 10), // Weniger Abstand
+                pw.SizedBox(height: 5), // Noch weniger Abstand zum Stamp
                 // Stempel (basierend auf Location) - WEITER LINKS
                 if (stamp != null)
                   pw.Container(
@@ -1144,7 +1144,7 @@ class PDFService {
                   'Mit freundlichen Grüßen',
                   style: pw.TextStyle(fontSize: 11),
                 ),
-                pw.SizedBox(height: 10),
+                pw.SizedBox(height: 5), // Weniger Abstand zum Stamp
                 // Stempel (basierend auf Location) - WEITER LINKS
                 if (stamp != null)
                   pw.Container(
@@ -1470,7 +1470,7 @@ class PDFService {
                     'Mit freundlichen Grüßen',
                     style: pw.TextStyle(fontSize: 10),
                   ),
-                  pw.SizedBox(height: 25),
+                  pw.SizedBox(height: 12), // Weniger Abstand zum Stamp (Single-Page)
                   if (stamp != null)
                     pw.Container(
                       width: 100,
