@@ -352,10 +352,11 @@ class PDFService {
               crossAxisAlignment: pw.CrossAxisAlignment.center,
               mainAxisSize: pw.MainAxisSize.min, // Minimale Größe
               children: [
-                // Logo - kompakt
+                // Logo - kompakt mit negativem Margin um Transparenz zu eliminieren
                 pw.Container(
                   width: 80,
                   height: 80,
+                  margin: pw.EdgeInsets.only(right: -15), // Negativer Margin um Transparenz zu überwinden
                   child: logoImage != null
                       ? pw.Image(logoImage, fit: pw.BoxFit.contain)
                       : pw.Container(
@@ -375,14 +376,16 @@ class PDFService {
                           ),
                         ),
                 ),
-                // KEIN SizedBox hier - direkt nebeneinander!
-                // Firmenname direkt rechts vom Logo
-                pw.Text(
-                  CompanyInfo.getName(invoiceData.location),
-                  style: pw.TextStyle(
-                    fontSize: 20,
-                    fontWeight: pw.FontWeight.bold,
-                    color: blackColor,
+                // Firmenname mit negativem Margin um direkt am Logo zu kleben
+                pw.Container(
+                  margin: pw.EdgeInsets.only(left: -15), // Negativer Margin um wirklich nah zu sein
+                  child: pw.Text(
+                    CompanyInfo.getName(invoiceData.location),
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                      color: blackColor,
+                    ),
                   ),
                 ),
               ],
@@ -1268,10 +1271,11 @@ class PDFService {
               crossAxisAlignment: pw.CrossAxisAlignment.center,
               mainAxisSize: pw.MainAxisSize.min, // Minimale Größe
               children: [
-                // Logo - kompakt für Single Page
+                // Logo - kompakt für Single Page mit negativem Margin
                 pw.Container(
                   width: 60,
                   height: 60,
+                  margin: pw.EdgeInsets.only(right: -12), // Negativer Margin für Single Page
                   child: logoImage != null
                       ? pw.Image(logoImage, fit: pw.BoxFit.contain)
                       : pw.Container(
@@ -1291,14 +1295,16 @@ class PDFService {
                           ),
                         ),
                 ),
-                // KEIN SizedBox hier - direkt nebeneinander!
-                // Firmenname direkt rechts vom Logo
-                pw.Text(
-                  CompanyInfo.getName(invoiceData.location),
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
-                    color: blackColor,
+                // Firmenname mit negativem Margin um direkt am Logo zu kleben
+                pw.Container(
+                  margin: pw.EdgeInsets.only(left: -12), // Negativer Margin für Single Page
+                  child: pw.Text(
+                    CompanyInfo.getName(invoiceData.location),
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                      color: blackColor,
+                    ),
                   ),
                 ),
               ],
