@@ -387,7 +387,7 @@ class PDFService {
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    // Empfänger: Firma über "Herr" (nicht fett)
+                    // Empfänger: Firma (wenn vorhanden)
                     if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
                       pw.Text(
                         '${invoiceData.customerCompany}',
@@ -396,15 +396,16 @@ class PDFService {
                           fontWeight: pw.FontWeight.normal, // Firma nicht fett
                         ),
                       ),
-                    pw.Text(
-                      'Herr',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.normal,
+                    // "Herr/Frau" nur wenn Kundenname vorhanden
+                    if (invoiceData.customerName.isNotEmpty) ...[
+                      pw.Text(
+                        invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.normal,
+                        ),
                       ),
-                    ),
-                    // Kundenname (nur wenn vorhanden)
-                    if (invoiceData.customerName.isNotEmpty)
+                      // Kundenname
                       pw.Text(
                         '${invoiceData.customerName}',
                         style: pw.TextStyle(
@@ -412,6 +413,7 @@ class PDFService {
                           fontWeight: pw.FontWeight.normal,
                         ),
                       ),
+                    ],
                     pw.Text(
                       '${invoiceData.customerStreet}',
                       style: pw.TextStyle(
@@ -1356,7 +1358,7 @@ class PDFService {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  // Firma über "Herr" (nicht fett)
+                  // Empfänger: Firma (wenn vorhanden)
                   if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
                     pw.Text(
                       '${invoiceData.customerCompany}',
@@ -1365,16 +1367,18 @@ class PDFService {
                         fontWeight: pw.FontWeight.normal, // Nicht fett
                       ),
                     ),
-                  pw.Text(
-                    'Herr',
-                    style: pw.TextStyle(fontSize: 10),
-                  ),
-                  // Kundenname (nur wenn vorhanden)
-                  if (invoiceData.customerName.isNotEmpty)
+                  // "Herr/Frau" nur wenn Kundenname vorhanden
+                  if (invoiceData.customerName.isNotEmpty) ...[
+                    pw.Text(
+                      invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
+                      style: pw.TextStyle(fontSize: 10),
+                    ),
+                    // Kundenname
                     pw.Text(
                       '${invoiceData.customerName}',
                       style: pw.TextStyle(fontSize: 10),
                     ),
+                  ],
                   pw.Text(
                     '${invoiceData.customerStreet}',
                     style: pw.TextStyle(fontSize: 10),
