@@ -343,19 +343,19 @@ class PDFService {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        // Header mit Logo und Firmenname
-        pw.Row(
+        // Header mit Logo und Firmenname - DIREKT NEBENEINANDER
+        pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo und Adresse (links)
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
+            // Logo und Firmenname in einer Zeile - OHNE ABSTAND
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              mainAxisSize: pw.MainAxisSize.min, // Minimale Größe
               children: [
-                // Logo Bereich (rundes gelbes Logo) - höher positioniert
+                // Logo - kompakt
                 pw.Container(
                   width: 80,
                   height: 80,
-                  margin: pw.EdgeInsets.only(top: -5),
                   child: logoImage != null
                       ? pw.Image(logoImage, fit: pw.BoxFit.contain)
                       : pw.Container(
@@ -375,37 +375,29 @@ class PDFService {
                           ),
                         ),
                 ),
-                pw.SizedBox(height: 5),
-                // Absender-Adresse direkt unter dem Logo (einzeilig)
-                pw.Container(
-                  width: 200, // Breiter für einzeilige Darstellung
-                  child: pw.Text(
-                    '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-                    style: pw.TextStyle(
-                      fontSize: 8,
-                      color: lightGrayColor,
-                    ),
-                    maxLines: 1, // Nur eine Zeile
+                // KEIN SizedBox hier - direkt nebeneinander!
+                // Firmenname direkt rechts vom Logo
+                pw.Text(
+                  CompanyInfo.getName(invoiceData.location),
+                  style: pw.TextStyle(
+                    fontSize: 20,
+                    fontWeight: pw.FontWeight.bold,
+                    color: blackColor,
                   ),
                 ),
               ],
             ),
-            pw.SizedBox(width: 2), // Sehr nah wie im Bild
-            // Firmenname (rechts)
-            pw.Expanded(
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.SizedBox(height: 30), // Firmenname weiter nach unten
-                  pw.Text(
-                    CompanyInfo.getName(invoiceData.location),
-                    style: pw.TextStyle(
-                      fontSize: 20,
-                      fontWeight: pw.FontWeight.bold,
-                      color: blackColor,
-                    ),
-                  ),
-                ],
+            pw.SizedBox(height: 5),
+            // Absender-Adresse unter dem Logo (einzeilig)
+            pw.Container(
+              width: 200,
+              child: pw.Text(
+                '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                style: pw.TextStyle(
+                  fontSize: 8,
+                  color: lightGrayColor,
+                ),
+                maxLines: 1,
               ),
             ),
           ],
@@ -1267,15 +1259,16 @@ class PDFService {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        // Header mit Logo und Firmenname (kompakter)
-        pw.Row(
+        // Header mit Logo und Firmenname - DIREKT NEBENEINANDER (Single Page)
+        pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo und Adresse (links)
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
+            // Logo und Firmenname in einer Zeile - OHNE ABSTAND
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              mainAxisSize: pw.MainAxisSize.min, // Minimale Größe
               children: [
-                // Logo Bereich (kleiner für Single Page)
+                // Logo - kompakt für Single Page
                 pw.Container(
                   width: 60,
                   height: 60,
@@ -1298,37 +1291,29 @@ class PDFService {
                           ),
                         ),
                 ),
-                pw.SizedBox(height: 3),
-                // Absender-Adresse direkt unter dem Logo (einzeilig)
-                pw.Container(
-                  width: 180, // Breiter für einzeilige Darstellung
-                  child: pw.Text(
-                    '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-                    style: pw.TextStyle(
-                      fontSize: 7,
-                      color: lightGrayColor,
-                    ),
-                    maxLines: 1, // Nur eine Zeile
+                // KEIN SizedBox hier - direkt nebeneinander!
+                // Firmenname direkt rechts vom Logo
+                pw.Text(
+                  CompanyInfo.getName(invoiceData.location),
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                    color: blackColor,
                   ),
                 ),
               ],
             ),
-            pw.SizedBox(width: 2), // Sehr nah wie im Bild
-            // Firmenname (rechts)
-            pw.Expanded(
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.SizedBox(height: 20), // Firmenname weiter nach unten
-                  pw.Text(
-                    CompanyInfo.getName(invoiceData.location),
-                    style: pw.TextStyle(
-                      fontSize: 16,
-                      fontWeight: pw.FontWeight.bold,
-                      color: blackColor,
-                    ),
-                  ),
-                ],
+            pw.SizedBox(height: 3),
+            // Absender-Adresse unter dem Logo (einzeilig)
+            pw.Container(
+              width: 180,
+              child: pw.Text(
+                '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                style: pw.TextStyle(
+                  fontSize: 7,
+                  color: lightGrayColor,
+                ),
+                maxLines: 1,
               ),
             ),
           ],
