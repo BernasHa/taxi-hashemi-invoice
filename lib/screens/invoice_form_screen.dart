@@ -1171,9 +1171,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       await PDFService.generateAndPreview(invoiceData);
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('PDF Vorschau erfolgreich erstellt!')),
-        );
+        // Keine Benachrichtigung mehr
       }
     } catch (e) {
       print('Fehler in _generatePreview: $e');
@@ -1212,9 +1210,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       final invoiceData = _createInvoiceData();
       await PDFService.generateAndSave(invoiceData);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('PDF erfolgreich gespeichert!')),
-        );
+        // Keine Benachrichtigung mehr
       }
     } catch (e) {
       if (mounted) {
@@ -1309,8 +1305,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       _selectedLocation = TaxiLocation.tamm;
       _selectedGender = CustomerGender.herr;
       
-      // Dokumenttyp und Brief-Felder zurücksetzen
-      _documentType = DocumentType.invoice;
+      // Brief-Felder zurücksetzen (Dokumenttyp bleibt erhalten)
       _letterSubjectController.clear();
       _letterContentController.clear();
       
@@ -1320,9 +1315,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     // Formular-Key zurücksetzen für saubere Validierung
     _formKey.currentState?.reset();
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Formular wurde zurückgesetzt - bereit für neue Rechnung')),
-    );
+    // Keine Benachrichtigung mehr
   }
 
   @override
