@@ -150,8 +150,8 @@ class PDFService {
     
     print('DEBUG: Gesamt Fahrten = $totalTrips');
     
-    // NEUE LOGIK: Bei wenigen Fahrten (≤5) alles auf eine Seite
-    final bool singlePageLayout = totalTrips <= 5;
+    // NEUE LOGIK: Bei wenigen Fahrten (≤7) alles auf eine Seite
+    final bool singlePageLayout = totalTrips <= 7;
     
     int totalPages;
     if (singlePageLayout) {
@@ -384,7 +384,7 @@ class PDFService {
                         ),
                 ),
                 // Kleiner Abstand um aus dem Logo rauszukommen
-                pw.SizedBox(width: 5),
+                pw.SizedBox(width: 8),
                 // Firmenname rechts vom Logo
                 pw.Text(
                   CompanyInfo.getName(invoiceData.location),
@@ -949,7 +949,7 @@ class PDFService {
             _buildTableCell(fahrtText, align: pw.TextAlign.center), // Verwende fahrtText statt trip.description
             _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
             _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
-            _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.center),
+            _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.right),
           ],
         ),
       );
@@ -990,7 +990,7 @@ class PDFService {
             _buildTableCell(fahrtText),
             _buildTableCell(fromText, fontSize: 8),
             _buildTableCell(toText, fontSize: 8),
-            _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.center),
+            _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.right),
           ],
         ),
       );
@@ -1372,7 +1372,7 @@ class PDFService {
                         ),
                 ),
                 // Kleiner Abstand um aus dem Logo rauszukommen (Single Page)
-                pw.SizedBox(width: 4),
+                pw.SizedBox(width: 7),
                 // Firmenname rechts vom Logo
                 pw.Text(
                   CompanyInfo.getName(invoiceData.location),
@@ -1645,7 +1645,7 @@ class PDFService {
                           ),
                         ),
                 ),
-                pw.SizedBox(width: 5),
+                pw.SizedBox(width: 8),
                 // Firmenname
                 pw.Text(
                   CompanyInfo.getName(invoiceData.location),
@@ -1718,7 +1718,7 @@ class PDFService {
               ),
             ),
             
-            pw.SizedBox(width: 80),
+            pw.SizedBox(width: 100),
             
             // Kontaktdaten und Rechnungsdetails (rechts) - exakt wie bei Rechnung
             pw.Container(
