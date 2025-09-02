@@ -1275,9 +1275,9 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
 
   void _resetForm() {
     setState(() {
-      // ALLES zurücksetzen - vollständiger Reset
+      // Selektiver Reset je Dokumenttyp - MODUS BLEIBT ERHALTEN
       
-      // Kundendaten zurücksetzen
+      // Kundendaten immer zurücksetzen (für beide Modi)
       _customerNameController.clear();
       _customerCompanyController.clear();
       _customerStreetController.clear();
@@ -1286,31 +1286,37 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       _selectedLocation = TaxiLocation.tamm;
       _selectedGender = CustomerGender.herr;
       
-      // Rechnungsdetails zurücksetzen
-      _invoiceNumberController.text = 'R-${DateTime.now().year}-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
-      _vatRateController.text = '7';
-      _purposeController.clear();
+      if (_documentType == DocumentType.invoice) {
+        // NUR Rechnungs-Felder zurücksetzen (Brief-Felder bleiben unberührt)
+        _invoiceNumberController.text = 'R-${DateTime.now().year}-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+        _vatRateController.text = '7';
+        _purposeController.clear();
+        
+        // Fahrt-Controller zurücksetzen
+        _tripDescriptionController.clear();
+        _tripFromController.clear();
+        _tripToController.clear();
+        _tripPriceController.clear();
+        
+        // Fahrten zurücksetzen
+        _trips.clear();
+        _addInitialTrips();
+        
+        // Datum für Rechnung
+        _invoiceDate = DateTime.now();
+        _tripDate = DateTime.now();
+        
+      } else if (_documentType == DocumentType.letter) {
+        // NUR Brief-Felder zurücksetzen (Rechnungs-Felder bleiben unberührt)
+        _letterSubjectController.clear();
+        _letterContentController.clear();
+        
+        // Datum für Brief
+        _invoiceDate = DateTime.now();
+      }
       
-      // Fahrt-Controller zurücksetzen
-      _tripDescriptionController.clear();
-      _tripFromController.clear();
-      _tripToController.clear();
-      _tripPriceController.clear();
-      
-      // Fahrten zurücksetzen
-      _trips.clear();
-      _addInitialTrips();
-      
-      // Brief-Felder zurücksetzen
-      _letterSubjectController.clear();
-      _letterContentController.clear();
-      
-      // Datum zurücksetzen
-      _invoiceDate = DateTime.now();
-      _tripDate = DateTime.now();
-      
-      // Dokumenttyp zurücksetzen auf Rechnung
-      _documentType = DocumentType.invoice;
+      // DOKUMENTTYP BLEIBT UNVERÄNDERT!
+      // _documentType wird NICHT geändert
       
       _isGenerating = false; // PDF-Generation zurücksetzen
     });
