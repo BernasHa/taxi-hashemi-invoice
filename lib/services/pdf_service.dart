@@ -150,8 +150,8 @@ class PDFService {
     
     print('DEBUG: Gesamt Fahrten = $totalTrips');
     
-    // NEUE LOGIK: Bei wenigen Fahrten (≤7) alles auf eine Seite
-    final bool singlePageLayout = totalTrips <= 7;
+    // NEUE LOGIK: Bei wenigen Fahrten (≤9) alles auf eine Seite
+    final bool singlePageLayout = totalTrips <= 9;
     
     int totalPages;
     if (singlePageLayout) {

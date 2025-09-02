@@ -28681,48 +28681,46 @@ case 6:case 1:return B.P(q,r)
 case 2:return B.O(o.at(-1),r)}})
 return B.Q($async$afb,r)},
 of(a){return B.aSG(a)},
-aSG(a0){var s=0,r=B.R(t.F),q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a
-var $async$of=B.S(function(a1,a2){if(a1===1)return B.O(a2,r)
-while(true)switch(s){case 0:c={}
-b=B.a([],t.gf)
-a=new B.a5W(B.aSL(!0,null,A.aLS,!1,A.FZ),b)
+aSG(a){var s=0,r=B.R(t.F),q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b
+var $async$of=B.S(function(a0,a1){if(a0===1)return B.O(a1,r)
+while(true)switch(s){case 0:d={}
+c=B.a([],t.gf)
+b=new B.a5W(B.aSL(!0,null,A.aLS,!1,A.FZ),c)
 s=3
 return B.W(B.aAA(),$async$of)
 case 3:s=4
 return B.W(B.afa(),$async$of)
-case 4:o=a2
+case 4:o=a1
 s=5
 return B.W(B.afc(),$async$of)
-case 5:n=a2
+case 5:n=a1
 s=6
 return B.W(B.afb(),$async$of)
-case 6:m=a2
+case 6:m=a1
 p=null
 l=p
 if(l==null)l=o
-k=a0.z===A.mi?n:m
-if(a0.at===A.ek){a.HR(B.aAB(new B.aff(a0,l,k),A.jy,A.ic))
-q=a.cB(0)
+k=a.z===A.mi?n:m
+if(a.at===A.ek){b.HR(B.aAB(new B.aff(a,l,k),A.jy,A.ic))
+q=b.cB(0)
 s=1
-break}j=a0.w.length
+break}j=a.w.length
 B.ki("DEBUG: Gesamt Fahrten = "+j)
-i=j<=7
-c.a=null
-if(i)b=c.a=1
-else if(j<=9){c.a=2
-b=2}else{h=1+A.m.e9((j-9)/20)
-c.a=h
-b=h}B.ki("DEBUG: Berechnet "+b+" Seiten total (singlePageLayout: "+i+")")
-a.HR(B.aAB(new B.afg(c,i,a0,l,k),A.jy,A.ic))
-b=!i
-if(b&&j>9)for(b=a.c,g=9,f=2;g<j;g=e){e=g+20
-e=e<j?e:j
-B.aCw("DEBUG: Seite "+f+" - Fahrten "+g+" bis "+(e-1)+" ("+(e-g)+" Fahrten)")
-d=new B.PJ(A.ic,A.FT,A.jy,null,!1,null)
-d=new B.Dc(d,new B.afh(c,g,e,f,a0,l,k))
-d.a05(a,null)
-b.push(d);++f}else if(b)a.HR(B.aAB(new B.afi(c,a0,k),A.jy,A.ic))
-q=a.cB(0)
+i=j<=9
+d.a=null
+if(i)c=d.a=1
+else c=d.a=1+A.m.e9((j-9)/20)
+B.ki("DEBUG: Berechnet "+c+" Seiten total (singlePageLayout: "+i+")")
+b.HR(B.aAB(new B.afg(d,i,a,l,k),A.jy,A.ic))
+c=!i
+if(c&&j>9)for(c=b.c,h=9,g=2;h<j;h=f){f=h+20
+f=f<j?f:j
+B.aCw("DEBUG: Seite "+g+" - Fahrten "+h+" bis "+(f-1)+" ("+(f-h)+" Fahrten)")
+e=new B.PJ(A.ic,A.FT,A.jy,null,!1,null)
+e=new B.Dc(e,new B.afh(d,h,f,g,a,l,k))
+e.a05(b,null)
+c.push(e);++g}else if(c)b.HR(B.aAB(new B.afi(d,a,k),A.jy,A.ic))
+q=b.cB(0)
 s=1
 break
 case 1:return B.P(q,r)}})
