@@ -1681,7 +1681,7 @@ class PDFService {
           children: [
             // Empfänger (links)
             pw.Container(
-              width: 250,
+              width: 200,
               height: 140,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1718,7 +1718,7 @@ class PDFService {
               ),
             ),
             
-            pw.SizedBox(width: 50),
+            pw.SizedBox(width: 80),
             
             // Kontaktdaten und Rechnungsdetails (rechts) - exakt wie bei Rechnung
             pw.Container(
