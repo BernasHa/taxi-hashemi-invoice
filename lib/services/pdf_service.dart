@@ -1720,75 +1720,13 @@ class PDFService {
             
             pw.SizedBox(width: 20),
             
-            // Kontaktdaten und Rechnungsdetails (rechts) - exakt wie bei Rechnung
+            // Nur Datum (rechts)
             pw.Container(
               width: 200,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  // Ansprechpartner (linksbündig) - ZUERST wie bei Rechnung
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      // Ansprechpartner: Label fett, Name normal
-                      pw.RichText(
-                        text: pw.TextSpan(
-                          children: [
-                            pw.TextSpan(
-                              text: 'Ihr Ansprechpartner: ',
-                              style: pw.TextStyle(
-                                fontSize: 9,
-                                fontWeight: pw.FontWeight.bold,
-                              ),
-                            ),
-                            pw.TextSpan(
-                              text: '${CompanyInfo.contactPerson}',
-                              style: pw.TextStyle(
-                                fontSize: 9,
-                                fontWeight: pw.FontWeight.normal, // Name normal
-                              ),
-                            ),
-                          ],
-                        ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                      pw.Text(
-                        'Abteilung: Rechnung u. Bearbeitung',
-                        style: pw.TextStyle(
-                          fontSize: 9,
-                        ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                      pw.SizedBox(height: 8), // Mehr Abstand nach Abteilung
-                      pw.Text(
-                        'Telefon: ${CompanyInfo.getPhone(invoiceData.location)}',
-                        style: pw.TextStyle(
-                          fontSize: 9,
-                        ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                      pw.Text(
-                        'E-Mail: ${CompanyInfo.getEmail(invoiceData.location)}',
-                        style: pw.TextStyle(
-                          fontSize: 9,
-                        ),
-                        textAlign: pw.TextAlign.left,
-                      ),
-                    ],
-                  ),
-                  
-                  pw.SizedBox(height: 15), // Abstand zwischen Kontakt und Rechnungsdetails
-                  
-                  // Rechnungsdetails (linksbündig) - DANACH wie bei Rechnung
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
-                      _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
-                      _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
-                      _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
-                    ],
-                  ),
+                  _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
                 ],
               ),
             ),
@@ -1816,21 +1754,13 @@ class PDFService {
         ),
         pw.SizedBox(height: 12), // Absatz nach Begrüßung (wie bei Invoice)
         
-        // Brief-Inhalt (wie bei Invoice)
+        // Brief-Inhalt
         pw.Text(
           invoiceData.letterContent ?? '',
           style: pw.TextStyle(fontSize: 11),
         ),
         
-        // Schwarze Linie unter Text - gleiche Dicke wie bei Invoice
-        pw.SizedBox(height: 8),
-        pw.Container(
-          width: double.infinity,
-          height: 4, // Gleiche Dicke wie bei Invoice
-          color: blackColor,
-        ),
-
-        pw.SizedBox(height: 15), // Kleinerer Abstand vor "Mit freundlichen Grüßen"
+        pw.SizedBox(height: 20), // Abstand vor "Mit freundlichen Grüßen"
 
         // Unterschrift
         pw.Row(
