@@ -1795,36 +1795,42 @@ class PDFService {
           ],
         ),
 
-        pw.SizedBox(height: 15),
+        pw.SizedBox(height: 20),
 
-        // Betreff
+        // Betreff (wie "Rechnung:" bei Invoice)
         pw.Text(
           invoiceData.letterSubject ?? 'Brief',
           style: pw.TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: pw.FontWeight.bold,
             color: blackColor,
           ),
         ),
 
-        pw.SizedBox(height: 10),
-
-        // Begrüßung
-        pw.Text(
-          invoiceData.customerSalutation + ',',
-          style: pw.TextStyle(fontSize: 10),
-        ),
-        
         pw.SizedBox(height: 15),
 
-        // Brief-Inhalt
+        // Begrüßung (wie bei Invoice)
+        pw.Text(
+          invoiceData.customerSalutation + ',',
+          style: pw.TextStyle(fontSize: 11),
+        ),
+        pw.SizedBox(height: 12), // Absatz nach Begrüßung (wie bei Invoice)
+        
+        // Brief-Inhalt (wie bei Invoice)
         pw.Text(
           invoiceData.letterContent ?? '',
-          style: pw.TextStyle(fontSize: 10),
+          style: pw.TextStyle(fontSize: 11),
         ),
         
-        // Fester Abstand statt dynamisch (1-2 Absätze)
-        pw.SizedBox(height: 25),
+        // Schwarze Linie unter Text - gleiche Dicke wie bei Invoice
+        pw.SizedBox(height: 8),
+        pw.Container(
+          width: double.infinity,
+          height: 4, // Gleiche Dicke wie bei Invoice
+          color: blackColor,
+        ),
+
+        pw.SizedBox(height: 15), // Kleinerer Abstand vor "Mit freundlichen Grüßen"
 
         // Unterschrift
         pw.Row(
