@@ -126,7 +126,7 @@ class PDFService {
                 ),
                 // Hauptinhalt
                 pw.Positioned(
-                  left: 10, right: 40, top: 40, bottom: 40,
+                  left: 30, right: 40, top: 40, bottom: 40,
                   child: _buildPageWithFooter(
                     _buildLetterPage(invoiceData, logoToUse, stampToUse),
                     invoiceData,
@@ -195,7 +195,7 @@ class PDFService {
               ),
               // Hauptinhalt mit eigenem Margin
               pw.Positioned(
-                left: 10,
+                left: 30,
                 right: 40,
                 top: 40,
                 bottom: 40,
@@ -254,7 +254,7 @@ class PDFService {
                   ),
                   // Hauptinhalt mit eigenem Margin
                   pw.Positioned(
-                    left: 10, right: 40, top: 40, bottom: 40,
+                    left: 30, right: 40, top: 40, bottom: 40,
                     child: _buildPageWithFooter(
                       // Letzte Seite bekommt Zusammenfassung dazu
                       currentPageNumber == totalPages 
