@@ -217,13 +217,13 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Taxi-Service-Tamm',
+                          'Taxi Tamm',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'Heilbronner Str. 30\n71732 Tamm',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Colors.grey[600],
                           ),
                         ),
@@ -299,13 +299,13 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Rechnung erstellen',
+                          'Rechnung',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          'Normale Rechnung mit Fahrten',
+                          'Mit Fahrten',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Colors.grey[600],
                           ),
                         ),
@@ -327,13 +327,13 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Brief erstellen',
+                          'Brief',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          'Freier Text mit Betreff',
+                          'Mit Betreff',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Colors.grey[600],
                           ),
                         ),

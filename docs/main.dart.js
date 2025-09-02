@@ -101521,22 +101521,22 @@ r=B.dD(B.aEN(q,B.bC(s,o,o,o,o,o,o,o),r,B.N9(o,o,A.ct,o,o,o,o,o,o,A.P,o,o,o,o,o,o
 s=p.db?o:p.gajL()
 s=B.e8(B.aAx(A.St,A.Lf,s,B.aAy(o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,new B.bh(A.ct,1,A.a9,-1),o,o,o,o)),1)
 q=p.db?o:p.gaky()
-m.push(B.d7(B.a([r,A.bH,B.e9(B.a([s,A.qs,B.e8(B.aAx(A.Ss,A.aV8,q,B.aAy(o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,new B.bh(A.ct,1,A.a9,-1),o,o,o,o)),1)],n),A.aw,A.a5,A.ah),A.bH,B.dD(B.aUD(A.Sb,A.aUS,p.gajm(),B.Fq(o,o,o,o,o,o,o,o,o,A.cC,o,o,o,o,o,o,o,o,o)),o,1/0)],n),A.aw,A.a5,A.ah))
-return new B.Es(new B.zy(A.aV3,2,A.ct,A.P,new B.YD(o,o,1/0,56),o),B.aF5(o,B.nL(A.bd,new B.dM(new B.asC(a),B.aB8(B.d7(m,A.dm,A.a5,A.ah),A.dq,A.t8),o,t.WA),A.b6,!1,o,o,o,o,o,o,o,o,o,o,o,o,o,new B.asD(a),o,o,o,o,o,o),p.d),o)},
-a7u(){var s,r=this,q=null,p=B.bC("Standort ausw\xe4hlen",q,q,q,B.d_(q,q,A.bW,q,q,q,q,q,q,q,q,18,q,q,A.bw,q,q,!0,q,q,q,q,q,q,q,q),q,q,q),o=t.D,n=B.d7(B.a([A.aVg,B.bC("Heilbronner Str. 30\n71732 Tamm",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,12,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah),m=t.f2
+m.push(B.d7(B.a([r,A.bH,B.e9(B.a([s,A.qs,B.e8(B.aAx(A.Ss,A.aVa,q,B.aAy(o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,new B.bh(A.ct,1,A.a9,-1),o,o,o,o)),1)],n),A.aw,A.a5,A.ah),A.bH,B.dD(B.aUD(A.Sb,A.aUT,p.gajm(),B.Fq(o,o,o,o,o,o,o,o,o,A.cC,o,o,o,o,o,o,o,o,o)),o,1/0)],n),A.aw,A.a5,A.ah))
+return new B.Es(new B.zy(A.aV5,2,A.ct,A.P,new B.YD(o,o,1/0,56),o),B.aF5(o,B.nL(A.bd,new B.dM(new B.asC(a),B.aB8(B.d7(m,A.dm,A.a5,A.ah),A.dq,A.t8),o,t.WA),A.b6,!1,o,o,o,o,o,o,o,o,o,o,o,o,o,new B.asD(a),o,o,o,o,o,o),p.d),o)},
+a7u(){var s,r=this,q=null,p=B.bC("Standort ausw\xe4hlen",q,q,q,B.d_(q,q,A.bW,q,q,q,q,q,q,q,q,18,q,q,A.bw,q,q,!0,q,q,q,q,q,q,q,q),q,q,q),o=t.D,n=B.d7(B.a([A.aUX,B.bC("Heilbronner Str. 30\n71732 Tamm",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,11,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah),m=t.f2
 n=B.e8(B.DM(A.ct,r.dx,new B.as9(r),n,A.mi,m),1)
-s=B.d7(B.a([A.aV5,B.bC("Waldeck Str. 7\n74371 Sersheim",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,12,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah)
+s=B.d7(B.a([A.aV7,B.bC("Waldeck Str. 7\n74371 Sersheim",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,12,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah)
 return B.pS(new B.bP(A.dq,B.d7(B.a([p,A.bl,B.e9(B.a([n,B.e8(B.DM(A.ct,r.dx,new B.asa(r),s,A.aQ9,m),1)],o),A.aw,A.a5,A.ah)],o),A.b5,A.a5,A.ah),q),q)},
-a7o(){var s,r=this,q=null,p=B.bC("Dokumenttyp ausw\xe4hlen",q,q,q,B.d_(q,q,A.bW,q,q,q,q,q,q,q,q,18,q,q,A.bw,q,q,!0,q,q,q,q,q,q,q,q),q,q,q),o=t.D,n=B.d7(B.a([A.aVc,B.bC("Normale Rechnung mit Fahrten",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,12,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah),m=t.ef
+a7o(){var s,r=this,q=null,p=B.bC("Dokumenttyp ausw\xe4hlen",q,q,q,B.d_(q,q,A.bW,q,q,q,q,q,q,q,q,18,q,q,A.bw,q,q,!0,q,q,q,q,q,q,q,q),q,q,q),o=t.D,n=B.d7(B.a([A.aUR,B.bC("Mit Fahrten",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,11,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah),m=t.ef
 n=B.e8(B.DM(A.ct,r.fr,new B.as2(r),n,A.hs,m),1)
-s=B.d7(B.a([A.aV2,B.bC("Freier Text mit Betreff",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,12,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah)
+s=B.d7(B.a([A.aV3,B.bC("Mit Betreff",q,q,q,B.d_(q,q,A.cC,q,q,q,q,q,q,q,q,11,q,q,q,q,q,!0,q,q,q,q,q,q,q,q),q,q,q)],o),A.b5,A.a5,A.ah)
 return B.pS(new B.bP(A.dq,B.d7(B.a([p,A.bl,B.e9(B.a([n,B.e8(B.DM(A.ct,r.fr,new B.as3(r),s,A.ek,m),1)],o),A.aw,A.a5,A.ah)],o),A.b5,A.a5,A.ah),q),q)},
 a7t(){var s=this,r=null
 return B.pS(new B.bP(A.dq,B.d7(B.a([B.bC("Brief-Inhalt",r,r,r,B.d_(r,r,A.bW,r,r,r,r,r,r,r,r,18,r,r,A.bw,r,r,!0,r,r,r,r,r,r,r,r),r,r,r),A.bl,B.eZ(!1,s.fx,A.SC,r,r,1,r,r,A.mk,new B.as5(s)),A.bl,B.eZ(!1,s.fy,A.SG,r,r,8,r,r,A.mk,new B.as6(s))],t.D),A.b5,A.a5,A.ah),r),r)},
 a7n(){var s=this,r=null,q=B.bC("Kundendaten",r,r,r,B.d_(r,r,A.bW,r,r,r,r,r,r,r,r,18,r,r,A.bw,r,r,!0,r,r,r,r,r,r,r,r),r,r,r),p=B.eZ(!1,s.f,A.SP,r,r,1,r,r,A.e1,r),o=B.eZ(!1,s.e,A.SB,r,r,1,r,r,A.e1,new B.arV(s)),n=B.eZ(!1,s.r,A.SL,r,r,1,r,r,A.e1,new B.arW()),m=t.D,l=B.e9(B.a([B.e8(B.eZ(!1,s.w,A.SF,r,A.ml,1,r,r,A.e2,new B.arX()),1),A.qs,B.e8(B.eZ(!1,s.x,A.SK,r,r,1,r,r,A.e1,new B.arY()),2)],m),A.aw,A.a5,A.ah),k=B.bC("Anrede",r,r,r,B.d_(r,r,A.eg,r,r,r,r,r,r,r,r,16,r,r,A.aP,r,r,!0,r,r,r,r,r,r,r,r),r,r,r),j=s.dy,i=t.M8
-return B.pS(new B.bP(A.dq,B.d7(B.a([q,A.bl,p,A.bH,o,A.bH,n,A.bH,l,A.bH,k,A.iC,B.e9(B.a([B.e8(B.DM(r,j,new B.arZ(s),A.aVd,A.nF,i),1),B.e8(B.DM(r,j,new B.as_(s),A.aUX,A.hn,i),1)],m),A.aw,A.a5,A.ah)],m),A.b5,A.a5,A.ah),r),r)},
-a7I(){var s=this,r=null,q=B.bC("Neue Fahrt hinzuf\xfcgen",r,r,r,B.d_(r,r,A.bW,r,r,r,r,r,r,r,r,18,r,r,A.bw,r,r,!0,r,r,r,r,r,r,r,r),r,r,r),p=B.m4(!1,r,!0,B.Oi(r,B.bC(B.q5("dd.MM.yyyy").kW(s.cx),r,r,r,r,r,r,r),A.SR,!1,!1,!1,!1,r,r),r,!0,r,r,r,r,r,r,r,r,r,r,new B.asd(s),r,r,r,r,r),o=B.eZ(!1,s.at,A.SH,r,r,1,r,r,A.mk,r),n=B.eZ(!1,s.ax,A.SD,r,r,1,r,r,A.e1,r),m=B.eZ(!1,s.ay,A.SO,r,r,1,r,r,A.e1,r),l=B.eZ(!1,s.ch,A.SM,r,A.aQw,1,r,r,A.e2,r),k=B.e8(B.aEN(A.Sp,A.aUW,s.ga6V(),B.N9(r,r,A.Pj,r,r,r,r,r,r,A.M,r,r,A.u1,r,r,r,r,r,r)),2),j=s.cy.length===0,i=j?r:s.gaa5(),h=t.D
-return B.pS(new B.bP(A.dq,B.d7(B.a([q,A.bl,p,A.bH,o,A.bH,n,A.bH,m,A.bH,l,A.bl,B.e9(B.a([k,A.mh,B.e8(B.aAx(A.Sk,A.aV6,i,B.aAy(r,r,r,r,r,r,r,r,r,A.hh,r,r,A.u1,r,r,new B.bh(j?A.hf:A.hh,1,A.a9,-1),r,r,r,r)),1)],h),A.aw,A.a5,A.ah)],h),A.b5,A.a5,A.ah),r),r)},
+return B.pS(new B.bP(A.dq,B.d7(B.a([q,A.bl,p,A.bH,o,A.bH,n,A.bH,l,A.bH,k,A.iC,B.e9(B.a([B.e8(B.DM(r,j,new B.arZ(s),A.aVe,A.nF,i),1),B.e8(B.DM(r,j,new B.as_(s),A.aUZ,A.hn,i),1)],m),A.aw,A.a5,A.ah)],m),A.b5,A.a5,A.ah),r),r)},
+a7I(){var s=this,r=null,q=B.bC("Neue Fahrt hinzuf\xfcgen",r,r,r,B.d_(r,r,A.bW,r,r,r,r,r,r,r,r,18,r,r,A.bw,r,r,!0,r,r,r,r,r,r,r,r),r,r,r),p=B.m4(!1,r,!0,B.Oi(r,B.bC(B.q5("dd.MM.yyyy").kW(s.cx),r,r,r,r,r,r,r),A.SR,!1,!1,!1,!1,r,r),r,!0,r,r,r,r,r,r,r,r,r,r,new B.asd(s),r,r,r,r,r),o=B.eZ(!1,s.at,A.SH,r,r,1,r,r,A.mk,r),n=B.eZ(!1,s.ax,A.SD,r,r,1,r,r,A.e1,r),m=B.eZ(!1,s.ay,A.SO,r,r,1,r,r,A.e1,r),l=B.eZ(!1,s.ch,A.SM,r,A.aQw,1,r,r,A.e2,r),k=B.e8(B.aEN(A.Sp,A.aUY,s.ga6V(),B.N9(r,r,A.Pj,r,r,r,r,r,r,A.M,r,r,A.u1,r,r,r,r,r,r)),2),j=s.cy.length===0,i=j?r:s.gaa5(),h=t.D
+return B.pS(new B.bP(A.dq,B.d7(B.a([q,A.bl,p,A.bH,o,A.bH,n,A.bH,m,A.bH,l,A.bl,B.e9(B.a([k,A.mh,B.e8(B.aAx(A.Sk,A.aV8,i,B.aAy(r,r,r,r,r,r,r,r,r,A.hh,r,r,A.u1,r,r,new B.bh(j?A.hf:A.hh,1,A.a9,-1),r,r,r,r)),1)],h),A.aw,A.a5,A.ah)],h),A.b5,A.a5,A.ah),r),r)},
 a7J(){var s=null,r=B.bC("Hinzugef\xfcgte Fahrten",s,s,s,B.d_(s,s,A.bW,s,s,s,s,s,s,s,s,18,s,s,A.bw,s,s,!0,s,s,s,s,s,s,s,s),s,s,s),q=B.km(20),p=this.cy,o=p.length,n=o===1?"":"en",m=t.D
 q=B.a([B.e9(B.a([r,A.KW,B.lJ(s,B.bC(""+o+" Fahrt"+n,s,s,s,B.d_(s,s,A.tB,s,s,s,s,s,s,s,s,s,s,s,A.bw,s,s,!0,s,s,s,s,s,s,s,s),s,s,s),A.ag,s,new B.dZ(A.nv,s,s,q,s,s,A.bM),s,s,s,A.QG,s,s,s)],m),A.aw,A.a5,A.ah),A.bl],m)
 r=p.length
@@ -101557,7 +101557,7 @@ if(o==null)o=7
 s=A.o.mH(this.cy,0,new B.asb())
 r=s/(1+o/100)
 q=t.D
-return B.pS(new B.bP(A.dq,B.d7(B.a([B.bC("Zusammenfassung",p,p,p,B.d_(p,p,A.bW,p,p,p,p,p,p,p,p,18,p,p,A.bw,p,p,!0,p,p,p,p,p,p,p,p),p,p,p),A.bl,B.e9(B.a([A.aUN,B.bC(A.m.a9(r,2)+" \u20ac",p,p,p,A.iH,p,p,p)],q),A.aw,A.i6,A.ah),A.iC,B.e9(B.a([B.bC("MwSt. "+A.m.n(o)+"%:",p,p,p,A.iH,p,p,p),B.bC(A.m.a9(s-r,2)+" \u20ac",p,p,p,A.iH,p,p,p)],q),A.aw,A.i6,A.ah),A.jv,B.e9(B.a([A.aVa,B.bC(A.m.a9(s,2)+" \u20ac",p,p,p,A.Ld,p,p,p)],q),A.aw,A.i6,A.ah)],q),A.b5,A.a5,A.ah),p),A.OO)},
+return B.pS(new B.bP(A.dq,B.d7(B.a([B.bC("Zusammenfassung",p,p,p,B.d_(p,p,A.bW,p,p,p,p,p,p,p,p,18,p,p,A.bw,p,p,!0,p,p,p,p,p,p,p,p),p,p,p),A.bl,B.e9(B.a([A.aUN,B.bC(A.m.a9(r,2)+" \u20ac",p,p,p,A.iH,p,p,p)],q),A.aw,A.i6,A.ah),A.iC,B.e9(B.a([B.bC("MwSt. "+A.m.n(o)+"%:",p,p,p,A.iH,p,p,p),B.bC(A.m.a9(s-r,2)+" \u20ac",p,p,p,A.iH,p,p,p)],q),A.aw,A.i6,A.ah),A.jv,B.e9(B.a([A.aVc,B.bC(A.m.a9(s,2)+" \u20ac",p,p,p,A.Ld,p,p,p)],q),A.aw,A.i6,A.ah)],q),A.b5,A.a5,A.ah),p),A.OO)},
 zZ(){var s=0,r=B.R(t.H),q=this,p,o,n
 var $async$zZ=B.S(function(a,b){if(a===1)return B.O(b,r)
 while(true)switch(s){case 0:n=q.c
@@ -101893,7 +101893,7 @@ $0(){this.a.cy[this.b]=this.c},
 $S:0}
 B.asl.prototype={
 $1(a){var s=null
-return B.azg(B.a([B.td(!1,A.qH,s,s,s,s,s,s,new B.asj(a),s,s),B.td(!1,A.aUO,s,s,s,s,s,s,new B.ask(this.a,this.b,a),s,B.Fq(s,s,s,s,s,s,s,s,s,A.py,s,s,s,s,s,s,s,s,s))],t.D),A.aUQ,A.aUZ)},
+return B.azg(B.a([B.td(!1,A.qH,s,s,s,s,s,s,new B.asj(a),s,s),B.td(!1,A.aUO,s,s,s,s,s,s,new B.ask(this.a,this.b,a),s,B.Fq(s,s,s,s,s,s,s,s,s,A.py,s,s,s,s,s,s,s,s,s))],t.D),A.aUQ,A.aV0)},
 $S:544}
 B.asj.prototype={
 $0(){return B.h4(this.a,!1).eD()},
@@ -101982,8 +101982,8 @@ s=B.m4(!1,o,!0,B.Oi(o,B.bC(A.t.du(A.l.k(B.cI(s)),2,"0")+"."+A.t.du(A.l.k(B.bo(p.
 r=p.d
 r===$&&B.b()
 q=t.D
-r=B.d7(B.a([m,A.iC,l,A.iC,n,A.bl,A.jv,A.bl,A.aV1,A.bH,s,A.bH,B.eZ(!1,r,A.uK,o,A.ml,1,o,o,A.e2,o)],q),A.b5,A.a5,A.cx)
-return B.azg(B.a([B.td(!1,A.qH,o,o,o,o,o,o,new B.aqd(a),o,o),B.aEL(!1,A.aVf,o,o,o,o,o,o,new B.aqe(p,a),o,B.N9(o,o,A.hh,o,o,o,o,o,o,A.M,o,o,o,o,o,o,o,o,o))],q),r,A.aUY)},
+r=B.d7(B.a([m,A.iC,l,A.iC,n,A.bl,A.jv,A.bl,A.aV4,A.bH,s,A.bH,B.eZ(!1,r,A.uK,o,A.ml,1,o,o,A.e2,o)],q),A.b5,A.a5,A.cx)
+return B.azg(B.a([B.td(!1,A.qH,o,o,o,o,o,o,new B.aqd(a),o,o),B.aEL(!1,A.aVg,o,o,o,o,o,o,new B.aqe(p,a),o,B.N9(o,o,A.hh,o,o,o,o,o,o,A.M,o,o,o,o,o,o,o,o,o))],q),r,A.aV_)},
 m(){var s=this.d
 s===$&&B.b()
 s.R$=$.ap()
@@ -102051,7 +102051,7 @@ p=n.r
 p===$&&B.b()
 o=t.D
 p=B.aB8(B.d7(B.a([l,A.bH,s,A.bH,r,A.bH,q,A.bH,B.eZ(!1,p,A.uK,m,A.ml,1,m,m,A.e2,m)],o),A.b5,A.a5,A.cx),m,m)
-return B.azg(B.a([B.td(!1,A.qH,m,m,m,m,m,m,new B.aqh(a),m,m),B.aEL(!1,A.Lf,m,m,m,m,m,m,new B.aqi(n,a),m,B.N9(m,m,A.jf,m,m,m,m,m,m,A.M,m,m,m,m,m,m,m,m,m))],o),p,A.aUT)},
+return B.azg(B.a([B.td(!1,A.qH,m,m,m,m,m,m,new B.aqh(a),m,m),B.aEL(!1,A.Lf,m,m,m,m,m,m,new B.aqi(n,a),m,B.N9(m,m,A.jf,m,m,m,m,m,m,A.M,m,m,m,m,m,m,m,m,m))],o),p,A.aUU)},
 m(){var s,r=this,q=r.d
 q===$&&B.b()
 s=q.R$=$.ap()
@@ -102132,7 +102132,7 @@ p=i.a
 if(p.length!==0){o=i.Q===A.hn?"Frau":"Herr"
 A.o.X(q,B.a([B.aM(o,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m),B.aM(p,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m)],r))}q.push(B.aM(i.c,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m))
 q.push(B.aM(i.d+" "+i.e,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m))
-s=B.fv(B.a([B.bK(B.cz(q,A.ak),m,m,140,m,m,280),new B.bb(30,m,m),B.bK(B.cz(B.a([B.cz(B.a([B.aB2(m,A.iF,m,new B.f_(m,B.a([new B.f_("Ihr Ansprechpartner: ",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.aM,m,!0,m,m,m,m),0,m),new B.f_(l,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.bP,m,!0,m,m,m,m),0,m)],t.XW),m,0,m),A.e0,m,1,!1),B.aM("Abteilung: Rechnung u. Bearbeitung",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),new B.bb(m,8,m),B.aM("Telefon: "+B.a4F(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),B.aM("E-Mail: "+B.a4E(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0)],r),A.ak),new B.bb(m,15,m),B.cz(B.a([B.jO("Rechnung Nr.:",i.f),B.jO("IK Nr.:","600851512"),B.jO("Steuer Nr.:","7110247350"),B.jO("Datum:",B.q5("dd.MM.yyyy").kW(i.r))],r),A.ak)],r),A.ak),m,m,m,m,m,200)],r),A.ak,A.cc,A.bS)
+s=B.fv(B.a([B.bK(B.cz(q,A.ak),m,m,140,m,m,250),new B.bb(50,m,m),B.bK(B.cz(B.a([B.cz(B.a([B.aB2(m,A.iF,m,new B.f_(m,B.a([new B.f_("Ihr Ansprechpartner: ",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.aM,m,!0,m,m,m,m),0,m),new B.f_(l,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.bP,m,!0,m,m,m,m),0,m)],t.XW),m,0,m),A.e0,m,1,!1),B.aM("Abteilung: Rechnung u. Bearbeitung",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),new B.bb(m,8,m),B.aM("Telefon: "+B.a4F(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),B.aM("E-Mail: "+B.a4E(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0)],r),A.ak),new B.bb(m,15,m),B.cz(B.a([B.jO("Rechnung Nr.:",i.f),B.jO("IK Nr.:","600851512"),B.jO("Steuer Nr.:","7110247350"),B.jO("Datum:",B.q5("dd.MM.yyyy").kW(i.r))],r),A.ak)],r),A.ak),m,m,m,m,m,200)],r),A.ak,A.cc,A.bS)
 q=i.ax
 if(q==null)q="Brief"
 q=B.aM(q,m,B.aB(m,A.br,m,m,m,m,m,m,m,A.Q,m,m,14,m,A.aM,m,!0,m,m,m,m),m)
@@ -111701,14 +111701,14 @@ A.RR=new B.cB(57785,!1)
 A.Sw=new B.dc(A.RR,16,A.py,null,null)
 A.mh=new B.f8(8,null,null,null)
 A.aTO=new B.q(!0,A.py,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-A.aV7=new B.cj("L\xf6schen",null,A.aTO,null,null,null,null,null,null,null)
-A.aFc=B.a(s([A.Sw,A.mh,A.aV7]),t.D)
+A.aV9=new B.cj("L\xf6schen",null,A.aTO,null,null,null,null,null,null,null)
+A.aFc=B.a(s([A.Sw,A.mh,A.aV9]),t.D)
 A.aNg=new B.wC(A.c6,A.a5,A.ah,A.aw,null,A.cW,null,0,A.aFc,null)
 A.aML=new B.wa("delete",A.aNg,null,t.wI)
 A.RU=new B.cB(57882,!1)
 A.Si=new B.dc(A.RU,16,null,null,null)
-A.aUV=new B.cj("Bearbeiten",null,null,null,null,null,null,null,null,null)
-A.aBH=B.a(s([A.Si,A.mh,A.aUV]),t.D)
+A.aUW=new B.cj("Bearbeiten",null,null,null,null,null,null,null,null,null)
+A.aBH=B.a(s([A.Si,A.mh,A.aUW]),t.D)
 A.aNf=new B.wC(A.c6,A.a5,A.ah,A.aw,null,A.cW,null,0,A.aBH,null)
 A.aMM=new B.wa("edit",A.aNf,null,t.wI)
 A.aMN=new B.wc(null,null,null,null,null,null,null,null,null,null,null,null,null)
@@ -112007,24 +112007,24 @@ A.aPu=new B.l9(3,"hide")
 A.aZm=new B.l9(4,"remove")
 A.KU=new B.l9(5,"timeout")
 A.aPv=new B.wT(null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-A.aVb=new B.cj("Duplikat-Fahrt wurde hinzugef\xfcgt",null,null,null,null,null,null,null,null,null)
-A.aPw=new B.h8(A.aVb,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
-A.aUR=new B.cj("Bitte g\xfcltigen Preis eingeben",null,null,null,null,null,null,null,null,null)
-A.qt=new B.h8(A.aUR,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
-A.aV0=new B.cj("PDF Vorschau erfolgreich erstellt!",null,null,null,null,null,null,null,null,null)
-A.aPx=new B.h8(A.aV0,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
-A.aVe=new B.cj("Fahrt wurde bearbeitet",null,null,null,null,null,null,null,null,null)
-A.aPy=new B.h8(A.aVe,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aVd=new B.cj("Duplikat-Fahrt wurde hinzugef\xfcgt",null,null,null,null,null,null,null,null,null)
+A.aPw=new B.h8(A.aVd,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aUS=new B.cj("Bitte g\xfcltigen Preis eingeben",null,null,null,null,null,null,null,null,null)
+A.qt=new B.h8(A.aUS,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aV2=new B.cj("PDF Vorschau erfolgreich erstellt!",null,null,null,null,null,null,null,null,null)
+A.aPx=new B.h8(A.aV2,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aVf=new B.cj("Fahrt wurde bearbeitet",null,null,null,null,null,null,null,null,null)
+A.aPy=new B.h8(A.aVf,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
 A.aUP=new B.cj("Formular wurde zur\xfcckgesetzt - bereit f\xfcr neue Rechnung",null,null,null,null,null,null,null,null,null)
 A.aPz=new B.h8(A.aUP,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
-A.aUU=new B.cj("Bitte alle Felder ausf\xfcllen",null,null,null,null,null,null,null,null,null)
-A.aPA=new B.h8(A.aUU,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
-A.aV9=new B.cj("PDF erfolgreich gespeichert!",null,null,null,null,null,null,null,null,null)
-A.aPB=new B.h8(A.aV9,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
-A.aV4=new B.cj("Bitte alle Fahrt-Felder ausf\xfcllen",null,null,null,null,null,null,null,null,null)
-A.aPC=new B.h8(A.aV4,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
-A.aV_=new B.cj("Fahrt wurde gel\xf6scht",null,null,null,null,null,null,null,null,null)
-A.aPD=new B.h8(A.aV_,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aUV=new B.cj("Bitte alle Felder ausf\xfcllen",null,null,null,null,null,null,null,null,null)
+A.aPA=new B.h8(A.aUV,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aVb=new B.cj("PDF erfolgreich gespeichert!",null,null,null,null,null,null,null,null,null)
+A.aPB=new B.h8(A.aVb,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aV6=new B.cj("Bitte alle Fahrt-Felder ausf\xfcllen",null,null,null,null,null,null,null,null,null)
+A.aPC=new B.h8(A.aV6,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
+A.aV1=new B.cj("Fahrt wurde gel\xf6scht",null,null,null,null,null,null,null,null,null)
+A.aPD=new B.h8(A.aV1,null,null,null,null,null,null,null,null,null,null,null,null,A.cD,null,null,null,A.ap,null)
 A.KV=new B.F3(0,"permissive")
 A.aPE=new B.F3(1,"normal")
 A.aPF=new B.F3(2,"forced")
@@ -112407,24 +112407,24 @@ A.aUN=new B.cj("Netto:",null,A.iH,null,null,null,null,null,null,null)
 A.aUO=new B.cj("L\xf6schen",null,null,null,null,null,null,null,null,null)
 A.Lf=new B.cj("Speichern",null,null,null,null,null,null,null,null,null)
 A.aUQ=new B.cj("M\xf6chten Sie diese Fahrt wirklich l\xf6schen?",null,null,null,null,null,null,null,null,null)
+A.aUR=new B.cj("Rechnung",null,A.e3,null,null,null,null,null,null,null)
 A.qH=new B.cj("Abbrechen",null,null,null,null,null,null,null,null,null)
-A.aUS=new B.cj("Neue Rechnung",null,null,null,null,null,null,null,null,null)
-A.aUT=new B.cj("Fahrt bearbeiten",null,null,null,null,null,null,null,null,null)
-A.aUW=new B.cj("Fahrt hinzuf\xfcgen",null,null,null,null,null,null,null,null,null)
-A.aUX=new B.cj("Frau",null,null,null,null,null,null,null,null,null)
-A.aUY=new B.cj("Fahrt duplizieren",null,null,null,null,null,null,null,null,null)
-A.aUZ=new B.cj("Fahrt l\xf6schen",null,null,null,null,null,null,null,null,null)
-A.aV1=new B.cj("Editierbare Felder:",null,A.e3,null,null,null,null,null,null,null)
-A.aV2=new B.cj("Brief erstellen",null,A.e3,null,null,null,null,null,null,null)
-A.aV3=new B.cj("Taxi Rechnung erstellen",null,null,null,null,null,null,null,null,null)
-A.aV5=new B.cj("Taxi Sersheim",null,A.e3,null,null,null,null,null,null,null)
-A.aV6=new B.cj("Duplicate",null,null,null,null,null,null,null,null,null)
-A.aV8=new B.cj("Teilen",null,null,null,null,null,null,null,null,null)
-A.aVa=new B.cj("Gesamtbetrag:",null,A.Ld,null,null,null,null,null,null,null)
-A.aVc=new B.cj("Rechnung erstellen",null,A.e3,null,null,null,null,null,null,null)
-A.aVd=new B.cj("Herr",null,null,null,null,null,null,null,null,null)
-A.aVf=new B.cj("Duplizieren",null,null,null,null,null,null,null,null,null)
-A.aVg=new B.cj("Taxi-Service-Tamm",null,A.e3,null,null,null,null,null,null,null)
+A.aUT=new B.cj("Neue Rechnung",null,null,null,null,null,null,null,null,null)
+A.aUU=new B.cj("Fahrt bearbeiten",null,null,null,null,null,null,null,null,null)
+A.aUX=new B.cj("Taxi Tamm",null,A.e3,null,null,null,null,null,null,null)
+A.aUY=new B.cj("Fahrt hinzuf\xfcgen",null,null,null,null,null,null,null,null,null)
+A.aUZ=new B.cj("Frau",null,null,null,null,null,null,null,null,null)
+A.aV_=new B.cj("Fahrt duplizieren",null,null,null,null,null,null,null,null,null)
+A.aV0=new B.cj("Fahrt l\xf6schen",null,null,null,null,null,null,null,null,null)
+A.aV3=new B.cj("Brief",null,A.e3,null,null,null,null,null,null,null)
+A.aV4=new B.cj("Editierbare Felder:",null,A.e3,null,null,null,null,null,null,null)
+A.aV5=new B.cj("Taxi Rechnung erstellen",null,null,null,null,null,null,null,null,null)
+A.aV7=new B.cj("Taxi Sersheim",null,A.e3,null,null,null,null,null,null,null)
+A.aV8=new B.cj("Duplicate",null,null,null,null,null,null,null,null,null)
+A.aVa=new B.cj("Teilen",null,null,null,null,null,null,null,null,null)
+A.aVc=new B.cj("Gesamtbetrag:",null,A.Ld,null,null,null,null,null,null,null)
+A.aVe=new B.cj("Herr",null,null,null,null,null,null,null,null,null)
+A.aVg=new B.cj("Duplizieren",null,null,null,null,null,null,null,null,null)
 A.aZq=new B.am7(0,"system")
 A.aJz=new B.m(0.056,0.024)
 A.aJO=new B.m(0.108,0.3085)
