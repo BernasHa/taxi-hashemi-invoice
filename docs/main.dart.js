@@ -102124,7 +102124,7 @@ if(h!=null)h=B.nQ(h,A.di)
 else{h=B.LG(m,A.ib,A.n9)
 h=B.bK(B.azu(B.aM("T",m,B.aB(m,A.br,m,m,m,m,m,m,m,A.Q,m,m,36,m,A.aM,m,!0,m,m,m,m),m)),m,h,m,m,m,m)}s=i.z
 r=t.T
-h=B.cz(B.a([B.fv(B.a([B.bK(h,m,m,80,m,m,80),new B.bb(5,m,m),B.aM(B.lH(s),m,B.aB(m,A.br,m,m,m,m,m,m,m,A.Q,m,m,18,m,A.aM,m,!0,m,m,m,m),m)],r),A.cl,A.cc,A.pu),new B.bb(m,3,m),B.bK(B.aM(B.lH(s)+", "+B.a4C(s)+", "+B.a4G(s)+" "+B.a4D(s),1,B.aB(m,A.pJ,m,m,m,m,m,m,m,A.Q,m,m,7,m,m,m,!0,m,m,m,m),m),m,m,m,m,m,250)],r),A.ak)
+h=B.cz(B.a([B.fv(B.a([B.bK(h,m,m,65,m,m,65),new B.bb(5,m,m),B.aM(B.lH(s),m,B.aB(m,A.br,m,m,m,m,m,m,m,A.Q,m,m,18,m,A.aM,m,!0,m,m,m,m),m)],r),A.cl,A.cc,A.pu),new B.bb(m,3,m),B.bK(B.aM(B.lH(s)+", "+B.a4C(s)+", "+B.a4G(s)+" "+B.a4D(s),1,B.aB(m,A.pJ,m,m,m,m,m,m,m,A.Q,m,m,7,m,m,m,!0,m,m,m,m),m),m,m,m,m,m,250)],r),A.ak)
 q=B.a([],r)
 p=i.b
 if(p!=null&&p.length!==0)q.push(B.aM(B.p(p),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,A.bP,m,!0,m,m,m,m),m))
@@ -102132,7 +102132,7 @@ p=i.a
 if(p.length!==0){o=i.Q===A.hn?"Frau":"Herr"
 A.o.X(q,B.a([B.aM(o,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m),B.aM(p,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m)],r))}q.push(B.aM(i.c,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m))
 q.push(B.aM(i.d+" "+i.e,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,10,m,m,m,!0,m,m,m,m),m))
-s=B.fv(B.a([B.bK(B.cz(q,A.ak),m,m,140,m,m,300),new B.bb(20,m,m),B.bK(B.cz(B.a([B.cz(B.a([B.aB2(m,A.iF,m,new B.f_(m,B.a([new B.f_("Ihr Ansprechpartner: ",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.aM,m,!0,m,m,m,m),0,m),new B.f_(l,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.bP,m,!0,m,m,m,m),0,m)],t.XW),m,0,m),A.e0,m,1,!1),B.aM("Abteilung: Rechnung u. Bearbeitung",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),new B.bb(m,8,m),B.aM("Telefon: "+B.a4F(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),B.aM("E-Mail: "+B.a4E(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0)],r),A.ak),new B.bb(m,15,m),B.cz(B.a([B.jO("Rechnung Nr.:",i.f),B.jO("IK Nr.:","600851512"),B.jO("Steuer Nr.:","7110247350"),B.jO("Datum:",B.q5("dd.MM.yyyy").kW(i.r))],r),A.ak)],r),A.ak),m,m,m,m,m,200)],r),A.ak,A.cc,A.bS)
+s=B.fv(B.a([B.bK(B.cz(q,A.ak),m,m,140,m,m,280),new B.bb(30,m,m),B.bK(B.cz(B.a([B.cz(B.a([B.aB2(m,A.iF,m,new B.f_(m,B.a([new B.f_("Ihr Ansprechpartner: ",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.aM,m,!0,m,m,m,m),0,m),new B.f_(l,m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,A.bP,m,!0,m,m,m,m),0,m)],t.XW),m,0,m),A.e0,m,1,!1),B.aM("Abteilung: Rechnung u. Bearbeitung",m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),new B.bb(m,8,m),B.aM("Telefon: "+B.a4F(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0),B.aM("E-Mail: "+B.a4E(s),m,B.aB(m,m,m,m,m,m,m,m,m,A.Q,m,m,9,m,m,m,!0,m,m,m,m),A.e0)],r),A.ak),new B.bb(m,15,m),B.cz(B.a([B.jO("Rechnung Nr.:",i.f),B.jO("IK Nr.:","600851512"),B.jO("Steuer Nr.:","7110247350"),B.jO("Datum:",B.q5("dd.MM.yyyy").kW(i.r))],r),A.ak)],r),A.ak),m,m,m,m,m,200)],r),A.ak,A.cc,A.bS)
 q=i.ax
 if(q==null)q="Brief"
 q=B.aM(q,m,B.aB(m,A.br,m,m,m,m,m,m,m,A.Q,m,m,14,m,A.aM,m,!0,m,m,m,m),m)
@@ -102186,7 +102186,7 @@ a8=q}else{if(a8!=null)a8=B.nQ(a8,A.di)
 else{a8=B.LG(f,A.ib,A.n9)
 a8=B.bK(B.azu(B.aM("T",f,B.aB(f,A.br,f,f,f,f,f,f,f,A.Q,f,f,36,f,A.aM,f,!0,f,f,f,f),f)),f,a8,f,f,f,f)}s=a7.z
 r=t.T
-a8=B.cz(B.a([B.fv(B.a([B.bK(a8,f,f,80,f,f,80),new B.bb(5,f,f),B.aM(B.lH(s),f,B.aB(f,A.br,f,f,f,f,f,f,f,A.Q,f,f,20,f,A.aM,f,!0,f,f,f,f),f)],r),A.cl,A.cc,A.pu),new B.bb(f,5,f),B.bK(B.aM(B.lH(s)+", "+B.a4C(s)+", "+B.a4G(s)+" "+B.a4D(s),1,B.aB(f,A.pJ,f,f,f,f,f,f,f,A.Q,f,f,8,f,f,f,!0,f,f,f,f),f),f,f,f,f,f,200)],r),A.ak)
+a8=B.cz(B.a([B.fv(B.a([B.bK(a8,f,f,65,f,f,65),new B.bb(5,f,f),B.aM(B.lH(s),f,B.aB(f,A.br,f,f,f,f,f,f,f,A.Q,f,f,20,f,A.aM,f,!0,f,f,f,f),f)],r),A.cl,A.cc,A.pu),new B.bb(f,5,f),B.bK(B.aM(B.lH(s)+", "+B.a4C(s)+", "+B.a4G(s)+" "+B.a4D(s),1,B.aB(f,A.pJ,f,f,f,f,f,f,f,A.Q,f,f,8,f,f,f,!0,f,f,f,f),f),f,f,f,f,f,200)],r),A.ak)
 q=B.a([],r)
 p=a7.b
 if(p!=null&&p.length!==0)q.push(B.aM(B.p(p),f,B.aB(f,f,f,f,f,f,f,f,f,A.Q,f,f,12,f,A.bP,f,!0,f,f,f,f),f))
@@ -111990,8 +111990,8 @@ A.Ok=new B.zV(null)
 A.aPi=new B.f8(20,20,A.Ok,null)
 A.bH=new B.f8(null,12,null,null)
 A.bl=new B.f8(null,16,null,null)
-A.KS=new B.f8(null,20,null,null)
 A.aPj=new B.f8(null,24,null,null)
+A.KS=new B.f8(null,28,null,null)
 A.aPl=new B.f8(null,4,null,null)
 A.iC=new B.f8(null,8,null,null)
 A.aPm=new B.f8(null,null,null,null)

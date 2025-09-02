@@ -362,8 +362,8 @@ class PDFService {
               children: [
                 // Logo - kompakt
                 pw.Container(
-                  width: 80,
-                  height: 80,
+                  width: 65,
+                  height: 65,
                   child: logoImage != null
                       ? pw.Image(logoImage, fit: pw.BoxFit.contain)
                       : pw.Container(
@@ -1624,8 +1624,8 @@ class PDFService {
               children: [
                 // Logo
                 pw.Container(
-                  width: 80,
-                  height: 80,
+                  width: 65,
+                  height: 65,
                   child: logoImage != null
                       ? pw.Image(logoImage, fit: pw.BoxFit.contain)
                       : pw.Container(
@@ -1681,7 +1681,7 @@ class PDFService {
           children: [
             // Empfänger (links)
             pw.Container(
-              width: 300,
+              width: 280,
               height: 140,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1718,7 +1718,7 @@ class PDFService {
               ),
             ),
             
-            pw.SizedBox(width: 20),
+            pw.SizedBox(width: 30),
             
             // Kontaktdaten und Rechnungsdetails (rechts) - exakt wie bei Rechnung
             pw.Container(
