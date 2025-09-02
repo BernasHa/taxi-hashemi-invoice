@@ -104,8 +104,47 @@ class PDFService {
     final logoToUse = customLogo ?? companyLogo;
     final stampToUse = invoiceData.location == TaxiLocation.tamm ? tammStamp : sersheimStamp;
 
-    // VEREINFACHTE Multi-Page Berechnung
-    const int tripsOnFirstPage = 13;
+    // Brief-Modus: Einfache Seite ohne Fahrten
+    if (invoiceData.documentType == DocumentType.letter) {
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(0),
+          build: (pw.Context context) {
+            return pw.Stack(
+              children: [
+                // Falzmarken
+                pw.Positioned(
+                  left: 0,
+                  top: 105 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                ),
+                pw.Positioned(
+                  left: 0,
+                  top: 148.5 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
+                ),
+                // Hauptinhalt
+                pw.Positioned(
+                  left: 20, right: 40, top: 40, bottom: 40,
+                  child: _buildPageWithFooter(
+                    _buildLetterPage(invoiceData, logoToUse, stampToUse),
+                    invoiceData,
+                    1,
+                    1,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+      
+      return pdf.save();
+    }
+
+    // VEREINFACHTE Multi-Page Berechnung für Rechnungen
+    const int tripsOnFirstPage = 9;
     const int tripsPerAdditionalPage = 20;
     final int totalTrips = invoiceData.trips.length;
     
@@ -156,7 +195,7 @@ class PDFService {
               ),
               // Hauptinhalt mit eigenem Margin
               pw.Positioned(
-                left: 40,
+                left: 20,
                 right: 40,
                 top: 40,
                 bottom: 40,
@@ -215,7 +254,7 @@ class PDFService {
                   ),
                   // Hauptinhalt mit eigenem Margin
                   pw.Positioned(
-                    left: 40, right: 40, top: 40, bottom: 40,
+                    left: 20, right: 40, top: 40, bottom: 40,
                     child: _buildPageWithFooter(
                       // Letzte Seite bekommt Zusammenfassung dazu
                       currentPageNumber == totalPages 
@@ -768,7 +807,7 @@ class PDFService {
                 _buildTableHeaderCentered('Fahrt/en:'),
                 _buildTableHeaderCentered('von:'),
                 _buildTableHeaderCentered('nach:'),
-                _buildTableHeaderCentered('Preis:'),
+                _buildTableHeaderRight('Preis:'),
               ],
             ),
           ],
@@ -820,7 +859,7 @@ class PDFService {
                 _buildTableHeaderCentered('Fahrt/en:'),
                 _buildTableHeaderCentered('von:'),
                 _buildTableHeaderCentered('nach:'),
-                _buildTableHeaderCentered('Preis:'),
+                _buildTableHeaderRight('Preis:'),
               ],
             ),
           ],
@@ -865,7 +904,7 @@ class PDFService {
                 _buildTableCell(fahrtText, align: pw.TextAlign.center),
                 _buildTableCell(fromText, fontSize: 8, align: pw.TextAlign.center),
                 _buildTableCell(toText, fontSize: 8, align: pw.TextAlign.center),
-                _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.center),
+                _buildTableCell(trip.formattedPricePdf, align: pw.TextAlign.right),
               ],
             );
           }).toList(),
@@ -986,6 +1025,21 @@ class PDFService {
           color: blackColor,
         ),
         textAlign: pw.TextAlign.center,
+      ),
+    );
+  }
+
+  static pw.Widget _buildTableHeaderRight(String text) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: 10,
+          fontWeight: pw.FontWeight.bold,
+          color: blackColor,
+        ),
+        textAlign: pw.TextAlign.right,
       ),
     );
   }
@@ -1480,7 +1534,10 @@ class PDFService {
         // Kompakte Tabelle
         _buildTripsTable(invoiceData, 0, invoiceData.trips.length),
         
-        pw.SizedBox(height: 60), // Viel größerer Abstand zwischen Tabelle und Verwendungszweck
+        // Dynamischer Abstand - größer bei wenigen Fahrten
+        invoiceData.trips.length <= 2 
+          ? pw.Expanded(child: pw.SizedBox()) // Maximaler Abstand bei 1-2 Fahrten
+          : pw.SizedBox(height: invoiceData.trips.length <= 5 ? 120 : 60), // Mehr Abstand bei wenigen Fahrten
 
         // Zusammenfassung und Unterschrift in einer Zeile
         pw.Row(
@@ -1547,6 +1604,198 @@ class PDFService {
 
         // Flexible Spacer für verbleibendes Layout
         pw.Expanded(child: pw.Container()),
+      ],
+    );
+  }
+
+  // Brief-Seite erstellen
+  static pw.Widget _buildLetterPage(InvoiceData invoiceData, pw.ImageProvider? logoImage, pw.ImageProvider? stamp) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Header mit Logo und Firmenname
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Logo und Firmenname in einer Zeile
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              mainAxisSize: pw.MainAxisSize.min,
+              children: [
+                // Logo
+                pw.Container(
+                  width: 80,
+                  height: 80,
+                  child: logoImage != null
+                      ? pw.Image(logoImage, fit: pw.BoxFit.contain)
+                      : pw.Container(
+                          decoration: pw.BoxDecoration(
+                            color: yellowColor,
+                            shape: pw.BoxShape.circle,
+                          ),
+                          child: pw.Center(
+                            child: pw.Text(
+                              'T',
+                              style: pw.TextStyle(
+                                color: blackColor,
+                                fontSize: 36,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
+                pw.SizedBox(width: 5),
+                // Firmenname
+                pw.Text(
+                  CompanyInfo.getName(invoiceData.location),
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                    color: blackColor,
+                  ),
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 3),
+            // Absender-Adresse unter dem Logo
+            pw.Container(
+              width: 250,
+              child: pw.Text(
+                '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                style: pw.TextStyle(
+                  fontSize: 7,
+                  color: lightGrayColor,
+                ),
+                maxLines: 1,
+              ),
+            ),
+          ],
+        ),
+        
+        pw.SizedBox(height: 20),
+
+        // Empfänger und Kontaktdaten
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Empfänger (links)
+            pw.Container(
+              width: 300,
+              height: 140,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  // Firma (wenn vorhanden)
+                  if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
+                    pw.Text(
+                      '${invoiceData.customerCompany}',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.normal,
+                      ),
+                    ),
+                  // "Herr/Frau" nur wenn Kundenname vorhanden
+                  if (invoiceData.customerName.isNotEmpty) ...[
+                    pw.Text(
+                      invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
+                      style: pw.TextStyle(fontSize: 10),
+                    ),
+                    pw.Text(
+                      '${invoiceData.customerName}',
+                      style: pw.TextStyle(fontSize: 10),
+                    ),
+                  ],
+                  pw.Text(
+                    '${invoiceData.customerStreet}',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.Text(
+                    '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+            // Kontaktdaten (rechts)
+            pw.Container(
+              width: 200,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  _buildDetailRowLeft('Brief Nr.:', invoiceData.invoiceNumber),
+                  _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
+                  _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
+                  _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        pw.SizedBox(height: 15),
+
+        // Betreff
+        pw.Text(
+          invoiceData.letterSubject ?? 'Brief',
+          style: pw.TextStyle(
+            fontSize: 14,
+            fontWeight: pw.FontWeight.bold,
+            color: blackColor,
+          ),
+        ),
+
+        pw.SizedBox(height: 10),
+
+        // Begrüßung
+        pw.Text(
+          invoiceData.customerSalutation + ',',
+          style: pw.TextStyle(fontSize: 10),
+        ),
+        
+        pw.SizedBox(height: 15),
+
+        // Brief-Inhalt
+        pw.Text(
+          invoiceData.letterContent ?? '',
+          style: pw.TextStyle(fontSize: 10),
+        ),
+        
+        // Dynamischer Abstand
+        pw.Expanded(child: pw.SizedBox()),
+
+        // Unterschrift
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Expanded(
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                    'Mit freundlichen Grüßen',
+                    style: pw.TextStyle(fontSize: 10),
+                  ),
+                  pw.SizedBox(height: 2),
+                  if (stamp != null)
+                    pw.Container(
+                      width: 120,
+                      height: 80,
+                      child: pw.Image(stamp, fit: pw.BoxFit.contain),
+                    ),
+                  pw.SizedBox(height: 5),
+                  pw.Text(
+                    CompanyInfo.contactPerson,
+                    style: pw.TextStyle(
+                      fontSize: 11,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

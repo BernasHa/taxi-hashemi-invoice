@@ -37,6 +37,11 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
   bool _isGenerating = false;
   TaxiLocation _selectedLocation = TaxiLocation.tamm;
   CustomerGender _selectedGender = CustomerGender.herr;
+  DocumentType _documentType = DocumentType.invoice;
+  
+  // Controller für Brief-Modus
+  final _letterSubjectController = TextEditingController();
+  final _letterContentController = TextEditingController();
 
   @override
   void initState() {
@@ -152,16 +157,29 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             children: [
               _buildLocationCard(),
               const SizedBox(height: 16),
+              _buildDocumentTypeCard(),
+              const SizedBox(height: 16),
               _buildCustomerDataCard(),
               const SizedBox(height: 16),
-              _buildTripInputCard(),
-              const SizedBox(height: 16),
-              _buildTripListCard(),
-              const SizedBox(height: 16),
-              _buildInvoiceDetailsCard(),
-              const SizedBox(height: 16),
-
-              _buildSummaryCard(),
+              
+              // Brief-Eingabe nur im Brief-Modus
+              if (_documentType == DocumentType.letter) ...[
+                _buildLetterInputCard(),
+                const SizedBox(height: 16),
+              ],
+              
+              // Fahrten-Eingabe nur im Rechnungs-Modus
+              if (_documentType == DocumentType.invoice) ...[
+                _buildTripInputCard(),
+                const SizedBox(height: 16),
+                _buildTripListCard(),
+                const SizedBox(height: 16),
+                _buildInvoiceDetailsCard(),
+                const SizedBox(height: 16),
+                _buildSummaryCard(),
+                const SizedBox(height: 16),
+              ],
+              
               const SizedBox(height: 24),
               _buildActionButtons(),
             ],
@@ -255,7 +273,145 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     );
   }
 
+  Widget _buildDocumentTypeCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Dokumenttyp auswählen',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<DocumentType>(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Rechnung erstellen',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Normale Rechnung mit Fahrten',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                    value: DocumentType.invoice,
+                    groupValue: _documentType,
+                    activeColor: Colors.yellow[700],
+                    onChanged: (DocumentType? value) {
+                      setState(() {
+                        _documentType = value!;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<DocumentType>(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Brief erstellen',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Freier Text mit Betreff',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                    value: DocumentType.letter,
+                    groupValue: _documentType,
+                    activeColor: Colors.yellow[700],
+                    onChanged: (DocumentType? value) {
+                      setState(() {
+                        _documentType = value!;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
+  Widget _buildLetterInputCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Brief-Inhalt',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // Betreff-Feld
+            TextFormField(
+              controller: _letterSubjectController,
+              decoration: const InputDecoration(
+                labelText: 'Betreff',
+                prefixIcon: Icon(Icons.subject),
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (_documentType == DocumentType.letter && (value == null || value.isEmpty)) {
+                  return 'Bitte geben Sie einen Betreff ein';
+                }
+                return null;
+              },
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Freitext-Feld
+            TextFormField(
+              controller: _letterContentController,
+              decoration: const InputDecoration(
+                labelText: 'Brief-Inhalt',
+                prefixIcon: Icon(Icons.text_fields),
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+              ),
+              maxLines: 8,
+              validator: (value) {
+                if (_documentType == DocumentType.letter && (value == null || value.isEmpty)) {
+                  return 'Bitte geben Sie den Brief-Inhalt ein';
+                }
+                return null;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildCustomerDataCard() {
     return Card(
@@ -937,7 +1093,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.preview),
-            label: Text(_isGenerating ? 'Generiere...' : 'PDF Vorschau'),
+            label: Text(_isGenerating ? 'Generiere...' : (_documentType == DocumentType.letter ? 'Brief Vorschau' : 'PDF Vorschau')),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.yellow[700],
               foregroundColor: Colors.black,
@@ -1113,12 +1269,15 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       customerCity: _customerCityController.text,
       invoiceNumber: _invoiceNumberController.text,
       invoiceDate: _invoiceDate,
-      trips: _trips,
+      trips: _documentType == DocumentType.invoice ? _trips : [], // Keine Fahrten bei Brief
       vatRate: vatRate,
       logoPath: null, // Logo aus assets verwenden
       location: _selectedLocation,
       customerGender: _selectedGender,
       purpose: _purposeController.text,
+      documentType: _documentType,
+      letterSubject: _documentType == DocumentType.letter ? _letterSubjectController.text : null,
+      letterContent: _documentType == DocumentType.letter ? _letterContentController.text : null,
     );
   }
 
@@ -1152,6 +1311,11 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
       _selectedLocation = TaxiLocation.tamm;
       _selectedGender = CustomerGender.herr;
       
+      // Dokumenttyp und Brief-Felder zurücksetzen
+      _documentType = DocumentType.invoice;
+      _letterSubjectController.clear();
+      _letterContentController.clear();
+      
       _isGenerating = false; // Sicherstellen, dass PDF-Generation zurückgesetzt wird
     });
     
@@ -1179,6 +1343,10 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
     _tripFromController.dispose();
     _tripToController.dispose();
     _tripPriceController.dispose();
+    
+    // Brief-Controller dispose
+    _letterSubjectController.dispose();
+    _letterContentController.dispose();
     
     super.dispose();
   }

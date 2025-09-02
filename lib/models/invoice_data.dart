@@ -12,6 +12,9 @@ class InvoiceData {
   final TaxiLocation location;
   final CustomerGender customerGender;
   final String purpose;     // Verwendungszweck
+  final DocumentType documentType; // Rechnung oder Brief
+  final String? letterSubject;     // Betreff für Brief
+  final String? letterContent;     // Freitext für Brief
 
   InvoiceData({
     required this.customerName,
@@ -27,6 +30,9 @@ class InvoiceData {
     this.location = TaxiLocation.tamm, // Standard: Tamm
     this.customerGender = CustomerGender.herr, // Standard: Herr
     this.purpose = '',         // Optional
+    this.documentType = DocumentType.invoice, // Standard: Rechnung
+    this.letterSubject,        // Optional: Betreff für Brief
+    this.letterContent,        // Optional: Inhalt für Brief
   });
 
   // KORRIGIERT: Fahrpreise sind bereits Brutto!
@@ -104,6 +110,11 @@ class TripEntry {
 enum TaxiLocation {
   tamm,
   sersheim,
+}
+
+enum DocumentType {
+  invoice,
+  letter,
 }
 
 enum CustomerGender {
