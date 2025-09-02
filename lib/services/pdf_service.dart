@@ -1681,7 +1681,7 @@ class PDFService {
           children: [
             // Empfänger (links)
             pw.Container(
-              width: 200,
+              width: 300,
               height: 140,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1718,7 +1718,7 @@ class PDFService {
               ),
             ),
             
-            pw.SizedBox(width: 100),
+            pw.SizedBox(width: 20),
             
             // Kontaktdaten und Rechnungsdetails (rechts) - exakt wie bei Rechnung
             pw.Container(
@@ -1823,8 +1823,8 @@ class PDFService {
           style: pw.TextStyle(fontSize: 10),
         ),
         
-        // Fester Abstand statt dynamisch (2-3 Absätze)
-        pw.SizedBox(height: 40),
+        // Fester Abstand statt dynamisch (1-2 Absätze)
+        pw.SizedBox(height: 25),
 
         // Unterschrift
         pw.Row(
