@@ -112,9 +112,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
           setState(() {
             _trips.add(duplicatedTrip);
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Duplikat-Fahrt wurde hinzugefügt')),
-          );
+          // Keine Benachrichtigung mehr
         },
       ),
     );
@@ -987,9 +985,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             setState(() {
               _trips[index] = editedTrip;
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Fahrt wurde bearbeitet')),
-            );
+            // Keine Benachrichtigung mehr
           }
         },
       ),
@@ -1014,9 +1010,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                   _trips.removeAt(index);
                 });
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Fahrt wurde gelöscht')),
-                );
+                // Keine Benachrichtigung mehr
               }
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -1137,7 +1131,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
           child: TextButton.icon(
             onPressed: _resetForm,
             icon: const Icon(Icons.refresh),
-            label: const Text('Neue Rechnung'),
+            label: Text(_documentType == DocumentType.letter ? 'Neuen Brief' : 'Neue Rechnung'),
             style: TextButton.styleFrom(
               foregroundColor: Colors.grey[600],
             ),

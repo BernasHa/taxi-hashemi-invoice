@@ -1720,13 +1720,13 @@ class PDFService {
             
             pw.SizedBox(width: 20),
             
-            // Nur Datum (rechts)
+            // Nur Datum (rechts) - wird später über Betreff platziert
             pw.Container(
               width: 200,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
+                  // Leer lassen - Datum wird über Betreff platziert
                 ],
               ),
             ),
@@ -1734,6 +1734,22 @@ class PDFService {
         ),
 
         pw.SizedBox(height: 20),
+
+        // Datum über Betreff (rechtsbündig)
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.end,
+          children: [
+            pw.Text(
+              'Datum: ${DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)}',
+              style: pw.TextStyle(
+                fontSize: 9,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+
+        pw.SizedBox(height: 10),
 
         // Betreff (wie "Rechnung:" bei Invoice)
         pw.Text(
