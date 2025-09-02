@@ -156,9 +156,9 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildLocationCard(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
               _buildDocumentTypeCard(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
               _buildCustomerDataCard(),
               const SizedBox(height: 16),
               

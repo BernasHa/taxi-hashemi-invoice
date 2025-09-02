@@ -807,7 +807,7 @@ class PDFService {
                 _buildTableHeaderCentered('Fahrt/en:'),
                 _buildTableHeaderCentered('von:'),
                 _buildTableHeaderCentered('nach:'),
-                _buildTableHeaderRight('Preis:'),
+                _buildTableHeaderCentered('Preis:'),
               ],
             ),
           ],
@@ -859,7 +859,7 @@ class PDFService {
                 _buildTableHeaderCentered('Fahrt/en:'),
                 _buildTableHeaderCentered('von:'),
                 _buildTableHeaderCentered('nach:'),
-                _buildTableHeaderRight('Preis:'),
+                _buildTableHeaderCentered('Preis:'),
               ],
             ),
           ],
@@ -1717,6 +1717,9 @@ class PDFService {
                 ],
               ),
             ),
+            
+            pw.SizedBox(width: 20),
+            
             // Kontaktdaten (rechts)
             pw.Container(
               width: 200,
