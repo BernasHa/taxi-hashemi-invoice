@@ -1743,7 +1743,7 @@ class PDFService {
               'Datum: ${DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)}',
               style: pw.TextStyle(
                 fontSize: 9,
-                fontWeight: pw.FontWeight.bold,
+                fontWeight: pw.FontWeight.normal,
               ),
             ),
           ],
