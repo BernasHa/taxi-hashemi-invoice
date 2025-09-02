@@ -156,15 +156,17 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildLocationCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               _buildDocumentTypeCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               _buildCustomerDataCard(),
               const SizedBox(height: 16),
               
               // Brief-Eingabe nur im Brief-Modus
               if (_documentType == DocumentType.letter) ...[
                 _buildLetterInputCard(),
+                const SizedBox(height: 16),
+                _buildInvoiceDetailsCard(), // Rechnungsdetails auch bei Brief
                 const SizedBox(height: 16),
               ],
               
@@ -375,6 +377,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             // Betreff-Feld
             TextFormField(
               controller: _letterSubjectController,
+              textCapitalization: TextCapitalization.sentences,
               decoration: const InputDecoration(
                 labelText: 'Betreff',
                 prefixIcon: Icon(Icons.subject),
@@ -393,6 +396,7 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
             // Freitext-Feld
             TextFormField(
               controller: _letterContentController,
+              textCapitalization: TextCapitalization.sentences,
               decoration: const InputDecoration(
                 labelText: 'Brief-Inhalt',
                 prefixIcon: Icon(Icons.text_fields),

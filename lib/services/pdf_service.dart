@@ -126,7 +126,7 @@ class PDFService {
                 ),
                 // Hauptinhalt
                 pw.Positioned(
-                  left: 20, right: 40, top: 40, bottom: 40,
+                  left: 10, right: 40, top: 40, bottom: 40,
                   child: _buildPageWithFooter(
                     _buildLetterPage(invoiceData, logoToUse, stampToUse),
                     invoiceData,
@@ -195,7 +195,7 @@ class PDFService {
               ),
               // Hauptinhalt mit eigenem Margin
               pw.Positioned(
-                left: 20,
+                left: 10,
                 right: 40,
                 top: 40,
                 bottom: 40,
@@ -254,7 +254,7 @@ class PDFService {
                   ),
                   // Hauptinhalt mit eigenem Margin
                   pw.Positioned(
-                    left: 20, right: 40, top: 40, bottom: 40,
+                    left: 10, right: 40, top: 40, bottom: 40,
                     child: _buildPageWithFooter(
                       // Letzte Seite bekommt Zusammenfassung dazu
                       currentPageNumber == totalPages 
@@ -1723,10 +1723,29 @@ class PDFService {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  _buildDetailRowLeft('Brief Nr.:', invoiceData.invoiceNumber),
+                  _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber), // Bleibt "Rechnung Nr."
                   _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
                   _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
                   _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
+                  pw.SizedBox(height: 8),
+                  // Ansprechpartner-Details hinzufügen
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      children: [
+                        pw.TextSpan(
+                          text: 'Ihr Ansprechpartner: ',
+                          style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: blackColor),
+                        ),
+                        pw.TextSpan(
+                          text: CompanyInfo.contactPerson,
+                          style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.normal, color: blackColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildDetailRowLeft('Abteilung:', 'Geschäftsführung'),
+                  _buildDetailRowLeft('Telefon:', CompanyInfo.getPhone(invoiceData.location)),
+                  _buildDetailRowLeft('Email:', CompanyInfo.getEmail(invoiceData.location)),
                 ],
               ),
             ),
@@ -1761,8 +1780,8 @@ class PDFService {
           style: pw.TextStyle(fontSize: 10),
         ),
         
-        // Dynamischer Abstand
-        pw.Expanded(child: pw.SizedBox()),
+        // Fester Abstand statt dynamisch (2-3 Absätze)
+        pw.SizedBox(height: 40),
 
         // Unterschrift
         pw.Row(
