@@ -204,66 +204,74 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                 color: Colors.grey[800],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
-                  child: RadioListTile<TaxiLocation>(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Taxi Tamm',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Heilbronner Str. 30\n71732 Tamm',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildLocationOption(
+                    title: 'Taxi Tamm',
+                    subtitle: 'Heilbronner Str. 30\n71732 Tamm',
                     value: TaxiLocation.tamm,
-                    groupValue: _selectedLocation,
-                    activeColor: Colors.yellow[700],
-                    onChanged: (TaxiLocation? value) {
-                      setState(() {
-                        _selectedLocation = value!;
-                      });
-                    },
                   ),
                 ),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: RadioListTile<TaxiLocation>(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Taxi Sersheim',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Waldeck Str. 7\n74371 Sersheim',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildLocationOption(
+                    title: 'Taxi Sersheim',
+                    subtitle: 'Waldeck Str. 7\n74372 Sersheim',
                     value: TaxiLocation.sersheim,
-                    groupValue: _selectedLocation,
-                    activeColor: Colors.yellow[700],
-                    onChanged: (TaxiLocation? value) {
-                      setState(() {
-                        _selectedLocation = value!;
-                      });
-                    },
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationOption({
+    required String title,
+    required String subtitle,
+    required TaxiLocation value,
+  }) {
+    final bool isSelected = _selectedLocation == value;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedLocation = value),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? Colors.yellow[700]! : Colors.grey[300]!,
+            width: isSelected ? 2 : 1,
+          ),
+          color: isSelected ? Colors.yellow[50] : Colors.transparent,
+        ),
+        child: Column(
+          children: [
+            Icon(
+              Icons.local_taxi,
+              color: isSelected ? Colors.yellow[700] : Colors.grey[400],
+              size: 28,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: isSelected ? Colors.black : Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey[600],
+              ),
             ),
           ],
         ),
@@ -286,66 +294,76 @@ class _InvoiceFormScreenState extends State<InvoiceFormScreen> {
                 color: Colors.grey[800],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
-                  child: RadioListTile<DocumentType>(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Rechnung',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Mit Fahrten',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildDocTypeOption(
+                    title: 'Rechnung',
+                    subtitle: 'Mit Fahrten',
+                    icon: Icons.receipt_long,
                     value: DocumentType.invoice,
-                    groupValue: _documentType,
-                    activeColor: Colors.yellow[700],
-                    onChanged: (DocumentType? value) {
-                      setState(() {
-                        _documentType = value!;
-                      });
-                    },
                   ),
                 ),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: RadioListTile<DocumentType>(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Brief',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Mit Betreff',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildDocTypeOption(
+                    title: 'Brief',
+                    subtitle: 'Mit Betreff',
+                    icon: Icons.mail_outline,
                     value: DocumentType.letter,
-                    groupValue: _documentType,
-                    activeColor: Colors.yellow[700],
-                    onChanged: (DocumentType? value) {
-                      setState(() {
-                        _documentType = value!;
-                      });
-                    },
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDocTypeOption({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required DocumentType value,
+  }) {
+    final bool isSelected = _documentType == value;
+    return GestureDetector(
+      onTap: () => setState(() => _documentType = value),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? Colors.yellow[700]! : Colors.grey[300]!,
+            width: isSelected ? 2 : 1,
+          ),
+          color: isSelected ? Colors.yellow[50] : Colors.transparent,
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? Colors.yellow[700] : Colors.grey[400],
+              size: 28,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: isSelected ? Colors.black : Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey[600],
+              ),
             ),
           ],
         ),
