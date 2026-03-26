@@ -143,28 +143,32 @@ class PDFService {
       return pdf.save();
     }
 
-    // VEREINFACHTE Multi-Page Berechnung für Rechnungen
+    // Multi-Page Berechnung für Rechnungen
     const int tripsOnFirstPage = 9;
-    const int tripsPerAdditionalPage = 20;
+    const int tripsPerMiddlePage = 20;   // Mittlere Seiten: nur Fahrten
+    const int tripsOnLastPage = 15;      // Letzte Seite: Fahrten + Summary
     final int totalTrips = invoiceData.trips.length;
-    
-    print('DEBUG: Gesamt Fahrten = $totalTrips');
-    
-    // NEUE LOGIK: Bei wenigen Fahrten (≤9) alles auf eine Seite
+
+    // Bei wenigen Fahrten (≤9) alles auf eine Seite
     final bool singlePageLayout = totalTrips <= 9;
-    
+
+    // Seitenaufteilung berechnen
     int totalPages;
     if (singlePageLayout) {
-      totalPages = 1; // Alles auf eine Seite
-    } else if (totalTrips <= tripsOnFirstPage) {
-      totalPages = 2; // Erste Seite + Zusammenfassung
+      totalPages = 1;
     } else {
-      final int remainingTrips = totalTrips - tripsOnFirstPage;
-      final int additionalPages = (remainingTrips / tripsPerAdditionalPage).ceil();
-      totalPages = 1 + additionalPages; // Erste + Zusätzliche (KEINE separate Finale-Seite)
+      final int remainingAfterFirst = totalTrips - tripsOnFirstPage;
+      if (remainingAfterFirst <= tripsOnLastPage) {
+        // Passt auf eine letzte Seite mit Summary
+        totalPages = 2;
+      } else {
+        // Braucht mittlere Seiten + letzte Seite
+        final int tripsForMiddlePages = remainingAfterFirst - tripsOnLastPage;
+        final int middlePages = (tripsForMiddlePages / tripsPerMiddlePage).ceil();
+        // Letzte Seite bekommt was übrig bleibt (≤ tripsOnLastPage)
+        totalPages = 1 + middlePages + 1;
+      }
     }
-    
-    print('DEBUG: Berechnet $totalPages Seiten total (singlePageLayout: $singlePageLayout)');
 
     // Seite 1: Hauptrechnung mit Header und Fahrten
     pdf.addPage(
@@ -214,34 +218,32 @@ class PDFService {
       ),
     );
 
-    // KORRIGIERTE Multi-Page Erstellung (nur wenn nicht Single-Page)
+    // Multi-Page Erstellung (nur wenn nicht Single-Page)
     if (!singlePageLayout && totalTrips > tripsOnFirstPage) {
-      // Fahrt-Seiten erstellen
       int startIndex = tripsOnFirstPage;
       int pageNumber = 2;
-      
+
       while (startIndex < totalTrips) {
-        // KORRIGIERTE endIndex Berechnung
-        final int endIndex = (startIndex + tripsPerAdditionalPage < totalTrips) 
-            ? startIndex + tripsPerAdditionalPage 
+        final bool isLastPage = pageNumber == totalPages;
+        // Letzte Seite bekommt weniger Fahrten (Platz für Summary)
+        final int maxTripsThisPage = isLastPage ? tripsOnLastPage : tripsPerMiddlePage;
+        final int endIndex = (startIndex + maxTripsThisPage < totalTrips)
+            ? startIndex + maxTripsThisPage
             : totalTrips;
-        
-        // CLOSURE-FIX: Lokale Kopien für die build-Funktion
+
+        // Lokale Kopien für die build-Closure
         final int currentStartIndex = startIndex;
         final int currentEndIndex = endIndex;
         final int currentPageNumber = pageNumber;
-        
-        print('DEBUG: Seite $currentPageNumber - Fahrten $currentStartIndex bis ${currentEndIndex-1} (${currentEndIndex - currentStartIndex} Fahrten)');
-        
+
         pdf.addPage(
           pw.Page(
             pageFormat: PdfPageFormat.a4,
-            margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
+            margin: const pw.EdgeInsets.all(0),
             build: (pw.Context context) {
-              print('DEBUG: In build context: startIndex=$currentStartIndex, endIndex=$currentEndIndex');
               return pw.Stack(
                 children: [
-                  // Falzmarken ganz am linken Seitenrand
+                  // Falzmarken
                   pw.Positioned(
                     left: 0,
                     top: 105 * 2.83465,
@@ -252,12 +254,11 @@ class PDFService {
                     top: 148.5 * 2.83465,
                     child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
                   ),
-                  // Hauptinhalt mit eigenem Margin
+                  // Hauptinhalt
                   pw.Positioned(
                     left: 30, right: 40, top: 40, bottom: 40,
                     child: _buildPageWithFooter(
-                      // Letzte Seite bekommt Zusammenfassung dazu
-                      currentPageNumber == totalPages 
+                      currentPageNumber == totalPages
                         ? _buildLastMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex, stampToUse)
                         : _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
                       invoiceData,
@@ -270,48 +271,11 @@ class PDFService {
             },
           ),
         );
-        
+
         startIndex = endIndex;
         pageNumber++;
       }
-      // KEINE separate Finale-Seite mehr - Zusammenfassung auf letzter Fahrt-Seite
-    } else if (!singlePageLayout) {
-      // Nur 2 Seiten bei ≤13 Fahrten (aber nicht Single-Page)
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
-          build: (pw.Context context) {
-            return pw.Stack(
-              children: [
-                // Falzmarken ganz am linken Seitenrand
-                pw.Positioned(
-                  left: 0,
-                  top: 105 * 2.83465,
-                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
-                ),
-                pw.Positioned(
-                  left: 0,
-                  top: 148.5 * 2.83465,
-                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
-                ),
-                // Hauptinhalt mit eigenem Margin
-                pw.Positioned(
-                  left: 40, right: 40, top: 40, bottom: 40,
-                  child: _buildPageWithFooter(
-                    _buildSecondPage(invoiceData, stampToUse),
-                    invoiceData,
-                    2,
-                    totalPages,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      );
     }
-    // Bei singlePageLayout wird keine zweite Seite erstellt!
 
     return pdf.save();
   }
@@ -761,9 +725,8 @@ class PDFService {
         
         pw.SizedBox(height: 20),
         
-        // Tabelle für diese Seite (weniger Platz für Zusammenfassung)
-        pw.Container(
-          height: 300, // Weniger Höhe für Zusammenfassung
+        // Tabelle für diese Seite - Expanded füllt verfügbaren Platz
+        pw.Expanded(
           child: _buildTripsTableForRange(invoiceData, startIndex, endIndex),
         ),
         
