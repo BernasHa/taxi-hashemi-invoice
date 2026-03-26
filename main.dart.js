@@ -28700,7 +28700,7 @@ break}j=a1.w.length
 i=B.a([],t.Wu)
 if(j<=9)i.push(new B.p9(0,j,!0,!0,!0,!1))
 else{i.push(new B.p9(0,9,!1,!0,!1,!1))
-for(h=9;h<j;)if(j-h<=10){i.push(new B.p9(h,j,!0,!1,!1,!1))
+for(h=9;h<j;)if(j-h<=16){i.push(new B.p9(h,j,!0,!1,!1,!1))
 h=j}else{g=h+20
 g=g<j?g:j
 i.push(new B.p9(h,g,!1,!1,!1,!1))

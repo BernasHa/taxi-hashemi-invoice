@@ -146,7 +146,7 @@ class PDFService {
     // Multi-Page Konstanten
     const int tripsOnFirstPage = 9;       // Erste Seite: Header + Kundendaten + Fahrten
     const int tripsPerMiddlePage = 20;    // Mittlere Seiten: nur Fahrten
-    const int maxTripsWithSummary = 10;   // Letzte Seite: Fahrten + Summary (konservativ)
+    const int maxTripsWithSummary = 16;   // Letzte Seite: Fahrten + Summary
     final int totalTrips = invoiceData.trips.length;
 
     // Bei wenigen Fahrten (≤9) alles auf eine Seite
