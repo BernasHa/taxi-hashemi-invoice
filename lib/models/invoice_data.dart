@@ -134,9 +134,9 @@ class CompanyInfo {
   static String getIban(TaxiLocation location) {
     switch (location) {
       case TaxiLocation.tamm:
-        return 'DE18 6045 0050 0000 0167 95';
+        return 'DE48 6045 0050 0030 2702 64';
       case TaxiLocation.sersheim:
-        return 'DE36 6045 0050 0030 2268 30';
+        return 'DE53 6045 0050 0030 2702 71';
     }
   }
   

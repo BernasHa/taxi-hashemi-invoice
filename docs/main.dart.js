@@ -28403,8 +28403,8 @@ s.cy$=k
 l=k}s.a0I(new B.G2(p,A.aQ8,o,l,j))
 s.M2()},
 SJ:function SJ(a){this.a=a},
-aPe(a){switch(a.a){case 0:return"DE18 6045 0050 0000 0167 95"
-case 1:return"DE36 6045 0050 0030 2268 30"}},
+aPe(a){switch(a.a){case 0:return"DE48 6045 0050 0030 2702 64"
+case 1:return"DE53 6045 0050 0030 2702 71"}},
 aPf(a){switch(a.a){case 0:return"www.Taxi-Service-Tamm.de"
 case 1:return"www.Taxi-Sersheim.de"}},
 lH(a){switch(a.a){case 0:return"Taxi-Service-Tamm"
