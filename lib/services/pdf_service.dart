@@ -143,138 +143,98 @@ class PDFService {
       return pdf.save();
     }
 
-    // Multi-Page Berechnung für Rechnungen
-    const int tripsOnFirstPage = 9;
-    const int tripsPerMiddlePage = 20;   // Mittlere Seiten: nur Fahrten
-    const int tripsOnLastPage = 15;      // Letzte Seite: Fahrten + Summary
+    // Multi-Page Konstanten
+    const int tripsOnFirstPage = 9;       // Erste Seite: Header + Kundendaten + Fahrten
+    const int tripsPerMiddlePage = 20;    // Mittlere Seiten: nur Fahrten
+    const int maxTripsWithSummary = 10;   // Letzte Seite: Fahrten + Summary (konservativ)
     final int totalTrips = invoiceData.trips.length;
 
     // Bei wenigen Fahrten (≤9) alles auf eine Seite
     final bool singlePageLayout = totalTrips <= 9;
 
-    // Seitenaufteilung berechnen
-    int totalPages;
+    // Seiten-Plan erstellen: Liste von (startIndex, endIndex, hasSummary)
+    final List<_PagePlan> pages = [];
+
     if (singlePageLayout) {
-      totalPages = 1;
+      pages.add(_PagePlan(0, totalTrips, true, isFirstPage: true, isSinglePage: true));
     } else {
-      final int remainingAfterFirst = totalTrips - tripsOnFirstPage;
-      if (remainingAfterFirst <= tripsOnLastPage) {
-        // Passt auf eine letzte Seite mit Summary
-        totalPages = 2;
-      } else {
-        // Braucht mittlere Seiten + letzte Seite
-        final int tripsForMiddlePages = remainingAfterFirst - tripsOnLastPage;
-        final int middlePages = (tripsForMiddlePages / tripsPerMiddlePage).ceil();
-        // Letzte Seite bekommt was übrig bleibt (≤ tripsOnLastPage)
-        totalPages = 1 + middlePages + 1;
+      // Erste Seite
+      pages.add(_PagePlan(0, tripsOnFirstPage, false, isFirstPage: true));
+
+      // Restliche Fahrten aufteilen
+      int startIndex = tripsOnFirstPage;
+      while (startIndex < totalTrips) {
+        final int tripsLeft = totalTrips - startIndex;
+
+        if (tripsLeft <= maxTripsWithSummary) {
+          // Passt auf eine letzte Seite MIT Summary
+          pages.add(_PagePlan(startIndex, totalTrips, true));
+          startIndex = totalTrips;
+        } else {
+          // Mittlere Seite mit vollen Fahrten
+          final int endIndex = (startIndex + tripsPerMiddlePage < totalTrips)
+              ? startIndex + tripsPerMiddlePage
+              : totalTrips;
+          pages.add(_PagePlan(startIndex, endIndex, false));
+          startIndex = endIndex;
+        }
+      }
+
+      // Wenn letzte Seite keine Summary hat, eigene Summary-Seite anhängen
+      if (!pages.last.hasSummary) {
+        pages.add(_PagePlan(totalTrips, totalTrips, true, isSummaryOnly: true));
       }
     }
 
-    // Seite 1: Hauptrechnung mit Header und Fahrten
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(0), // Kein Margin für absolute Positionierung
-        build: (pw.Context context) {
-          return pw.Stack(
-            children: [
-              // Falzmarken ganz am linken Seitenrand
-              pw.Positioned(
-                left: 0, // Absolut am Seitenrand
-                top: 105 * 2.83465, // 105mm in PDF-Punkte
-                child: pw.Container(
-                  width: 8,
-                  height: 1,
-                  color: PdfColors.grey700,
+    final int totalPages = pages.length;
+
+    // Seiten generieren
+    for (int i = 0; i < pages.length; i++) {
+      final plan = pages[i];
+      final int currentPage = i + 1;
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(0),
+          build: (pw.Context context) {
+            pw.Widget content;
+
+            if (plan.isSinglePage) {
+              content = _buildSinglePage(invoiceData, logoToUse, stampToUse);
+            } else if (plan.isFirstPage) {
+              content = _buildFirstPage(invoiceData, logoToUse, plan.startIndex, plan.endIndex - plan.startIndex);
+            } else if (plan.isSummaryOnly) {
+              content = _buildFinalPage(invoiceData, stampToUse);
+            } else if (plan.hasSummary) {
+              content = _buildLastMiddlePage(invoiceData, logoToUse, plan.startIndex, plan.endIndex, stampToUse);
+            } else {
+              content = _buildMiddlePage(invoiceData, logoToUse, plan.startIndex, plan.endIndex);
+            }
+
+            return pw.Stack(
+              children: [
+                // Falzmarken
+                pw.Positioned(
+                  left: 0,
+                  top: 105 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
                 ),
-              ),
-              pw.Positioned(
-                left: 0, // Absolut am Seitenrand
-                top: 148.5 * 2.83465, // 148.5mm in PDF-Punkte
-                child: pw.Container(
-                  width: 8,
-                  height: 1,
-                  color: PdfColors.grey700,
+                pw.Positioned(
+                  left: 0,
+                  top: 148.5 * 2.83465,
+                  child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
                 ),
-              ),
-              // Hauptinhalt mit eigenem Margin
-              pw.Positioned(
-                left: 30,
-                right: 40,
-                top: 40,
-                bottom: 40,
-                child: _buildPageWithFooter(
-                  singlePageLayout 
-                    ? _buildSinglePage(invoiceData, logoToUse, stampToUse)
-                    : _buildFirstPage(invoiceData, logoToUse, 0, tripsOnFirstPage),
-                  invoiceData,
-                  1,
-                  totalPages,
+                // Hauptinhalt
+                pw.Positioned(
+                  left: 30, right: 40, top: 40, bottom: 40,
+                  child: _buildPageWithFooter(content, invoiceData, currentPage, totalPages),
                 ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-
-    // Multi-Page Erstellung (nur wenn nicht Single-Page)
-    if (!singlePageLayout && totalTrips > tripsOnFirstPage) {
-      int startIndex = tripsOnFirstPage;
-      int pageNumber = 2;
-
-      while (startIndex < totalTrips) {
-        final bool isLastPage = pageNumber == totalPages;
-        // Letzte Seite bekommt weniger Fahrten (Platz für Summary)
-        final int maxTripsThisPage = isLastPage ? tripsOnLastPage : tripsPerMiddlePage;
-        final int endIndex = (startIndex + maxTripsThisPage < totalTrips)
-            ? startIndex + maxTripsThisPage
-            : totalTrips;
-
-        // Lokale Kopien für die build-Closure
-        final int currentStartIndex = startIndex;
-        final int currentEndIndex = endIndex;
-        final int currentPageNumber = pageNumber;
-
-        pdf.addPage(
-          pw.Page(
-            pageFormat: PdfPageFormat.a4,
-            margin: const pw.EdgeInsets.all(0),
-            build: (pw.Context context) {
-              return pw.Stack(
-                children: [
-                  // Falzmarken
-                  pw.Positioned(
-                    left: 0,
-                    top: 105 * 2.83465,
-                    child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
-                  ),
-                  pw.Positioned(
-                    left: 0,
-                    top: 148.5 * 2.83465,
-                    child: pw.Container(width: 8, height: 1, color: PdfColors.grey700),
-                  ),
-                  // Hauptinhalt
-                  pw.Positioned(
-                    left: 30, right: 40, top: 40, bottom: 40,
-                    child: _buildPageWithFooter(
-                      currentPageNumber == totalPages
-                        ? _buildLastMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex, stampToUse)
-                        : _buildMiddlePage(invoiceData, logoToUse, currentStartIndex, currentEndIndex),
-                      invoiceData,
-                      currentPageNumber,
-                      totalPages,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        );
-
-        startIndex = endIndex;
-        pageNumber++;
-      }
+              ],
+            );
+          },
+        ),
+      );
     }
 
     return pdf.save();
@@ -1172,7 +1132,7 @@ class PDFService {
           ],
         ),
 
-        pw.SizedBox(height: 90), // Mehr Abstand nach unten
+        pw.SizedBox(height: 40),
 
         // Grußformel und Unterschrift
         pw.Row(
@@ -1776,4 +1736,22 @@ class PDFService {
       ],
     );
   }
+}
+
+class _PagePlan {
+  final int startIndex;
+  final int endIndex;
+  final bool hasSummary;
+  final bool isFirstPage;
+  final bool isSinglePage;
+  final bool isSummaryOnly;
+
+  _PagePlan(
+    this.startIndex,
+    this.endIndex,
+    this.hasSummary, {
+    this.isFirstPage = false,
+    this.isSinglePage = false,
+    this.isSummaryOnly = false,
+  });
 }
