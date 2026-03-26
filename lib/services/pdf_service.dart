@@ -145,14 +145,13 @@ class PDFService {
 
     // Multi-Page Konstanten
     const int tripsOnFirstPage = 9;       // Erste Seite: Header + Kundendaten + Fahrten
-    const int tripsPerMiddlePage = 28;    // Mittlere Seiten: nur Fahrten
-    const int maxTripsWithSummary = 19;   // Letzte Seite: Fahrten + Summary
+    const int tripsPerPage = 28;          // Folgeseiten: bis zu 28 Fahrten (+ Summary auf letzter)
     final int totalTrips = invoiceData.trips.length;
 
     // Bei wenigen Fahrten (≤9) alles auf eine Seite
     final bool singlePageLayout = totalTrips <= 9;
 
-    // Seiten-Plan erstellen: Liste von (startIndex, endIndex, hasSummary)
+    // Seiten-Plan erstellen
     final List<_PagePlan> pages = [];
 
     if (singlePageLayout) {
@@ -161,29 +160,15 @@ class PDFService {
       // Erste Seite
       pages.add(_PagePlan(0, tripsOnFirstPage, false, isFirstPage: true));
 
-      // Restliche Fahrten aufteilen
+      // Restliche Fahrten in Seiten à 28 aufteilen
       int startIndex = tripsOnFirstPage;
       while (startIndex < totalTrips) {
-        final int tripsLeft = totalTrips - startIndex;
-
-        if (tripsLeft <= maxTripsWithSummary) {
-          // Passt auf eine letzte Seite MIT Summary
-          pages.add(_PagePlan(startIndex, totalTrips, true));
-          startIndex = totalTrips;
-        } else if (tripsLeft > tripsPerMiddlePage) {
-          // Volle Mittelseite
-          final int endIndex = startIndex + tripsPerMiddlePage;
-          pages.add(_PagePlan(startIndex, endIndex, false));
-          startIndex = endIndex;
-        } else {
-          // Zu viele für letzte Seite mit Summary, aber füllt keine volle Mittelseite
-          // Aufteilen: ein Teil auf Mittelseite, Rest + Summary auf letzte Seite
-          final int tripsForLastPage = maxTripsWithSummary;
-          final int middleEnd = startIndex + (tripsLeft - tripsForLastPage);
-          pages.add(_PagePlan(startIndex, middleEnd, false));
-          startIndex = middleEnd;
-          // Nächste Iteration: tripsLeft <= maxTripsWithSummary → kommt mit Summary
-        }
+        final int endIndex = (startIndex + tripsPerPage < totalTrips)
+            ? startIndex + tripsPerPage
+            : totalTrips;
+        final bool isLastChunk = endIndex == totalTrips;
+        pages.add(_PagePlan(startIndex, endIndex, isLastChunk));
+        startIndex = endIndex;
       }
     }
 
