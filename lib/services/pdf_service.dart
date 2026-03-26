@@ -307,77 +307,80 @@ class PDFService {
               ],
             ),
             pw.SizedBox(height: 5),
-            // Absender-Adresse unter dem Logo (einzeilig)
-            pw.Container(
-              width: 200,
-              child: pw.Text(
-                '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-                style: pw.TextStyle(
-                  fontSize: 8,
-                  color: lightGrayColor,
+            // Absender-Rücksendezeile (DIN 5008: 20mm vom linken Rand)
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 27),
+              child: pw.Container(
+                width: 200,
+                child: pw.Text(
+                  '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                  style: pw.TextStyle(
+                    fontSize: 8,
+                    color: lightGrayColor,
+                  ),
+                  maxLines: 1,
                 ),
-                maxLines: 1,
               ),
             ),
           ],
         ),
-        
+
         pw.SizedBox(height: 30),
 
-        // Empfänger und Kontaktdaten - FESTE POSITIONIERUNG
+        // Empfänger und Kontaktdaten - DIN 5008 Positionierung
         pw.Container(
-          height: 140, // Mehr Höhe damit Rechnungsdetails nicht verschwinden
+          height: 140,
           child: pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Empfänger (links) - feste Breite
-              pw.Container(
-                width: 300, // Feste Breite statt Expanded
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    // Empfänger: Firma (wenn vorhanden)
-                    if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
-                      pw.Text(
-                        '${invoiceData.customerCompany}',
-                        style: pw.TextStyle(
-                          fontSize: 12,
-                          fontWeight: pw.FontWeight.normal, // Firma nicht fett
+              // Empfänger (links) - 20mm vom Seitenrand
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(left: 27),
+                child: pw.Container(
+                  width: 273,
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
+                        pw.Text(
+                          '${invoiceData.customerCompany}',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
                         ),
-                      ),
-                    // "Herr/Frau" nur wenn Kundenname vorhanden
-                    if (invoiceData.customerName.isNotEmpty) ...[
+                      if (invoiceData.customerName.isNotEmpty) ...[
+                        pw.Text(
+                          invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                        pw.Text(
+                          '${invoiceData.customerName}',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ],
                       pw.Text(
-                        invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
+                        '${invoiceData.customerStreet}',
                         style: pw.TextStyle(
                           fontSize: 12,
                           fontWeight: pw.FontWeight.normal,
                         ),
                       ),
-                      // Kundenname
                       pw.Text(
-                        '${invoiceData.customerName}',
+                        '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
                         style: pw.TextStyle(
                           fontSize: 12,
                           fontWeight: pw.FontWeight.normal,
                         ),
                       ),
                     ],
-                    pw.Text(
-                      '${invoiceData.customerStreet}',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.normal,
-                      ),
-                    ),
-                    pw.Text(
-                      '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.normal,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
               
@@ -1294,49 +1297,50 @@ class PDFService {
               ],
             ),
             pw.SizedBox(height: 3),
-            // Absender-Adresse unter dem Logo (einzeilig)
-            pw.Container(
-              width: 180,
-              child: pw.Text(
-                '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-                style: pw.TextStyle(
-                  fontSize: 7,
-                  color: lightGrayColor,
+            // Absender-Rücksendezeile (DIN 5008: 20mm vom linken Rand)
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 27),
+              child: pw.Container(
+                width: 180,
+                child: pw.Text(
+                  '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                  style: pw.TextStyle(
+                    fontSize: 7,
+                    color: lightGrayColor,
+                  ),
+                  maxLines: 1,
                 ),
-                maxLines: 1,
               ),
             ),
           ],
         ),
-        
+
         pw.SizedBox(height: 20),
 
-        // Empfänger und Kontaktdaten (kompakter)
+        // Empfänger und Kontaktdaten - DIN 5008 Positionierung
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
+            pw.SizedBox(width: 27),
             // Empfänger (links)
             pw.Expanded(
               flex: 2,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  // Empfänger: Firma (wenn vorhanden)
                   if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
                     pw.Text(
                       '${invoiceData.customerCompany}',
                       style: pw.TextStyle(
                         fontSize: 10,
-                        fontWeight: pw.FontWeight.normal, // Nicht fett
+                        fontWeight: pw.FontWeight.normal,
                       ),
                     ),
-                  // "Herr/Frau" nur wenn Kundenname vorhanden
                   if (invoiceData.customerName.isNotEmpty) ...[
                     pw.Text(
                       invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
                       style: pw.TextStyle(fontSize: 10),
                     ),
-                    // Kundenname
                     pw.Text(
                       '${invoiceData.customerName}',
                       style: pw.TextStyle(fontSize: 10),
@@ -1567,63 +1571,67 @@ class PDFService {
               ],
             ),
             pw.SizedBox(height: 3),
-            // Absender-Adresse unter dem Logo
-            pw.Container(
-              width: 250,
-              child: pw.Text(
-                '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
-                style: pw.TextStyle(
-                  fontSize: 7,
-                  color: lightGrayColor,
+            // Absender-Rücksendezeile (DIN 5008: 20mm vom linken Rand)
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 27),
+              child: pw.Container(
+                width: 250,
+                child: pw.Text(
+                  '${CompanyInfo.getName(invoiceData.location)}, ${CompanyInfo.getAddress(invoiceData.location)}, ${CompanyInfo.getPostalCode(invoiceData.location)} ${CompanyInfo.getCity(invoiceData.location)}',
+                  style: pw.TextStyle(
+                    fontSize: 7,
+                    color: lightGrayColor,
+                  ),
+                  maxLines: 1,
                 ),
-                maxLines: 1,
               ),
             ),
           ],
         ),
-        
+
         pw.SizedBox(height: 20),
 
-        // Empfänger und Kontaktdaten
+        // Empfänger und Kontaktdaten - DIN 5008 Positionierung
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Empfänger (links)
-            pw.Container(
-              width: 300,
-              height: 140,
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  // Firma (wenn vorhanden)
-                  if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
-                    pw.Text(
-                      '${invoiceData.customerCompany}',
-                      style: pw.TextStyle(
-                        fontSize: 10,
-                        fontWeight: pw.FontWeight.normal,
+            // Empfänger (links) - 20mm vom Seitenrand
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 27),
+              child: pw.Container(
+                width: 273,
+                height: 140,
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    if (invoiceData.customerCompany != null && invoiceData.customerCompany!.isNotEmpty)
+                      pw.Text(
+                        '${invoiceData.customerCompany}',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.normal,
+                        ),
                       ),
-                    ),
-                  // "Herr/Frau" nur wenn Kundenname vorhanden
-                  if (invoiceData.customerName.isNotEmpty) ...[
+                    if (invoiceData.customerName.isNotEmpty) ...[
+                      pw.Text(
+                        invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
+                        style: pw.TextStyle(fontSize: 10),
+                      ),
+                      pw.Text(
+                        '${invoiceData.customerName}',
+                        style: pw.TextStyle(fontSize: 10),
+                      ),
+                    ],
                     pw.Text(
-                      invoiceData.customerGender == CustomerGender.frau ? 'Frau' : 'Herr',
+                      '${invoiceData.customerStreet}',
                       style: pw.TextStyle(fontSize: 10),
                     ),
                     pw.Text(
-                      '${invoiceData.customerName}',
+                      '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
                       style: pw.TextStyle(fontSize: 10),
                     ),
                   ],
-                  pw.Text(
-                    '${invoiceData.customerStreet}',
-                    style: pw.TextStyle(fontSize: 10),
-                  ),
-                  pw.Text(
-                    '${invoiceData.customerPostalCode} ${invoiceData.customerCity}',
-                    style: pw.TextStyle(fontSize: 10),
-                  ),
-                ],
+                ),
               ),
             ),
             
