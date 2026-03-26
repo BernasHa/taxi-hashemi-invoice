@@ -146,7 +146,7 @@ class PDFService {
     // Multi-Page Konstanten
     const int tripsOnFirstPage = 9;       // Erste Seite: Header + Kundendaten + Fahrten
     const int tripsPerMiddlePage = 28;    // Mittlere Seiten: nur Fahrten
-    const int maxTripsWithSummary = 16;   // Letzte Seite: Fahrten + Summary
+    const int maxTripsWithSummary = 19;   // Letzte Seite: Fahrten + Summary
     final int totalTrips = invoiceData.trips.length;
 
     // Bei wenigen Fahrten (≤9) alles auf eine Seite
@@ -170,19 +170,20 @@ class PDFService {
           // Passt auf eine letzte Seite MIT Summary
           pages.add(_PagePlan(startIndex, totalTrips, true));
           startIndex = totalTrips;
-        } else {
-          // Mittlere Seite mit vollen Fahrten
-          final int endIndex = (startIndex + tripsPerMiddlePage < totalTrips)
-              ? startIndex + tripsPerMiddlePage
-              : totalTrips;
+        } else if (tripsLeft > tripsPerMiddlePage) {
+          // Volle Mittelseite
+          final int endIndex = startIndex + tripsPerMiddlePage;
           pages.add(_PagePlan(startIndex, endIndex, false));
           startIndex = endIndex;
+        } else {
+          // Zu viele für letzte Seite mit Summary, aber füllt keine volle Mittelseite
+          // Aufteilen: ein Teil auf Mittelseite, Rest + Summary auf letzte Seite
+          final int tripsForLastPage = maxTripsWithSummary;
+          final int middleEnd = startIndex + (tripsLeft - tripsForLastPage);
+          pages.add(_PagePlan(startIndex, middleEnd, false));
+          startIndex = middleEnd;
+          // Nächste Iteration: tripsLeft <= maxTripsWithSummary → kommt mit Summary
         }
-      }
-
-      // Wenn letzte Seite keine Summary hat, eigene Summary-Seite anhängen
-      if (!pages.last.hasSummary) {
-        pages.add(_PagePlan(totalTrips, totalTrips, true, isSummaryOnly: true));
       }
     }
 
