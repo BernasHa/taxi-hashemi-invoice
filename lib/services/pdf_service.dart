@@ -450,7 +450,6 @@ class PDFService {
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
-                        _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
                         _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
                         _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
                         // Verwendungszweck entfernt von oben rechts
@@ -1400,7 +1399,6 @@ class PDFService {
                   ),
                   pw.SizedBox(height: 18), // Mehr Abstand zwischen Email und Rechnungsnummer
                   _buildDetailRowLeft('Rechnung Nr.:', invoiceData.invoiceNumber),
-                  _buildDetailRowLeft('IK Nr.:', CompanyInfo.ikNumber),
                   _buildDetailRowLeft('Steuer Nr.:', CompanyInfo.taxNumber),
                   _buildDetailRowLeft('Datum:', DateFormat('dd.MM.yyyy').format(invoiceData.invoiceDate)),
                 ],

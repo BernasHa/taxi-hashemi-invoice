@@ -149,8 +149,7 @@ class CompanyInfo {
     }
   }
   
-  static const String taxNumber = '7110247350';
-  static const String ikNumber = '600851512';
+  static const String taxNumber = '7110254127';
   
   // Feste Fahrtdaten
   static const String fromLocation = 'Tamm, Ulmer Str. 51';
