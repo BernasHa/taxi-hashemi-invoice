@@ -265,49 +265,49 @@ class PDFService {
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo und Firmenname in einer Zeile - OHNE ABSTAND
-            pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              mainAxisSize: pw.MainAxisSize.min, // Minimale Größe
-              children: [
-                // Logo - kompakt
-                pw.Container(
-                  width: 65,
-                  height: 65,
-                  child: logoImage != null
-                      ? pw.Image(logoImage, fit: pw.BoxFit.contain)
-                      : pw.Container(
-                          decoration: pw.BoxDecoration(
-                            color: yellowColor,
-                            shape: pw.BoxShape.circle,
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              'T',
-                              style: pw.TextStyle(
-                                color: blackColor,
-                                fontSize: 36,
-                                fontWeight: pw.FontWeight.bold,
+            // Logo und Firmenname in einer Zeile - bündig mit Absenderzeile
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 27),
+              child: pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisSize: pw.MainAxisSize.min,
+                children: [
+                  pw.Container(
+                    width: 65,
+                    height: 65,
+                    child: logoImage != null
+                        ? pw.Image(logoImage, fit: pw.BoxFit.contain)
+                        : pw.Container(
+                            decoration: pw.BoxDecoration(
+                              color: yellowColor,
+                              shape: pw.BoxShape.circle,
+                            ),
+                            child: pw.Center(
+                              child: pw.Text(
+                                'T',
+                                style: pw.TextStyle(
+                                  color: blackColor,
+                                  fontSize: 36,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                ),
-                // Kleiner Abstand um aus dem Logo rauszukommen
-                pw.SizedBox(width: 8),
-                // Firmenname rechts vom Logo
-                pw.Text(
-                  CompanyInfo.getName(invoiceData.location),
-                  style: pw.TextStyle(
-                    fontSize: 20,
-                    fontWeight: pw.FontWeight.bold,
-                    color: blackColor,
                   ),
-                ),
-              ],
+                  pw.SizedBox(width: 8),
+                  pw.Text(
+                    CompanyInfo.getName(invoiceData.location),
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                      color: blackColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
             pw.SizedBox(height: 5),
-            // Absender-Rücksendezeile (DIN 5008: 20mm vom linken Rand)
+            // Absender-Rücksendezeile
             pw.Padding(
               padding: const pw.EdgeInsets.only(left: 27),
               child: pw.Container(
@@ -1254,49 +1254,49 @@ class PDFService {
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo und Firmenname in einer Zeile - OHNE ABSTAND
-            pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              mainAxisSize: pw.MainAxisSize.min, // Minimale Größe
-              children: [
-                // Logo - kompakt für Single Page
-                pw.Container(
-                  width: 60,
-                  height: 60,
-                  child: logoImage != null
-                      ? pw.Image(logoImage, fit: pw.BoxFit.contain)
-                      : pw.Container(
-                          decoration: pw.BoxDecoration(
-                            color: yellowColor,
-                            shape: pw.BoxShape.circle,
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              'T',
-                              style: pw.TextStyle(
-                                color: blackColor,
-                                fontSize: 28,
-                                fontWeight: pw.FontWeight.bold,
+            // Logo und Firmenname - bündig mit Absenderzeile
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 27),
+              child: pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisSize: pw.MainAxisSize.min,
+                children: [
+                  pw.Container(
+                    width: 60,
+                    height: 60,
+                    child: logoImage != null
+                        ? pw.Image(logoImage, fit: pw.BoxFit.contain)
+                        : pw.Container(
+                            decoration: pw.BoxDecoration(
+                              color: yellowColor,
+                              shape: pw.BoxShape.circle,
+                            ),
+                            child: pw.Center(
+                              child: pw.Text(
+                                'T',
+                                style: pw.TextStyle(
+                                  color: blackColor,
+                                  fontSize: 28,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                ),
-                // Kleiner Abstand um aus dem Logo rauszukommen (Single Page)
-                pw.SizedBox(width: 7),
-                // Firmenname rechts vom Logo
-                pw.Text(
-                  CompanyInfo.getName(invoiceData.location),
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
-                    color: blackColor,
                   ),
-                ),
-              ],
+                  pw.SizedBox(width: 7),
+                  pw.Text(
+                    CompanyInfo.getName(invoiceData.location),
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                      color: blackColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
             pw.SizedBox(height: 3),
-            // Absender-Rücksendezeile (DIN 5008: 20mm vom linken Rand)
+            // Absender-Rücksendezeile
             pw.Padding(
               padding: const pw.EdgeInsets.only(left: 27),
               child: pw.Container(
@@ -1528,48 +1528,49 @@ class PDFService {
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Logo und Firmenname in einer Zeile
-            pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              mainAxisSize: pw.MainAxisSize.min,
-              children: [
-                // Logo
-                pw.Container(
-                  width: 65,
-                  height: 65,
-                  child: logoImage != null
-                      ? pw.Image(logoImage, fit: pw.BoxFit.contain)
-                      : pw.Container(
-                          decoration: pw.BoxDecoration(
-                            color: yellowColor,
-                            shape: pw.BoxShape.circle,
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              'T',
-                              style: pw.TextStyle(
-                                color: blackColor,
-                                fontSize: 36,
-                                fontWeight: pw.FontWeight.bold,
+            // Logo und Firmenname - bündig mit Absenderzeile
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 27),
+              child: pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisSize: pw.MainAxisSize.min,
+                children: [
+                  pw.Container(
+                    width: 65,
+                    height: 65,
+                    child: logoImage != null
+                        ? pw.Image(logoImage, fit: pw.BoxFit.contain)
+                        : pw.Container(
+                            decoration: pw.BoxDecoration(
+                              color: yellowColor,
+                              shape: pw.BoxShape.circle,
+                            ),
+                            child: pw.Center(
+                              child: pw.Text(
+                                'T',
+                                style: pw.TextStyle(
+                                  color: blackColor,
+                                  fontSize: 36,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                ),
-                pw.SizedBox(width: 8),
-                // Firmenname
-                pw.Text(
-                  CompanyInfo.getName(invoiceData.location),
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
-                    color: blackColor,
                   ),
-                ),
-              ],
+                  pw.SizedBox(width: 8),
+                  pw.Text(
+                    CompanyInfo.getName(invoiceData.location),
+                    style: pw.TextStyle(
+                      fontSize: 18,
+                      fontWeight: pw.FontWeight.bold,
+                      color: blackColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
             pw.SizedBox(height: 3),
-            // Absender-Rücksendezeile (DIN 5008: 20mm vom linken Rand)
+            // Absender-Rücksendezeile
             pw.Padding(
               padding: const pw.EdgeInsets.only(left: 27),
               child: pw.Container(
